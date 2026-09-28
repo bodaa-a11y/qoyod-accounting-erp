@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قيد محاسبة — نظام حجاج المالي المتكامل</title>
+  <link rel="icon" type="image/png" href="logo_icon.png">
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- QRCode.js CDN for ZATCA standard QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            gathern: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              200: '#e9d5ff',
+              300: '#d8b4fe',
+              400: '#c084fc',
+              500: '#a855f7',
+              600: '#9333ea',
+              700: '#7e22ce',
+              800: '#6b21a8',
+              900: '#581c87',
+              950: '#3b0764',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      font-family: 'Cairo', sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      background-color: #f8f9fc;
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .gathern-gradient-btn {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+      box-shadow: 0 4px 14px rgba(109, 40, 217, 0.25);
+    }
+    .gathern-gradient-btn:hover {
+      background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+      box-shadow: 0 6px 20px rgba(109, 40, 217, 0.35);
+    }
+    .tab-active {
+      border-bottom: 3px solid #7c3aed;
+      color: #6d28d9 !important;
+      font-weight: 800 !important;
+    }
+    .sidebar-active {
+      background: #f5f3ff !important;
+      color: #6d28d9 !important;
+      font-weight: 800 !important;
+      border-right: 4px solid #7c3aed !important;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- ================= TOP HEADER (نفس ستايل جاذرن الأبيض الأصلي المعتمد) ================= -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-[1700px] mx-auto px-4 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Right: Brand Logo -->
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-3 cursor-pointer select-none group" onclick="setEntity('all'); switchView('dashboard');" title="قيد محاسبة">
+            <img src="logo_header.png" alt="شعار قيد" class="h-11 w-auto object-contain group-hover:scale-105 transition-transform drop-shadow-xs">
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-gathern-100 text-gathern-800 font-bold border border-gathern-200">محاسبة</span>
+          </div>
+        </div>
+
+        <!-- Center: Top Activities Switcher Tabs (أنشطة المالك حجاج الـ 5 المعتمدة) -->
+        <nav class="hidden md:flex items-center gap-1 lg:gap-2 h-full">
+          <button onclick="setEntity('all')" id="tab-all" class="activity-tab h-full px-4 flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-gathern-700 transition tab-active">
+            <span>الرئيسية (المجمع العام)</span>
+          </button>
+          <button onclick="setEntity('law')" id="tab-law" class="activity-tab h-full px-4 flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-gathern-700 transition">
+            <span>شركة المحاماة</span>
+          </button>
+          <button onclick="setEntity('restaurant')" id="tab-restaurant" class="activity-tab h-full px-4 flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-gathern-700 transition">
+            <span>المطعم</span>
+          </button>
+          <button onclick="setEntity('farm')" id="tab-farm" class="activity-tab h-full px-4 flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-gathern-700 transition">
+            <span>المزرعة</span>
+          </button>
+          <button onclick="setEntity('barber')" id="tab-barber" class="activity-tab h-full px-4 flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-gathern-700 transition">
+            <span>الحلاق</span>
+          </button>
+          <button onclick="setEntity('home')" id="tab-home" class="activity-tab h-full px-4 flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-gathern-700 transition">
+            <span>البيت (المصروفات الشخصية)</span>
+          </button>
+        </nav>
+
+        <!-- Left: Search, Notifications & User Greeting ("حيا الله حجاج") -->
+        <div class="flex items-center gap-4">
+          <!-- Search box -->
+          <div class="relative hidden sm:block">
+            <input type="text" id="globalSearchInput" onkeyup="handleGlobalSearch(event)" placeholder="بحث سريع عن فاتورة، صنف، عميل..." class="w-56 lg:w-72 pr-9 pl-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-gathern-500 focus:bg-white transition">
+            <svg class="w-4 h-4 text-slate-400 absolute right-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+
+          <!-- Notification Button -->
+          <button onclick="showToast('لا توجد إشعارات جديدة حالياً')" class="p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-gathern-700 relative transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            <span class="absolute top-2 right-2 w-2 h-2 bg-gathern-600 rounded-full"></span>
+          </button>
+
+          <!-- User Greeting (حيا الله حجاج) -->
+          <div class="flex items-center gap-3 pr-3 border-r border-slate-200">
+            <div class="w-10 h-10 rounded-full bg-gathern-100 border border-gathern-300 flex items-center justify-center text-gathern-800 font-black text-base shadow-xs">
+              ح
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-bold text-slate-400">مرحباً بك</div>
+              <div class="text-sm font-black text-gathern-900 leading-none">حيا الله حجاج</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN LAYOUT WITH RIGHT SIDEBAR ================= -->
+  <div class="flex-1 max-w-[1700px] w-full mx-auto flex flex-col md:flex-row">
+    
+    <!-- RIGHT SIDEBAR (القائمة الجانبية اليمنى الأنيقة بستايل جاذرن) -->
+    <aside class="w-full md:w-64 lg:w-72 bg-white border-l border-slate-200 shrink-0 py-6 px-3 flex flex-col justify-between">
+      <div class="space-y-1">
+        
+        <!-- Active Entity Pill Indicator -->
+        <div class="px-3 pb-4 mb-2 border-b border-slate-100 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-400">النشاط المحدد:</span>
+          <span id="currentEntityBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-gathern-50 text-gathern-800 border border-gathern-200">
+            الرئيسية (المجمع العام)
+          </span>
+        </div>
+
+        <!-- Sidebar Navigation Items (أقسام الـ ERP المتكاملة) -->
+        <button onclick="switchView('dashboard')" id="nav-dashboard" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold transition sidebar-active">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+          <span>لوحة المعلومات</span>
+        </button>
+
+        <button onclick="switchView('invoices')" id="nav-invoices" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <div class="flex-1 text-right flex items-center justify-between">
+            <span>المبيعات والفواتير</span>
+            <span id="invoicesCountBadge" class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">12</span>
+          </div>
+        </button>
+
+        <button onclick="switchView('inventory')" id="nav-inventory" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+          <div class="flex-1 text-right flex items-center justify-between">
+            <span>المخزون والأصناف</span>
+            <span id="lowStockWarningBadge" class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">2 نقص</span>
+          </div>
+        </button>
+
+        <button onclick="switchView('purchases')" id="nav-purchases" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span>المشتريات والموردين</span>
+        </button>
+
+        <button onclick="switchView('treasury')" id="nav-treasury" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <span>الخزينة والبنوك</span>
+        </button>
+
+        <button onclick="switchView('journal')" id="nav-journal" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+          <span>القيود اليومية والدفاتر</span>
+        </button>
+
+        <button onclick="switchView('reports')" id="nav-reports" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          <span>التقارير المالية والأرباح</span>
+        </button>
+
+        <button onclick="switchView('zatca')" id="nav-zatca" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+          <div class="flex-1 text-right flex items-center justify-between">
+            <span>الزكاة والضريبة</span>
+            <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-black">ZATCA</span>
+          </div>
+        </button>
+
+        <button onclick="switchView('branches')" id="nav-branches" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          <span>الفروع والمستخدمين</span>
+        </button>
+
+        <button onclick="switchView('settings')" id="nav-settings" class="sidebar-nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-gathern-700 hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <span>الإعدادات والنسخ</span>
+        </button>
+
+      </div>
+
+      <!-- Quick Action Buttons at bottom of Sidebar -->
+      <div class="pt-4 border-t border-slate-100 space-y-2">
+        <button onclick="openNewInvoiceModal()" class="w-full gathern-gradient-btn text-white py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <span>+ إنشاء فاتورة مبيعات</span>
+        </button>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="openReceiptModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 py-2 px-2 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1">
+            <span>+ سند قبض</span>
+          </button>
+          <button onclick="openPaymentModal()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 py-2 px-2 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1">
+            <span>- سند صرف</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT AREA ================= -->
+    <main class="flex-1 p-4 lg:p-8 overflow-y-auto">
+
+      <!-- View 1: DASHBOARD (لوحة المعلومات والمؤشرات المالية) -->
+      <div id="view-dashboard" class="space-y-6">
+        
+        <!-- Welcome Greeting Banner (نفس بنر جاذرن الأصلي) -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-gathern-700 mb-1">
+              <span class="w-2 h-2 rounded-full bg-gathern-600 animate-pulse"></span>
+              <span>نظام المحاسبة المركزي الموحد — حجاج عبدالرحمن</span>
+            </div>
+            <h1 class="text-2xl lg:text-3xl font-black text-slate-800" id="welcomeTitle">
+              حيا الله حجاج <span class="text-sm font-semibold text-slate-500 mr-2" id="welcomeSub">| كافة الأنشطة والاستثمارات</span>
+            </h1>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">الفترة:</span>
+            <select id="timeRangeFilter" onchange="updateDashboardKPIs()" class="text-xs font-bold bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-gathern-500">
+              <option value="month">الشهر الحالي (سبتمبر 2026)</option>
+              <option value="quarter">الربع الثالث (Q3)</option>
+              <option value="year">العام المالي 2026</option>
+            </select>
+            <button onclick="window.print()" class="text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl px-3 py-2 flex items-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span>طباعة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI CARDS (كروت المؤشرات المالية الحقيقية) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          
+          <!-- Card 1: Sales -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-slate-500">إجمالي المبيعات المحققة</span>
+              <div class="w-10 h-10 rounded-xl bg-gathern-50 text-gathern-700 flex items-center justify-center font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+            </div>
+            <div class="text-2xl lg:text-3xl font-black text-slate-900 mb-2" id="kpi-sales">190,157.10 <span class="text-sm font-bold text-slate-500">ر.س</span></div>
+            <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7l-5 5 1.414 1.414L12 9.828l3.586 3.586L17 12l-5-5z" clip-rule="evenodd"></path></svg>
+              <span>+308% نمو مقارنة بالفترة السابقة</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Invoices Count -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-slate-500">الفواتير وسندات الدخل</span>
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+              </div>
+            </div>
+            <div class="text-2xl lg:text-3xl font-black text-slate-900 mb-2" id="kpi-invoices">1,248 <span class="text-sm font-bold text-slate-500">فاتورة</span></div>
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+              <span class="text-emerald-600 font-extrabold" id="kpi-paid-invoices">1,180 مدفوعة</span>
+              <span>•</span>
+              <span class="text-amber-600 font-extrabold" id="kpi-pending-invoices">68 معلقة</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Inventory Value -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-slate-500">قيمة المخزون الفعلي</span>
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+              </div>
+            </div>
+            <div class="text-2xl lg:text-3xl font-black text-slate-900 mb-2" id="kpi-inventory">45,820.00 <span class="text-sm font-bold text-slate-500">ر.س</span></div>
+            <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500">
+              <span class="text-red-500 font-extrabold">2 أصناف</span>
+              <span>تحت حد إعادة الطلب</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Net Profit & Liquidity -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-slate-500">صافي الربح والسيولة النقدية</span>
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+              </div>
+            </div>
+            <div class="text-2xl lg:text-3xl font-black text-emerald-600 mb-2" id="kpi-profit">84,230.50 <span class="text-sm font-bold text-slate-500">ر.س</span></div>
+            <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500">
+              <span>الكاش + البنوك: </span>
+              <span class="text-slate-800 font-extrabold" id="kpi-liquidity">190,150 ر.س</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CHARTS SECTION (مخططات بيانية تفاعلية) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Line Chart: Performance -->
+          <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-black text-slate-800">أداء المبيعات والمصروفات</h3>
+                <p class="text-xs text-slate-400 font-medium">مقارنة شهرية للإيرادات المحصلة مقابل النفقات التشغيلية</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-gathern-700">
+                  <span class="w-2.5 h-2.5 rounded-full bg-gathern-600"></span> مبيعات
+                </span>
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-rose-500 mr-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> مصروفات
+                </span>
+              </div>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="performanceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Donut Chart: Revenue Distribution -->
+          <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
+            <div>
+              <h3 class="text-base font-black text-slate-800 mb-1">توزيع الإيرادات حسب النشاط</h3>
+              <p class="text-xs text-slate-400 font-medium mb-4">مساهمة كل نشاط في إجمالي دخل المالك</p>
+              <div class="h-48 relative flex items-center justify-center">
+                <canvas id="distributionChart"></canvas>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-4 border-t border-slate-100 text-xs font-bold">
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span> المحاماة (42%)</div>
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> المطعم (30%)</div>
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> المزرعة (16%)</div>
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> الحلاق (12%)</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RECENT TRANSACTIONS TABLE & ZATCA BANNER -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Recent Invoices & Vouchers (2 Cols) -->
+          <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-base font-black text-slate-800">أحدث الفواتير والعمليات المالية</h3>
+                <p class="text-xs text-slate-400 font-medium">سجل الحركات المسجلة عبر الأنشطة</p>
+              </div>
+              <button onclick="switchView('invoices')" class="text-xs font-bold text-gathern-700 hover:text-gathern-900 transition flex items-center gap-1">
+                <span>عرض الكل</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="text-slate-400 border-b border-slate-100 font-bold">
+                    <th class="pb-3">رقم المستند</th>
+                    <th class="pb-3">النشاط</th>
+                    <th class="pb-3">الطرف / البيان</th>
+                    <th class="pb-3">التاريخ</th>
+                    <th class="pb-3">المبلغ</th>
+                    <th class="pb-3">الحالة</th>
+                    <th class="pb-3 text-center">إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardRecentTable" class="divide-y divide-slate-100">
+                  <!-- Injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ZATCA Electronic Invoicing & Quick Balances Box (1 Col) -->
+          <div class="space-y-6">
+            
+            <!-- ZATCA Badge Card -->
+            <div class="bg-gradient-to-br from-gathern-900 to-gathern-800 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span>متوافق ومعتمد</span>
+                </span>
+                <span class="text-xs font-bold tracking-widest text-slate-300">ZATCA V2</span>
+              </div>
+              <h4 class="text-lg font-black mb-1">الفوترة الإلكترونية (فاتورة)</h4>
+              <p class="text-xs text-gathern-200 mb-4 leading-relaxed">
+                نظام حجاج مجهز ومطابق لمعايير المرحلة الثانية (الربط والتكامل) مع توليد QR Code وTLV لضريبة القيمة المضافة 15%.
+              </p>
+              <button onclick="switchView('zatca')" class="w-full py-2.5 bg-white text-gathern-900 font-black text-xs rounded-xl shadow-xs hover:bg-gathern-50 transition text-center">
+                فحص إعدادات وتكامل الفاتورة
+              </button>
+            </div>
+
+            <!-- Treasury Quick Balances -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-sm font-black text-slate-800">أرصدة الخزينة والحسابات</h4>
+                <button onclick="switchView('treasury')" class="text-xs text-gathern-700 font-bold hover:underline">إدارة</button>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-xs font-bold text-slate-700">الصندوق النقدي (الكاش)</span>
+                  </div>
+                  <span class="text-xs font-black text-slate-900" id="dash-cash-balance">32,450.00 ر.س</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-xs font-bold text-slate-700">مصرف الراجحي (رئيسي)</span>
+                  </div>
+                  <span class="text-xs font-black text-slate-900" id="dash-rajhi-balance">114,800.00 ر.س</span>
+                </div>
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span class="text-xs font-bold text-slate-700">البنك الأهلي التجاري</span>
+                  </div>
+                  <span class="text-xs font-black text-slate-900" id="dash-ahli-balance">42,900.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- View 2: INVOICES & SALES (المبيعات والفواتير المعتمدة) -->
+      <div id="view-invoices" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">إدارة فواتير المبيعات والإيرادات</h2>
+            <p class="text-xs text-slate-400 font-medium">إصدار ومتابعة الفواتير الضريبية وتوليد رمز ZATCA QR Code</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openNewInvoiceModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              <span>فاتورة مبيعات جديدة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-500">تصفية حسب الحالة:</span>
+            <button onclick="filterInvoicesByStatus('all')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-gathern-100 text-gathern-800 font-bold">الكل</button>
+            <button onclick="filterInvoicesByStatus('paid')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">مدفوعة</button>
+            <button onclick="filterInvoicesByStatus('pending')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">معلقة</button>
+            <button onclick="filterInvoicesByStatus('overdue')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">متأخرة</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="invoiceSearchInput" onkeyup="searchInvoices(this.value)" placeholder="بحث بالرقم أو العميل..." class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-gathern-500">
+          </div>
+        </div>
+
+        <!-- Invoices List Table -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-4">رقم الفاتورة</th>
+                  <th class="p-4">العميل / المستفيد</th>
+                  <th class="p-4">النشاط</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">قبل الضريبة</th>
+                  <th class="p-4">ضريبة 15%</th>
+                  <th class="p-4">الإجمالي النهائي</th>
+                  <th class="p-4">طريقة الدفع</th>
+                  <th class="p-4">الحالة</th>
+                  <th class="p-4 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="invoicesTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 3: INVENTORY (المخزون والأصناف وتنبيهات النواقص) -->
+      <div id="view-inventory" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">إدارة المخزون والمستلزمات</h2>
+            <p class="text-xs text-slate-400 font-medium">متابعة أرصدة المواد، التكلفة، وحدود إعادة الطلب لكل نشاط</p>
+          </div>
+          <button onclick="openNewItemModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ إضافة صنف جديد</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-4">كود الصنف (SKU)</th>
+                  <th class="p-4">اسم المادة / الصنف</th>
+                  <th class="p-4">النشاط التابع</th>
+                  <th class="p-4">الوحدة</th>
+                  <th class="p-4">الكمية الحالية</th>
+                  <th class="p-4">سعر التكلفة</th>
+                  <th class="p-4">سعر البيع</th>
+                  <th class="p-4">إجمالي القيمة</th>
+                  <th class="p-4">حالة المخزون</th>
+                  <th class="p-4 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 4: PURCHASES & SUPPLIERS (المشتريات والموردين) -->
+      <div id="view-purchases" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">أوامر الشراء وفواتير الموردين</h2>
+            <p class="text-xs text-slate-400 font-medium">تسجيل فواتير مشتريات الخامات وتحديث المخزون والنفقات آلياً</p>
+          </div>
+          <button onclick="openNewPurchaseModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ تسجيل فاتورة شراء</span>
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-4">رقم أمر الشراء</th>
+                  <th class="p-4">المورد</th>
+                  <th class="p-4">النشاط</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">البيان / المواد</th>
+                  <th class="p-4">الإجمالي (شامل الضريبة)</th>
+                  <th class="p-4">حالة السداد</th>
+                </tr>
+              </thead>
+              <tbody id="purchasesTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 5: TREASURY & CASH (الخزينة والبنوك والسيولة) -->
+      <div id="view-treasury" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">الخزينة والبنوك وحركة التدفق المالي</h2>
+            <p class="text-xs text-slate-400 font-medium">أرصدة الصندوق والحسابات البنكية وسندات القبض والصرف الفورية</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openOpeningBalancesModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <span>⚙️ رصيد افتتاحي</span>
+            </button>
+            <button onclick="openReceiptModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition">
+              <span>+ سند قبض</span>
+            </button>
+            <button onclick="openPaymentModal()" class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition">
+              <span>- سند صرف</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Treasury Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+            <span class="text-xs font-bold text-slate-400">الصندوق النقدي الرئيسي (الكاش)</span>
+            <div class="text-2xl font-black text-slate-900 mt-2 mb-1" id="treasury-cash-card">32,450.00 ر.س</div>
+            <p class="text-[11px] text-emerald-600 font-bold">● سيولة نقدية مباشرة</p>
+          </div>
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+            <span class="text-xs font-bold text-slate-400">حساب مصرف الراجحي</span>
+            <div class="text-2xl font-black text-slate-900 mt-2 mb-1" id="treasury-rajhi-card">114,800.00 ر.س</div>
+            <p class="text-[11px] text-blue-600 font-bold">● حساب التحويلات والأتعاب الرئيسي</p>
+          </div>
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+            <span class="text-xs font-bold text-slate-400">حساب البنك الأهلي التجاري</span>
+            <div class="text-2xl font-black text-slate-900 mt-2 mb-1" id="treasury-ahli-card">42,900.00 ر.س</div>
+            <p class="text-[11px] text-purple-600 font-bold">● حساب تشغيلي فرعي</p>
+          </div>
+        </div>
+
+        <!-- Vouchers Ledger -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-sm font-black text-slate-800">سجل سندات القبض والصرف والحركات</h3>
+            <span class="text-xs text-slate-400 font-medium">سجل القيود المحاسبية الآلية</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-4">رقم السند</th>
+                  <th class="p-4">نوع السند</th>
+                  <th class="p-4">النشاط</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">الحساب / الصندوق</th>
+                  <th class="p-4">البيان</th>
+                  <th class="p-4">المبلغ</th>
+                  <th class="p-4">المستخدم</th>
+                </tr>
+              </thead>
+              <tbody id="vouchersTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 6: JOURNAL (القيود اليومية والدفاتر المزدوجة) -->
+      <div id="view-journal" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">دفتر اليومية العامة والقيود المحاسبية المزدوجة</h2>
+            <p class="text-xs text-slate-400 font-medium">تسجيل القيود المزدوجة مع التحقق الصارم من توازن المدين والدائن</p>
+          </div>
+          <button onclick="openNewJournalModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ قيد يومية يدوي</span>
+          </button>
+        </div>
+
+        <!-- Trial Balance Summary -->
+        <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">
+              ✓
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-slate-200">حالة ميزان القيود والدفاتر</h4>
+              <p class="text-xs text-emerald-400 font-black">كافة القيود متزنة تماماً (إجمالي المدين = إجمالي الدائن)</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 text-center text-xs">
+            <div>
+              <div class="text-slate-400 font-semibold mb-1">إجمالي المدين</div>
+              <div class="text-base font-black text-white" id="totalDebitSpan">248,600.00 ر.س</div>
+            </div>
+            <div>
+              <div class="text-slate-400 font-semibold mb-1">إجمالي الدائن</div>
+              <div class="text-base font-black text-white" id="totalCreditSpan">248,600.00 ر.س</div>
+            </div>
+            <div>
+              <div class="text-slate-400 font-semibold mb-1">الفرق</div>
+              <div class="text-base font-black text-emerald-400">0.00 ر.س</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Journal Table -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-4">رقم القيد</th>
+                  <th class="p-4">التاريخ</th>
+                  <th class="p-4">النشاط</th>
+                  <th class="p-4">البيان والشرح</th>
+                  <th class="p-4">من حساب (المدين)</th>
+                  <th class="p-4">إلى حساب (الدائن)</th>
+                  <th class="p-4">المبلغ</th>
+                  <th class="p-4">الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="journalTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 7: REPORTS (التقارير المالية والأرباح وقائمة الدخل) -->
+      <div id="view-reports" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">التقارير المالية الختامية والأرباح</h2>
+            <p class="text-xs text-slate-400 font-medium">قائمة الدخل، الأرباح والخسائر، وإقرار ضريبة القيمة المضافة</p>
+          </div>
+          <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>طباعة التقرير المالي</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Income Statement (P&L) -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <h3 class="text-base font-black text-slate-800 border-b border-slate-100 pb-3">قائمة الدخل (الأرباح والخسائر المجمعة)</h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between py-1 text-slate-700">
+                <span class="font-bold">إجمالي الإيرادات المحصلة:</span>
+                <span class="font-black text-emerald-600" id="report-rev">+0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-1 text-slate-700">
+                <span class="font-bold">تكلفة النشاط والمبيعات (COGS):</span>
+                <span class="font-black text-rose-500" id="report-cogs">-0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-2 border-t border-slate-100 text-slate-900 font-extrabold">
+                <span>إجمالي الربح (Gross Profit):</span>
+                <span id="report-gross">0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-1 text-slate-700">
+                <span class="font-bold">المصروفات التشغيلية والرواتب:</span>
+                <span class="font-black text-rose-500" id="report-opex">-0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-3 border-t-2 border-slate-200 text-base font-black text-gathern-900 bg-gathern-50 px-3 rounded-xl mt-3">
+                <span>صافي الربح النهائي للمالك حجاج:</span>
+                <span class="text-emerald-700 font-black" id="report-net">0.00 ر.س</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VAT Summary (إقرار ضريبة القيمة المضافة) -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <h3 class="text-base font-black text-slate-800 border-b border-slate-100 pb-3">ملخص إقرار ضريبة القيمة المضافة (VAT 15%)</h3>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center justify-between py-1 text-slate-700">
+                <span class="font-bold">المبيعات الخاضعة للضريبة 15%:</span>
+                <span class="font-black text-slate-900" id="vat-taxable-sales">0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-1 text-slate-700">
+                <span class="font-bold">ضريبة المخرجات المحصلة من العملاء:</span>
+                <span class="font-black text-emerald-600" id="vat-output-tax">+0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-1 text-slate-700">
+                <span class="font-bold">ضريبة المدخلات المدفوعة للموردين:</span>
+                <span class="font-black text-rose-500" id="vat-input-tax">-0.00 ر.س</span>
+              </div>
+              <div class="flex items-center justify-between py-3 border-t-2 border-slate-200 text-base font-black text-slate-900 bg-slate-50 px-3 rounded-xl mt-3">
+                <span>صافي الضريبة الواجب سدادها لهيئة الزكاة:</span>
+                <span class="text-gathern-900 font-black" id="vat-net-tax">0.00 ر.س</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- View 8: ZATCA COMPLIANCE (الزكاة والضريبة) -->
+      <div id="view-zatca" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-black text-slate-800">الربط والتكامل مع هيئة الزكاة والضريبة والجمارك (ZATCA)</h2>
+            <p class="text-xs text-slate-400 font-medium">الامتثال التام للائحة الفوترة الإلكترونية - المرحلة الثانية</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-black rounded-lg">الحالة: متصل ومعتمد</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+            <h4 class="text-sm font-black text-slate-800">بيانات المنشأة الضريبية</h4>
+            <div class="text-xs space-y-1.5 text-slate-600">
+              <div><strong class="text-slate-800">الاسم التجاري:</strong> مؤسسة حجاج للمحاماة والاستثمار</div>
+              <div><strong class="text-slate-800">الرقم الضريبي:</strong> 310123456700003</div>
+              <div><strong class="text-slate-800">السجل التجاري:</strong> 1010987654</div>
+              <div><strong class="text-slate-800">نوع الفواتير:</strong> ضريبية مبسطة + ضريبية للمنشآت</div>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+            <h4 class="text-sm font-black text-slate-800">رمز الاستجابة السريع (QR TLV)</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              تشفير اسم المورد، الرقم الضريبي، الطابع الزمني، إجمالي الفاتورة، ومبلغ الضريبة بصيغة TLV Base64 القياسية المعتمدة من الهيئة.
+            </p>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+            <h4 class="text-sm font-black text-slate-800">الأرشفة والتوثيق الأمني</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              حفظ تسلسلي غير قابل للتعديل لكل فاتورة مع تجزئة التشفير (Cryptographic Stamp Hash) لضمان موثوقية السجلات المالية.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- View 9: BRANCHES (الفروع والمستخدمين) -->
+      <div id="view-branches" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <h2 class="text-xl font-black text-slate-800 mb-1">الأنشطة الاستثمارية والفروع</h2>
+          <p class="text-xs text-slate-400 font-medium">سجل الكيانات الخمسة المدارة تحت حساب المالك حجاج</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="branchesContainer">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- View 10: SETTINGS (الإعدادات والنسخ) -->
+      <div id="view-settings" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <h2 class="text-xl font-black text-slate-800 mb-1">إعدادات النظام والبيانات</h2>
+          <p class="text-xs text-slate-400 font-medium">التحكم في التخزين، تصدير البيانات، واستعادة الإعدادات التأسيسية</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <h4 class="text-sm font-black text-slate-800 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>قاعدة البيانات والمزامنة الحية</span>
+            </h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              يتم حفظ كافة القيود والفواتير والمخزون وحركات البنوك بشكل دائم في ملف النظام <code class="bg-slate-100 px-1.5 py-0.5 rounded text-gathern-800 font-bold">data.json</code> مع مزامنة فورية في متصفحك.
+            </p>
+            <div class="flex flex-wrap items-center gap-3">
+              <button onclick="exportAllData()" class="px-4 py-2 bg-gathern-700 text-white rounded-xl text-xs font-bold hover:bg-gathern-800 transition flex items-center gap-1.5">
+                <span>تصدير نسخة احتياطية (JSON)</span>
+              </button>
+              <button onclick="openOpeningBalancesModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                <span>⚙️ تعديل الأرصدة الافتتاحية</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <h4 class="text-sm font-black text-rose-600">بدء التشغيل الحقيقي وتصفير البيانات</h4>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              إذا أردت تصفير أي حركات أو أرقام والبدء فوراً بحسابات حقيقية نظيفة خالية من أي بيانات تجريبية:
+            </p>
+            <div class="flex items-center gap-3">
+              <button onclick="zeroOutAllData()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
+                تصفير كافة الحركات والبدء من 0.00 ر.س
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal 1: CREATE NEW INVOICE -->
+  <div id="newInvoiceModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800">إنشاء فاتورة مبيعات ضريبية جديدة</h3>
+        <button onclick="closeModal('newInvoiceModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form id="newInvoiceForm" onsubmit="handleCreateInvoice(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">النشاط التابع له الفاتورة:</label>
+            <select id="inv-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500 font-bold text-slate-800">
+              <option value="law">🏢 شركة المحاماة</option>
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ الحلاق</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">اسم العميل / المستفيد:</label>
+            <input type="text" id="inv-client" required placeholder="مثال: شركة الفيصلية القابضة" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تاريخ الفاتورة:</label>
+            <input type="date" id="inv-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تاريخ الاستحقاق:</label>
+            <input type="date" id="inv-due-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">طريقة التحصيل:</label>
+            <select id="inv-payment-method" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500 font-bold">
+              <option value="bank">تحويل بنكي (مصرف الراجحي)</option>
+              <option value="cash">نقداً (الصندوق)</option>
+              <option value="pos">شبكة / نقطة بيع</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Line items -->
+        <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/50 space-y-3">
+          <div class="font-bold text-slate-800">بيانات الخدمة أو المبيعات:</div>
+          <div class="grid grid-cols-12 gap-2">
+            <div class="col-span-6">
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">الوصف / البيان</label>
+              <input type="text" id="inv-item-desc" required placeholder="مثال: أتعاب قضية تحكيم تجاري" class="w-full p-2 bg-white border border-slate-200 rounded-lg">
+            </div>
+            <div class="col-span-2">
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">الكمية</label>
+              <input type="number" id="inv-item-qty" value="1" min="1" oninput="calculateInvoiceModalTotals()" class="w-full p-2 bg-white border border-slate-200 rounded-lg text-center font-bold">
+            </div>
+            <div class="col-span-4">
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">السعر الإفرادي (ر.س)</label>
+              <input type="number" id="inv-item-price" step="0.01" value="5000" oninput="calculateInvoiceModalTotals()" class="w-full p-2 bg-white border border-slate-200 rounded-lg font-bold">
+            </div>
+          </div>
+
+          <!-- Total Calculation preview -->
+          <div class="pt-2 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
+            <div class="text-slate-500">المبلغ قبل الضريبة: <span id="modal-subtotal" class="text-slate-800">5,000.00</span> ر.س</div>
+            <div class="text-slate-500">ضريبة 15%: <span id="modal-vat" class="text-slate-800">750.00</span> ر.س</div>
+            <div class="text-gathern-800 font-black text-sm">الإجمالي: <span id="modal-grand">5,750.00</span> ر.س</div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('newInvoiceModal')" class="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black">حفظ وإصدار الفاتورة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: PRINT & VIEW TAX INVOICE WITH ZATCA QR -->
+  <div id="viewInvoiceModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[95vh] overflow-y-auto" id="printArea">
+      
+      <!-- Invoice Header -->
+      <div class="flex items-start justify-between border-b-2 border-slate-100 pb-5">
+        <div>
+          <img src="logo_header.png" alt="شعار قيد" class="h-8 w-auto object-contain mb-2">
+          <div class="text-2xl font-black text-gathern-900 mb-1">فاتورة ضريبية مبسطة</div>
+          <div class="text-xs font-bold text-slate-500" id="print-entity-name">مؤسسة حجاج للمحاماة والاستشارات</div>
+          <div class="text-xs text-slate-400">الرقم الضريبي: 310123456700003</div>
+          <div class="text-xs text-slate-400">السجل التجاري: 1010987654</div>
+        </div>
+        <!-- ZATCA QR Code Display -->
+        <div class="flex flex-col items-center">
+          <div id="zatcaQrCodeContainer" class="p-1 bg-white border border-slate-200 rounded-lg shadow-xs"></div>
+          <span class="text-[9px] font-bold text-slate-400 mt-1">ZATCA QR Code</span>
+        </div>
+      </div>
+
+      <!-- Invoice Details Grid -->
+      <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-xl border border-slate-100">
+        <div><strong class="text-slate-700">رقم الفاتورة:</strong> <span id="print-inv-no" class="font-black text-slate-900">#INV-2026-001</span></div>
+        <div><strong class="text-slate-700">تاريخ الإصدار:</strong> <span id="print-inv-date">2026-09-27</span></div>
+        <div><strong class="text-slate-700">العميل:</strong> <span id="print-inv-client" class="font-bold">شركة النور للمقاولات</span></div>
+        <div><strong class="text-slate-700">حالة السداد:</strong> <span id="print-inv-status" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">مدفوعة</span></div>
+      </div>
+
+      <!-- Invoice Items Table -->
+      <table class="w-full text-right text-xs">
+        <thead class="border-b border-slate-200 text-slate-400 font-bold">
+          <tr>
+            <th class="pb-2">البند / البيان</th>
+            <th class="pb-2 text-center">الكمية</th>
+            <th class="pb-2">السعر</th>
+            <th class="pb-2">المجموع</th>
+          </tr>
+        </thead>
+        <tbody id="print-inv-items" class="divide-y divide-slate-100 font-semibold text-slate-800">
+          <!-- Item rows -->
+        </tbody>
+      </table>
+
+      <!-- Totals Breakdown -->
+      <div class="border-t-2 border-slate-100 pt-3 space-y-1.5 text-xs">
+        <div class="flex justify-between text-slate-600">
+          <span>المبلغ الخاضع للضريبة:</span>
+          <span id="print-subtotal" class="font-bold">0.00 ر.س</span>
+        </div>
+        <div class="flex justify-between text-slate-600">
+          <span>ضريبة القيمة المضافة (15%):</span>
+          <span id="print-vat" class="font-bold">0.00 ر.س</span>
+        </div>
+        <div class="flex justify-between text-base font-black text-gathern-900 pt-2 border-t border-slate-200">
+          <span>الإجمالي النهائي المستحق:</span>
+          <span id="print-grand">0.00 ر.س</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 no-print">
+        <button onclick="closeModal('viewInvoiceModal')" class="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-xl text-xs font-bold">إغلاق</button>
+        <button onclick="window.print()" class="bg-gathern-800 hover:bg-gathern-900 text-white px-5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-xs transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span>طباعة الفاتورة</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal 3: RECEIPT VOUCHER (سند قبض +) -->
+  <div id="receiptModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-emerald-700 flex items-center gap-2">
+          <span>+ سند قبض وإيداع نقدي / بنكي</span>
+        </h3>
+        <button onclick="closeModal('receiptModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleCreateReceipt(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
+          <select id="receipt-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+            <option value="law">🏢 شركة المحاماة</option>
+            <option value="restaurant">🍔 المطعم</option>
+            <option value="farm">🌾 المزرعة</option>
+            <option value="barber">✂️ الحلاق</option>
+            <option value="home">🏠 البيت</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">المبلغ المحصل (ر.س):</label>
+            <input type="number" id="receipt-amount" required step="0.01" placeholder="مثال: 3500" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-emerald-700">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تم الإيداع في:</label>
+            <select id="receipt-account" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="cash">الصندوق النقدي (الكاش)</option>
+              <option value="rajhi">مصرف الراجحي</option>
+              <option value="ahli">البنك الأهلي</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">المستلم منه (العميل / الطرف):</label>
+          <input type="text" id="receipt-payer" required placeholder="اسم الشخص أو الشركة" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">البيان والسبب:</label>
+          <input type="text" id="receipt-notes" required placeholder="مثال: دفعة تحت حساب أتعاب استشارة" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('receiptModal')" class="px-4 py-2 text-slate-500 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-black transition">حفظ السند وترحيل القيد</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: PAYMENT VOUCHER (سند صرف -) -->
+  <div id="paymentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-rose-700 flex items-center gap-2">
+          <span>- سند صرف وتسديد مصروف</span>
+        </h3>
+        <button onclick="closeModal('paymentModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleCreatePayment(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
+          <select id="payment-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+            <option value="law">🏢 شركة المحاماة</option>
+            <option value="restaurant">🍔 المطعم</option>
+            <option value="farm">🌾 المزرعة</option>
+            <option value="barber">✂️ الحلاق</option>
+            <option value="home">🏠 البيت (مصروفات المعيشة)</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">المبلغ المصروف (ر.س):</label>
+            <input type="number" id="payment-amount" required step="0.01" placeholder="مثال: 1200" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-rose-700">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">صُرف من:</label>
+            <select id="payment-account" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="cash">الصندوق النقدي (الكاش)</option>
+              <option value="rajhi">مصرف الراجحي</option>
+              <option value="ahli">البنك الأهلي</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">المصروف لأمره (المستفيد / المورد):</label>
+          <input type="text" id="payment-payee" required placeholder="مثال: شركة الكهرباء أو المورد" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">بند المصروف / البيان:</label>
+          <input type="text" id="payment-notes" required placeholder="مثال: سداد فاتورة كهرباء وخدمات" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('paymentModal')" class="px-4 py-2 text-slate-500 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl font-black transition">حفظ السند والخصم فوراً</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: NEW INVENTORY ITEM -->
+  <div id="newItemModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800">إضافة صنف جديد للمخزون</h3>
+        <button onclick="closeModal('newItemModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleCreateItem(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">كود الصنف (SKU):</label>
+            <input type="text" id="item-sku" required placeholder="مثال: RES-BEEF-01" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">النشاط التابع له:</label>
+            <select id="item-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ الحلاق</option>
+              <option value="law">🏢 شركة المحاماة</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">اسم الصنف أو المادة:</label>
+          <input type="text" id="item-name" required placeholder="مثال: لحم بقري مفروم طازج" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">الوحدة:</label>
+            <input type="text" id="item-unit" value="كجم" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">الكمية الأولية:</label>
+            <input type="number" id="item-qty" value="50" min="0" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">حد إعادة الطلب:</label>
+            <input type="number" id="item-reorder" value="10" min="0" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center font-bold text-red-600">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">سعر التكلفة (ر.س):</label>
+            <input type="number" id="item-cost" step="0.01" value="35" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">سعر البيع (إن وجد):</label>
+            <input type="number" id="item-price" step="0.01" value="55" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('newItemModal')" class="px-4 py-2 text-slate-500 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black">حفظ الصنف</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 6: CREATE PURCHASE ORDER (تسجيل فاتورة شراء وموردين) -->
+  <div id="newPurchaseModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+          <span>+ تسجيل فاتورة مشتريات / مورد</span>
+        </h3>
+        <button onclick="closeModal('newPurchaseModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form id="newPurchaseForm" onsubmit="handleCreatePurchase(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
+            <select id="po-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="law">🏢 شركة المحاماة</option>
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ الحلاق</option>
+              <option value="home">🏠 البيت (مصروفات شخصية)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تاريخ الفاتورة:</label>
+            <input type="date" id="po-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">اسم المورد / الشركة البائعة:</label>
+          <input type="text" id="po-vendor" required placeholder="مثال: شركة التوريدات، محطة وقود، مقاول..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">البيان / تفاصيل المشتريات والمواد:</label>
+          <input type="text" id="po-items" required placeholder="مثال: شراء خامات تموينية، أسمدة، أدوات مكتبية..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">المبلغ قبل الضريبة (ر.س):</label>
+            <input type="number" id="po-subtotal" required step="0.01" placeholder="0.00" oninput="calculatePurchaseModalTotals()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">طريقة الدفع:</label>
+            <select id="po-payment-method" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="cash">الصندوق النقدي (كاش)</option>
+              <option value="rajhi">مصرف الراجحي</option>
+              <option value="ahli">البنك الأهلي</option>
+              <option value="credit">آجل (ذمم دائنة مستحقة)</option>
+            </select>
+          </div>
+        </div>
+        <!-- Summary Box -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5 text-slate-700 font-bold">
+          <div class="flex justify-between">
+            <span>ضريبة المدخلات (15%):</span>
+            <span id="po-modal-vat">0.00 ر.س</span>
+          </div>
+          <div class="flex justify-between text-slate-900 text-sm font-black pt-1 border-t border-slate-200">
+            <span>الإجمالي المطلوب سداده:</span>
+            <span id="po-modal-total" class="text-rose-600">0.00 ر.س</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('newPurchaseModal')" class="px-4 py-2 text-slate-500 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black transition">حفظ الفاتورة وترحيل القيد</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 7: CREATE JOURNAL ENTRY (قيد يومية يدوي) -->
+  <div id="newJournalModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+          <span>+ إنشاء قيد يومية محاسبي يدوي</span>
+        </h3>
+        <button onclick="closeModal('newJournalModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form id="newJournalForm" onsubmit="handleCreateJournal(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
+            <select id="jrn-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="law">🏢 شركة المحاماة</option>
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ الحلاق</option>
+              <option value="home">🏠 البيت</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تاريخ القيد:</label>
+            <input type="date" id="jrn-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">شرح وبيان القيد:</label>
+          <input type="text" id="jrn-desc" required placeholder="مثال: تسوية عهدة، إثبات إيجار، سداد ذمة..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-emerald-700 mb-1">من حساب (الطرف المدين):</label>
+            <input type="text" id="jrn-debit" required placeholder="مثال: 5001 - مصروفات إيجار" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+          </div>
+          <div>
+            <label class="block font-bold text-blue-700 mb-1">إلى حساب (الطرف الدائن):</label>
+            <input type="text" id="jrn-credit" required placeholder="مثال: 1002 - مصرف الراجحي" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">مبلغ القيد (متزن مدين/دائن) ر.س:</label>
+          <input type="number" id="jrn-amount" required step="0.01" placeholder="0.00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-black text-slate-900 text-sm">
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('newJournalModal')" class="px-4 py-2 text-slate-500 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black transition">ترحيل القيد لدفتر اليومية</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 8: OPENING BALANCES (الأرصدة الافتتاحية الحقيقية) -->
+  <div id="openingBalancesModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+          <span>⚙️ ضبط الأرصدة الافتتاحية الحقيقية</span>
+        </h3>
+        <button onclick="closeModal('openingBalancesModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <p class="text-xs text-slate-500">أدخل الأرصدة المتوفرة فعلياً في حساباتك وصناديقك لبدء العمل الحقيقي:</p>
+      <form onsubmit="handleSaveOpeningBalances(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">رصيد الصندوق النقدي (كاش متوفر باليد):</label>
+          <input type="number" id="ob-cash" step="0.01" placeholder="0.00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">رصيد حساب مصرف الراجحي:</label>
+          <input type="number" id="ob-rajhi" step="0.01" placeholder="0.00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">رصيد حساب البنك الأهلي:</label>
+          <input type="number" id="ob-ahli" step="0.01" placeholder="0.00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900">
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('openingBalancesModal')" class="px-4 py-2 text-slate-500 rounded-xl font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black transition">اعتماد وحفظ الأرصدة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ================= JAVASCRIPT APPLICATION CORE ================= -->
+  <script>
+    // Clean Initial State for Hajjaj's 5 Real Businesses (كل الأرقام صفر وجاهز للتشغيل الفعلي)
+    const CLEAN_ZERO_DATA = {
+      currentEntity: 'all',
+      invoices: [],
+      inventory: [],
+      purchases: [],
+      treasury: {
+        cash: 0.00,
+        rajhi: 0.00,
+        ahli: 0.00
+      },
+      vouchers: [],
+      journals: [],
+      branches: [
+        { id: 'law', name: 'شركة حجاج للمحاماة والاستشارات', desc: 'فرع طريق الملك فهد - الرياض', cr: '1010987654', vat: '310123456700003', icon: '🏢' },
+        { id: 'restaurant', name: 'مطعم مذاق البخاري والشاورما', desc: 'حي السليمانية - الرياض', cr: '1010765432', vat: '310987654300003', icon: '🍔' },
+        { id: 'farm', name: 'مزرعة الواحة الخضراء', desc: 'محافظة الخرج - وادي حنيفة', cr: '1010543210', vat: '310654321000003', icon: '🌾' },
+        { id: 'barber', name: 'صالون الأناقة للرجال', desc: 'حي النرجس - الرياض', cr: '1010432109', vat: '310432109800003', icon: '✂️' },
+        { id: 'home', name: 'المصروفات الشخصية والمنزلية', desc: 'الذمة المالية الشخصية المعزولة', cr: 'حساب مالك خاص', vat: 'غير خاضع', icon: '🏠' }
+      ]
+    };
+
+    // Application State Management
+    let state = JSON.parse(JSON.stringify(CLEAN_ZERO_DATA));
+
+    // Load from localStorage & purge old dummy mock data if found
+    const localSaved = localStorage.getItem('hajjaj_accounting_state');
+    if (localSaved) {
+      try {
+        const parsed = JSON.parse(localSaved);
+        if (parsed.invoices && parsed.invoices.some(i => i.client === 'شركة الأفق للاستشارات')) {
+          // Purge mock data
+          state = JSON.parse(JSON.stringify(CLEAN_ZERO_DATA));
+          localStorage.setItem('hajjaj_accounting_state', JSON.stringify(state));
+        } else {
+          state = Object.assign({}, CLEAN_ZERO_DATA, parsed);
+        }
+      } catch (e) {
+        state = JSON.parse(JSON.stringify(CLEAN_ZERO_DATA));
+      }
+    }
+
+    // Sync with backend database data.json on startup
+    fetch('/api/state')
+      .then(res => res.json())
+      .then(serverData => {
+        if (serverData && (serverData.invoices || serverData.treasury)) {
+          if (!serverData.invoices || !serverData.invoices.some(i => i.client === 'شركة الأفق للاستشارات')) {
+            state = Object.assign({}, CLEAN_ZERO_DATA, serverData);
+            localStorage.setItem('hajjaj_accounting_state', JSON.stringify(state));
+            renderAll();
+            updateCharts();
+          }
+        }
+      })
+      .catch(err => console.log('API sync notice:', err));
+
+    // Save state to localStorage & data.json on disk
+    function saveState(syncBackend = true) {
+      localStorage.setItem('hajjaj_accounting_state', JSON.stringify(state));
+      if (syncBackend) {
+        fetch('/api/state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state)
+        }).catch(err => console.log('API save warning:', err));
+      }
+    }
+
+    // Global Entity Filter (التبديل بين الأنشطة الخمسة)
+    function setEntity(entityKey) {
+      state.currentEntity = entityKey;
+      saveState(false);
+
+      // Update tabs styling
+      document.querySelectorAll('.activity-tab').forEach(tab => {
+        tab.classList.remove('tab-active');
+        tab.classList.add('text-slate-500', 'font-semibold');
+      });
+      const activeTab = document.getElementById(`tab-${entityKey}`);
+      if (activeTab) {
+        activeTab.classList.add('tab-active');
+        activeTab.classList.remove('text-slate-500');
+      }
+
+      // Update badge in sidebar & welcome
+      const badge = document.getElementById('currentEntityBadge');
+      const welcomeSub = document.getElementById('welcomeSub');
+      const entityNames = {
+        all: 'الرئيسية (المجمع العام)',
+        law: '🏢 شركة المحاماة',
+        restaurant: '🍔 المطعم',
+        farm: '🌾 المزرعة',
+        barber: '✂️ الحلاق',
+        home: '🏠 البيت (المصروفات الشخصية)'
+      };
+      if (badge) badge.textContent = entityNames[entityKey] || 'المجمع';
+      if (welcomeSub) {
+        welcomeSub.textContent = entityKey === 'all' ? '| كافة الأنشطة والاستثمارات' : `| نشاط: ${entityNames[entityKey]}`;
+      }
+
+      // Refresh Views
+      renderAll();
+      updateCharts();
+      showToast(`تم التبديل إلى: ${entityNames[entityKey]}`);
+    }
+
+    // View Switcher (التنقل بين الصفحات والأقسام)
+    function switchView(viewName) {
+      const views = ['dashboard', 'invoices', 'inventory', 'purchases', 'treasury', 'journal', 'reports', 'zatca', 'branches', 'settings'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        const navEl = document.getElementById(`nav-${v}`);
+        if (el) el.classList.add('hidden');
+        if (navEl) {
+          navEl.classList.remove('sidebar-active');
+          navEl.classList.add('text-slate-600');
+        }
+      });
+
+      const targetEl = document.getElementById(`view-${viewName}`);
+      const targetNav = document.getElementById(`nav-${viewName}`);
+      if (targetEl) targetEl.classList.remove('hidden');
+      if (targetNav) {
+        targetNav.classList.add('sidebar-active');
+        targetNav.classList.remove('text-slate-600');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Modal Helpers
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.remove('hidden');
+    }
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // Toast Notifications
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'px-4 py-3 bg-slate-900 text-white rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 border border-slate-700 transition transform duration-300 translate-y-2';
+      toast.innerHTML = `
+        <span class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-red-400' : 'bg-emerald-400'}"></span>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.remove('translate-y-2'); }, 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Filter Items by current entity
+    function getFilteredList(items) {
+      if (!Array.isArray(items)) return [];
+      if (!state.currentEntity || state.currentEntity === 'all') return items;
+      return items.filter(item => item.entity === state.currentEntity);
+    }
+
+    // Format Currency
+    function formatSAR(num) {
+      return (Number(num) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Entity Badge helper
+    const ENTITY_BADGES = {
+      law: '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 font-bold">محاماة</span>',
+      restaurant: '<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 font-bold">مطعم</span>',
+      farm: '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold">مزرعة</span>',
+      barber: '<span class="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold">حلاق</span>',
+      home: '<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold">منزل</span>'
+    };
+
+    // Render Dashboard KPIs (حسابات حقيقية دقيقة 100%)
+    function updateDashboardKPIs() {
+      const filteredInvoices = getFilteredList(state.invoices);
+      const filteredInventory = getFilteredList(state.inventory);
+      const filteredPurchases = getFilteredList(state.purchases);
+      const filteredVouchers = getFilteredList(state.vouchers);
+      
+      const totalSales = filteredInvoices.reduce((sum, inv) => sum + (inv.status === 'paid' ? inv.total : 0), 0);
+      const paidCount = filteredInvoices.filter(i => i.status === 'paid').length;
+      const pendingCount = filteredInvoices.filter(i => i.status !== 'paid').length;
+      const totalInvValue = filteredInventory.reduce((sum, item) => sum + (item.qty * item.cost), 0);
+      
+      document.getElementById('kpi-sales').innerHTML = `${formatSAR(totalSales)} <span class="text-sm font-bold text-slate-500">ر.س</span>`;
+      document.getElementById('kpi-invoices').innerHTML = `${filteredInvoices.length} <span class="text-sm font-bold text-slate-500">فاتورة</span>`;
+      document.getElementById('kpi-paid-invoices').textContent = `${paidCount} مدفوعة`;
+      document.getElementById('kpi-pending-invoices').textContent = `${pendingCount} معلقة`;
+      document.getElementById('kpi-inventory').innerHTML = `${formatSAR(totalInvValue)} <span class="text-sm font-bold text-slate-500">ر.س</span>`;
+      
+      // Total Treasury Liquidity
+      const totalLiquidity = (Number(state.treasury.cash) || 0) + (Number(state.treasury.rajhi) || 0) + (Number(state.treasury.ahli) || 0);
+      document.getElementById('kpi-liquidity').textContent = `${formatSAR(totalLiquidity)} ر.س`;
+
+      // Real Net Profit = Real Revenue - Real Direct Expenses & Purchases
+      const totalPurchasesCost = filteredPurchases.reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+      const totalPaymentExpenses = filteredVouchers.filter(v => v.type === 'صرف').reduce((sum, v) => sum + (Number(v.amount) || 0), 0);
+      const realProfit = totalSales - (totalPurchasesCost + totalPaymentExpenses);
+      
+      const profitEl = document.getElementById('kpi-profit');
+      if (profitEl) {
+        profitEl.innerHTML = `${formatSAR(realProfit)} <span class="text-sm font-bold text-slate-500">ر.س</span>`;
+        profitEl.className = realProfit < 0 ? 'text-2xl font-black text-rose-600' : 'text-2xl font-black text-slate-900';
+      }
+
+      // Quick balances
+      document.getElementById('dash-cash-balance').textContent = `${formatSAR(state.treasury.cash)} ر.س`;
+      document.getElementById('dash-rajhi-balance').textContent = `${formatSAR(state.treasury.rajhi)} ر.س`;
+      document.getElementById('dash-ahli-balance').textContent = `${formatSAR(state.treasury.ahli)} ر.س`;
+
+      // Treasury Cards
+      if (document.getElementById('treasury-cash-card')) {
+        document.getElementById('treasury-cash-card').textContent = `${formatSAR(state.treasury.cash)} ر.س`;
+        document.getElementById('treasury-rajhi-card').textContent = `${formatSAR(state.treasury.rajhi)} ر.س`;
+        document.getElementById('treasury-ahli-card').textContent = `${formatSAR(state.treasury.ahli)} ر.س`;
+      }
+
+      // Recent Dashboard table
+      renderDashboardRecentTable(filteredInvoices);
+
+      // Financial Reports
+      updateFinancialReports();
+    }
+
+    // Dashboard Recent Invoices Table
+    function renderDashboardRecentTable(invoices) {
+      const tbody = document.getElementById('dashboardRecentTable');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      const recent = invoices.slice(0, 5);
+      if (recent.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl text-slate-300">📄</span>
+                <p class="text-xs font-bold text-slate-500">لا توجد فواتير أو حركات مسجلة بعد</p>
+                <button onclick="openNewInvoiceModal()" class="mt-2 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إصدار أول فاتورة</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      recent.forEach(inv => {
+        const statusBadge = inv.status === 'paid' 
+          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">مدفوعة</span>'
+          : (inv.status === 'overdue' 
+              ? '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">متأخرة</span>' 
+              : '<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">معلقة</span>');
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="py-3 font-bold text-gathern-800 cursor-pointer" onclick="viewTaxInvoice('${inv.id}')">${inv.id}</td>
+          <td class="py-3">${ENTITY_BADGES[inv.entity] || inv.entity}</td>
+          <td class="py-3 font-semibold text-slate-800">${inv.client}</td>
+          <td class="py-3 text-slate-500">${inv.date}</td>
+          <td class="py-3 font-black text-slate-900">${formatSAR(inv.total)} ر.س</td>
+          <td class="py-3">${statusBadge}</td>
+          <td class="py-3 text-center">
+            <button onclick="viewTaxInvoice('${inv.id}')" class="text-gathern-700 hover:text-gathern-900 font-bold px-2 py-1 rounded-lg bg-gathern-50">عرض ZATCA</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Invoices Table
+    function renderInvoicesTable(filteredList = null) {
+      const list = filteredList || getFilteredList(state.invoices);
+      const tbody = document.getElementById('invoicesTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      const countBadge = document.getElementById('invoicesCountBadge');
+      if (countBadge) countBadge.textContent = list.length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl text-slate-300">🧾</span>
+                <p class="text-xs font-bold text-slate-500">لا توجد فواتير مسجلة لهذا النشاط</p>
+                <button onclick="openNewInvoiceModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إنشاء فاتورة ضريبية جديدة مع QR</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      list.forEach(inv => {
+        const statusBadge = inv.status === 'paid' 
+          ? '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">مدفوعة</span>'
+          : (inv.status === 'overdue' 
+              ? '<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">متأخرة</span>' 
+              : '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">معلقة</span>');
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-black text-gathern-800 cursor-pointer" onclick="viewTaxInvoice('${inv.id}')">${inv.id}</td>
+          <td class="p-4 font-bold text-slate-800">${inv.client}</td>
+          <td class="p-4">${ENTITY_BADGES[inv.entity] || inv.entity}</td>
+          <td class="p-4 text-slate-500">${inv.date}</td>
+          <td class="p-4 font-semibold text-slate-700">${formatSAR(inv.subtotal)} ر.س</td>
+          <td class="p-4 font-semibold text-slate-500">${formatSAR(inv.vat)} ر.س</td>
+          <td class="p-4 font-black text-slate-900">${formatSAR(inv.total)} ر.س</td>
+          <td class="p-4 text-slate-600">${inv.method}</td>
+          <td class="p-4">${statusBadge}</td>
+          <td class="p-4 text-center">
+            <button onclick="viewTaxInvoice('${inv.id}')" class="px-3 py-1.5 rounded-xl bg-gathern-50 text-gathern-800 hover:bg-gathern-100 font-black text-[11px] transition">
+              عرض وضريبة QR
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Inventory Table
+    function renderInventoryTable() {
+      const list = getFilteredList(state.inventory);
+      const tbody = document.getElementById('inventoryTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="10" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl text-slate-300">📦</span>
+                <p class="text-xs font-bold text-slate-500">المستودع فارغ حالياً — لا توجد أصناف مدخلة</p>
+                <button onclick="openNewItemModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إضافة صنف جديد للمخزون</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        const lowBadge = document.getElementById('lowStockWarningBadge');
+        if (lowBadge) lowBadge.textContent = '0 نقص';
+        return;
+      }
+
+      let lowCount = 0;
+      list.forEach(item => {
+        if (item.qty <= item.reorder) lowCount++;
+        const isLow = item.qty <= item.reorder;
+        const statusBadge = isLow 
+          ? '<span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-black text-[10px]">نقص بالمخزون</span>'
+          : '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px]">متوفر كافٍ</span>';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-mono font-bold text-slate-700">${item.sku}</td>
+          <td class="p-4 font-bold text-slate-900">${item.name}</td>
+          <td class="p-4 font-semibold text-slate-500">${ENTITY_BADGES[item.entity] || item.entity}</td>
+          <td class="p-4 text-slate-600">${item.unit}</td>
+          <td class="p-4 font-black ${isLow ? 'text-red-600 font-extrabold' : 'text-slate-900'}">${item.qty}</td>
+          <td class="p-4 font-semibold text-slate-700">${formatSAR(item.cost)} ر.س</td>
+          <td class="p-4 font-semibold text-slate-700">${formatSAR(item.price)} ر.س</td>
+          <td class="p-4 font-black text-slate-900">${formatSAR(item.qty * item.cost)} ر.س</td>
+          <td class="p-4">${statusBadge}</td>
+          <td class="p-4 text-center">
+            <button onclick="adjustStock('${item.sku}')" class="px-2.5 py-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg">تعديل جرد</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const lowBadge = document.getElementById('lowStockWarningBadge');
+      if (lowBadge) lowBadge.textContent = `${lowCount} نقص`;
+    }
+
+    // Render Purchases Table
+    function renderPurchasesTable() {
+      const list = getFilteredList(state.purchases);
+      const tbody = document.getElementById('purchasesTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl text-slate-300">🛍️</span>
+                <p class="text-xs font-bold text-slate-500">لا توجد أوامر شراء أو فواتير موردين مسجلة</p>
+                <button onclick="openNewPurchaseModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ تسجيل أول فاتورة شراء</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      list.forEach(po => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-gathern-800">${po.id}</td>
+          <td class="p-4 font-bold text-slate-900">${po.vendor}</td>
+          <td class="p-4">${ENTITY_BADGES[po.entity] || po.entity}</td>
+          <td class="p-4 text-slate-500">${po.date}</td>
+          <td class="p-4 font-medium text-slate-700">${po.items}</td>
+          <td class="p-4 font-black text-slate-900">${formatSAR(po.total)} ر.س</td>
+          <td class="p-4"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">${po.status || 'مسدد'}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Vouchers (Treasury)
+    function renderVouchersTable() {
+      const list = getFilteredList(state.vouchers);
+      const tbody = document.getElementById('vouchersTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl text-slate-300">💳</span>
+                <p class="text-xs font-bold text-slate-500">لا توجد سندات قبض أو صرف مسجلة بالخزينة</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <button onclick="openReceiptModal()" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition">+ سند قبض</button>
+                  <button onclick="openPaymentModal()" class="text-xs font-bold text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition">- سند صرف</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      list.forEach(v => {
+        const isReceipt = v.type === 'قبض';
+        const typeBadge = isReceipt
+          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">+ سند قبض</span>'
+          : '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">- سند صرف</span>';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-mono font-bold text-slate-700">${v.id}</td>
+          <td class="p-4">${typeBadge}</td>
+          <td class="p-4 font-semibold">${ENTITY_BADGES[v.entity] || v.entity}</td>
+          <td class="p-4 text-slate-500">${v.date}</td>
+          <td class="p-4 font-bold text-slate-800">${v.account}</td>
+          <td class="p-4 font-medium text-slate-700">${v.notes}</td>
+          <td class="p-4 font-black ${isReceipt ? 'text-emerald-700' : 'text-rose-600'}">${isReceipt ? '+' : '-'}${formatSAR(v.amount)} ر.س</td>
+          <td class="p-4 text-slate-500">${v.user || 'حجاج'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Journals (دفتر القيود اليومية)
+    function renderJournalsTable() {
+      const list = getFilteredList(state.journals);
+      const tbody = document.getElementById('journalTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl text-slate-300">⚖️</span>
+                <p class="text-xs font-bold text-slate-500">دفتر اليومية فارغ — القيود تنشأ تلقائياً مع العمليات أو يدوياً</p>
+                <button onclick="openNewJournalModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إضافة قيد يومية يدوي</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        document.getElementById('totalDebitSpan').textContent = `0.00 ر.س`;
+        document.getElementById('totalCreditSpan').textContent = `0.00 ر.س`;
+        return;
+      }
+
+      let total = 0;
+      list.forEach(j => {
+        total += (Number(j.amount) || 0);
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-mono font-bold text-slate-700">${j.id}</td>
+          <td class="p-4 text-slate-500">${j.date}</td>
+          <td class="p-4 font-semibold">${ENTITY_BADGES[j.entity] || j.entity}</td>
+          <td class="p-4 font-bold text-slate-800">${j.desc}</td>
+          <td class="p-4 text-emerald-700 font-bold">${j.debit}</td>
+          <td class="p-4 text-blue-700 font-bold">${j.credit}</td>
+          <td class="p-4 font-black text-slate-900">${formatSAR(j.amount)} ر.س</td>
+          <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">متزن ✓</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('totalDebitSpan').textContent = `${formatSAR(total)} ر.س`;
+      document.getElementById('totalCreditSpan').textContent = `${formatSAR(total)} ر.س`;
+    }
+
+    // Render Branches
+    function renderBranches() {
+      const container = document.getElementById('branchesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      state.branches.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4';
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-3xl">${b.icon}</span>
+            <button onclick="setEntity('${b.id}'); switchView('dashboard');" class="text-xs font-black text-gathern-700 hover:text-gathern-900 px-3 py-1 bg-gathern-50 rounded-lg">
+              فتح النشاط ➔
+            </button>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900 mb-1">${b.name}</h3>
+            <p class="text-xs text-slate-400 font-medium">${b.desc}</p>
+          </div>
+          <div class="pt-3 border-t border-slate-100 text-xs space-y-1 text-slate-600">
+            <div><strong>السجل التجاري:</strong> ${b.cr}</div>
+            <div><strong>الرقم الضريبي:</strong> ${b.vat}</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Dynamic Financial Reports (P&L & VAT 15%)
+    function updateFinancialReports() {
+      const filteredInvoices = getFilteredList(state.invoices);
+      const filteredPurchases = getFilteredList(state.purchases);
+      const filteredVouchers = getFilteredList(state.vouchers);
+
+      // Real Revenue = sum of invoice subtotals
+      const totalRevenue = filteredInvoices.reduce((sum, i) => sum + (i.status === 'paid' ? (Number(i.subtotal) || 0) : 0), 0);
+      
+      // Real COGS = sum of purchases
+      const totalCOGS = filteredPurchases.reduce((sum, p) => sum + (Number(p.subtotal) || Number(p.total) || 0), 0);
+      
+      const grossProfit = totalRevenue - totalCOGS;
+
+      // Real OPEX = payment vouchers
+      const totalOPEX = filteredVouchers.filter(v => v.type === 'صرف').reduce((sum, v) => sum + (Number(v.amount) || 0), 0);
+
+      const netProfit = grossProfit - totalOPEX;
+
+      // VAT 15% Calculation
+      const taxableSales = filteredInvoices.reduce((sum, i) => sum + (Number(i.subtotal) || 0), 0);
+      const outputVat = filteredInvoices.reduce((sum, i) => sum + (Number(i.vat) || 0), 0);
+      const inputVat = filteredPurchases.reduce((sum, p) => sum + (Number(p.vat) || (Number(p.total) * 0.15 / 1.15) || 0), 0);
+      const netVat = outputVat - inputVat;
+
+      // Update P&L DOM
+      const elRev = document.getElementById('report-rev');
+      const elCogs = document.getElementById('report-cogs');
+      const elGross = document.getElementById('report-gross');
+      const elOpex = document.getElementById('report-opex');
+      const elNet = document.getElementById('report-net');
+
+      if (elRev) elRev.textContent = `+${formatSAR(totalRevenue)} ر.س`;
+      if (elCogs) elCogs.textContent = `-${formatSAR(totalCOGS)} ر.س`;
+      if (elGross) elGross.textContent = `${formatSAR(grossProfit)} ر.س`;
+      if (elOpex) elOpex.textContent = `-${formatSAR(totalOPEX)} ر.س`;
+      if (elNet) {
+        elNet.textContent = `${formatSAR(netProfit)} ر.س`;
+        elNet.className = netProfit >= 0 ? 'text-emerald-700 font-black' : 'text-rose-600 font-black';
+      }
+
+      // Update VAT DOM
+      const elTaxable = document.getElementById('vat-taxable-sales');
+      const elOutput = document.getElementById('vat-output-tax');
+      const elInput = document.getElementById('vat-input-tax');
+      const elNetVat = document.getElementById('vat-net-tax');
+
+      if (elTaxable) elTaxable.textContent = `${formatSAR(taxableSales)} ر.س`;
+      if (elOutput) elOutput.textContent = `+${formatSAR(outputVat)} ر.س`;
+      if (elInput) elInput.textContent = `-${formatSAR(inputVat)} ر.س`;
+      if (elNetVat) elNetVat.textContent = `${formatSAR(netVat)} ر.س`;
+    }
+
+    // Chart.js Instances
+    let perfChartInstance = null;
+    let distChartInstance = null;
+
+    function initCharts() {
+      // 1. Performance Line Chart
+      const perfCtx = document.getElementById('performanceChart')?.getContext('2d');
+      if (perfCtx) {
+        if (perfChartInstance) perfChartInstance.destroy();
+        perfChartInstance = new Chart(perfCtx, {
+          type: 'line',
+          data: {
+            labels: ['أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر'],
+            datasets: [
+              {
+                label: 'المبيعات الفعلية',
+                data: [0, 0, 0, 0, 0, 0],
+                borderColor: '#7c3aed',
+                backgroundColor: 'rgba(124, 58, 237, 0.08)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 3,
+                pointBackgroundColor: '#6d28d9',
+                pointRadius: 4
+              },
+              {
+                label: 'المصروفات الفعلية',
+                data: [0, 0, 0, 0, 0, 0],
+                borderColor: '#f43f5e',
+                backgroundColor: 'transparent',
+                borderDash: [5, 5],
+                tension: 0.35,
+                borderWidth: 2,
+                pointRadius: 3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { font: { family: 'Cairo' } } },
+              y: { 
+                grid: { color: '#f1f5f9' }, 
+                ticks: { 
+                  font: { family: 'Cairo' },
+                  callback: val => Number(val).toLocaleString() + ' ر.س'
+                } 
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Revenue Distribution Doughnut Chart
+      const distCtx = document.getElementById('distributionChart')?.getContext('2d');
+      if (distCtx) {
+        if (distChartInstance) distChartInstance.destroy();
+        distChartInstance = new Chart(distCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['بانتظار تسجيل المبيعات'],
+            datasets: [{
+              data: [1],
+              backgroundColor: ['#e2e8f0'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            cutout: '72%'
+          }
+        });
+      }
+
+      updateCharts();
+    }
+
+    function updateCharts() {
+      const filteredInvoices = getFilteredList(state.invoices);
+      const filteredPurchases = getFilteredList(state.purchases);
+      const filteredVouchers = getFilteredList(state.vouchers);
+
+      const currentSales = filteredInvoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      const currentExpenses = filteredPurchases.reduce((sum, p) => sum + (Number(p.total) || 0), 0) + 
+                              filteredVouchers.filter(v => v.type === 'صرف').reduce((sum, v) => sum + (Number(v.amount) || 0), 0);
+
+      if (perfChartInstance) {
+        perfChartInstance.data.datasets[0].data = [0, 0, 0, 0, 0, currentSales];
+        perfChartInstance.data.datasets[1].data = [0, 0, 0, 0, 0, currentExpenses];
+        perfChartInstance.update();
+      }
+
+      const entities = [
+        { key: 'law', label: 'المحاماة' },
+        { key: 'restaurant', label: 'المطعم' },
+        { key: 'farm', label: 'المزرعة' },
+        { key: 'barber', label: 'الحلاق' }
+      ];
+
+      const entityTotals = entities.map(e => {
+        return state.invoices.filter(i => i.entity === e.key).reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+      });
+
+      const totalAll = entityTotals.reduce((a, b) => a + b, 0);
+
+      if (distChartInstance) {
+        if (totalAll === 0) {
+          distChartInstance.data.labels = ['بانتظار تسجيل المبيعات'];
+          distChartInstance.data.datasets[0].data = [1];
+          distChartInstance.data.datasets[0].backgroundColor = ['#e2e8f0'];
+        } else {
+          distChartInstance.data.labels = entities.map(e => e.label);
+          distChartInstance.data.datasets[0].data = entityTotals;
+          distChartInstance.data.datasets[0].backgroundColor = ['#7c3aed', '#f59e0b', '#10b981', '#3b82f6'];
+        }
+        distChartInstance.update();
+      }
+    }
+
+    // Modal Actions: Invoices
+    function openNewInvoiceModal() {
+      const today = new Date().toISOString().substring(0, 10);
+      const d1 = document.getElementById('inv-date');
+      const d2 = document.getElementById('inv-due-date');
+      if (d1) d1.value = today;
+      if (d2) d2.value = today;
+      if (state.currentEntity && state.currentEntity !== 'all') {
+        const ent = document.getElementById('inv-entity');
+        if (ent) ent.value = state.currentEntity;
+      }
+      calculateInvoiceModalTotals();
+      openModal('newInvoiceModal');
+    }
+
+    function calculateInvoiceModalTotals() {
+      const qty = parseFloat(document.getElementById('inv-item-qty')?.value) || 1;
+      const price = parseFloat(document.getElementById('inv-item-price')?.value) || 0;
+      const subtotal = qty * price;
+      const vat = subtotal * 0.15;
+      const grand = subtotal + vat;
+
+      const s = document.getElementById('modal-subtotal');
+      const v = document.getElementById('modal-vat');
+      const g = document.getElementById('modal-grand');
+      if (s) s.textContent = formatSAR(subtotal);
+      if (v) v.textContent = formatSAR(vat);
+      if (g) g.textContent = formatSAR(grand);
+    }
+
+    function handleCreateInvoice(e) {
+      e.preventDefault();
+      const entity = document.getElementById('inv-entity').value;
+      const client = document.getElementById('inv-client').value.trim();
+      const date = document.getElementById('inv-date').value;
+      const dueDate = document.getElementById('inv-due-date').value;
+      const methodSelect = document.getElementById('inv-payment-method');
+      const method = methodSelect.options[methodSelect.selectedIndex].text;
+      const itemDesc = document.getElementById('inv-item-desc').value.trim();
+      const qty = parseFloat(document.getElementById('inv-item-qty').value) || 1;
+      const price = parseFloat(document.getElementById('inv-item-price').value) || 0;
+      
+      const subtotal = qty * price;
+      const vat = subtotal * 0.15;
+      const total = subtotal + vat;
+
+      const newId = `INV-2026-${String(state.invoices.length + 1).padStart(3, '0')}`;
+      
+      const newInvoice = {
+        id: newId,
+        entity,
+        client,
+        date,
+        dueDate,
+        subtotal,
+        vat,
+        total,
+        method,
+        status: 'paid',
+        item: `${itemDesc} (${qty} × ${price})`
+      };
+
+      state.invoices.unshift(newInvoice);
+
+      // Add corresponding journal entry
+      state.journals.unshift({
+        id: `JRN-${String(state.journals.length + 1).padStart(3, '0')}`,
+        date,
+        entity,
+        desc: `فاتورة مبيعات رقم ${newId} - ${client}`,
+        debit: method.includes('بنك') ? '1002 - مصرف الراجحي' : '1001 - الصندوق النقدي',
+        credit: '4001 - إيرادات مبيعات وخدمات',
+        amount: total,
+        status: 'متزن'
+      });
+
+      // Update treasury
+      if (method.includes('بنك')) state.treasury.rajhi += total;
+      else state.treasury.cash += total;
+
+      saveState();
+      closeModal('newInvoiceModal');
+      renderAll();
+      updateCharts();
+      showToast(`تم إصدار الفاتورة رقم ${newId} وترحيل القيد بنجاح!`, 'success');
+      viewTaxInvoice(newId);
+    }
+
+    // View Tax Invoice with ZATCA QR
+    function viewTaxInvoice(invId) {
+      const inv = state.invoices.find(i => i.id === invId);
+      if (!inv) return;
+
+      document.getElementById('print-inv-no').textContent = inv.id;
+      document.getElementById('print-inv-date').textContent = inv.date;
+      document.getElementById('print-inv-client').textContent = inv.client;
+      document.getElementById('print-subtotal').textContent = `${formatSAR(inv.subtotal)} ر.س`;
+      document.getElementById('print-vat').textContent = `${formatSAR(inv.vat)} ر.س`;
+      document.getElementById('print-grand').textContent = `${formatSAR(inv.total)} ر.س`;
+
+      const entityNames = {
+        law: 'مؤسسة حجاج للمحاماة والاستشارات القانونية',
+        restaurant: 'مطعم مذاق البخاري والشاورما',
+        farm: 'مزرعة الواحة الخضراء للمنتجات الزراعية',
+        barber: 'صالون الأناقة الرجالي',
+        home: 'الذمة الشخصية لحجاج'
+      };
+      document.getElementById('print-entity-name').textContent = entityNames[inv.entity] || 'مؤسسة حجاج';
+
+      // Items table
+      const tbody = document.getElementById('print-inv-items');
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td class="py-2.5 font-bold">${inv.item}</td>
+            <td class="py-2.5 text-center">1</td>
+            <td class="py-2.5">${formatSAR(inv.subtotal)}</td>
+            <td class="py-2.5 font-black">${formatSAR(inv.subtotal)} ر.س</td>
+          </tr>
+        `;
+      }
+
+      // Render standard ZATCA QR Code
+      const qrContainer = document.getElementById('zatcaQrCodeContainer');
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        const zatcaPayload = `Seller:${entityNames[inv.entity]}|VAT:310123456700003|Time:${inv.date}T12:00:00Z|Total:${inv.total}|VAT:${inv.vat}`;
+        new QRCode(qrContainer, {
+          text: zatcaPayload,
+          width: 90,
+          height: 90,
+          colorDark: "#1e1b4b",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+
+      openModal('viewInvoiceModal');
+    }
+
+    // Modal Actions: Purchases (المشتريات والموردين)
+    function openNewPurchaseModal() {
+      const today = new Date().toISOString().substring(0, 10);
+      const d = document.getElementById('po-date');
+      if (d) d.value = today;
+      if (state.currentEntity && state.currentEntity !== 'all') {
+        const ent = document.getElementById('po-entity');
+        if (ent) ent.value = state.currentEntity;
+      }
+      calculatePurchaseModalTotals();
+      openModal('newPurchaseModal');
+    }
+
+    function calculatePurchaseModalTotals() {
+      const subtotal = parseFloat(document.getElementById('po-subtotal')?.value) || 0;
+      const vat = subtotal * 0.15;
+      const total = subtotal + vat;
+
+      const v = document.getElementById('po-modal-vat');
+      const t = document.getElementById('po-modal-total');
+      if (v) v.textContent = `${formatSAR(vat)} ر.س`;
+      if (t) t.textContent = `${formatSAR(total)} ر.س`;
+    }
+
+    function handleCreatePurchase(e) {
+      e.preventDefault();
+      const entity = document.getElementById('po-entity').value;
+      const vendor = document.getElementById('po-vendor').value.trim();
+      const date = document.getElementById('po-date').value;
+      const items = document.getElementById('po-items').value.trim();
+      const subtotal = parseFloat(document.getElementById('po-subtotal').value) || 0;
+      const payMethod = document.getElementById('po-payment-method').value;
+
+      const vat = subtotal * 0.15;
+      const total = subtotal + vat;
+
+      const id = `PO-2026-${String(state.purchases.length + 1).padStart(3, '0')}`;
+
+      state.purchases.unshift({
+        id,
+        entity,
+        vendor,
+        date,
+        items,
+        subtotal,
+        vat,
+        total,
+        status: payMethod === 'credit' ? 'آجل مستحق' : 'مسدد'
+      });
+
+      // Deduct from Treasury if paid cash or bank
+      let accName = 'ذمم دائنة (موردين)';
+      if (payMethod === 'cash') {
+        state.treasury.cash -= total;
+        accName = 'الصندوق النقدي';
+      } else if (payMethod === 'rajhi') {
+        state.treasury.rajhi -= total;
+        accName = 'مصرف الراجحي';
+      } else if (payMethod === 'ahli') {
+        state.treasury.ahli -= total;
+        accName = 'البنك الأهلي';
+      }
+
+      // Add Journal entry
+      state.journals.unshift({
+        id: `JRN-${String(state.journals.length + 1).padStart(3, '0')}`,
+        date,
+        entity,
+        desc: `فاتورة شراء رقم ${id} - من: ${vendor}`,
+        debit: '5001 - تكلفة مشتريات وخامات',
+        credit: `1001 - ${accName}`,
+        amount: total,
+        status: 'متزن'
+      });
+
+      saveState();
+      closeModal('newPurchaseModal');
+      renderAll();
+      updateCharts();
+      showToast(`تم تسجيل فاتورة الشراء ${id} وترحيل القيد بنجاح!`, 'success');
+    }
+
+    // Modal Actions: Manual Journal Entry (قيد يدوي)
+    function openNewJournalModal() {
+      const today = new Date().toISOString().substring(0, 10);
+      const d = document.getElementById('jrn-date');
+      if (d) d.value = today;
+      if (state.currentEntity && state.currentEntity !== 'all') {
+        const ent = document.getElementById('jrn-entity');
+        if (ent) ent.value = state.currentEntity;
+      }
+      openModal('newJournalModal');
+    }
+
+    function handleCreateJournal(e) {
+      e.preventDefault();
+      const entity = document.getElementById('jrn-entity').value;
+      const date = document.getElementById('jrn-date').value;
+      const desc = document.getElementById('jrn-desc').value.trim();
+      const debit = document.getElementById('jrn-debit').value.trim();
+      const credit = document.getElementById('jrn-credit').value.trim();
+      const amount = parseFloat(document.getElementById('jrn-amount').value) || 0;
+
+      if (amount <= 0) {
+        showToast('يرجى إدخال مبلغ صحيح للقيد', 'error');
+        return;
+      }
+
+      const id = `JRN-${String(state.journals.length + 1).padStart(3, '0')}`;
+
+      state.journals.unshift({
+        id,
+        date,
+        entity,
+        desc,
+        debit,
+        credit,
+        amount,
+        status: 'متزن'
+      });
+
+      saveState();
+      closeModal('newJournalModal');
+      renderAll();
+      showToast(`تم ترحيل القيد رقم ${id} بنجاح!`, 'success');
+    }
+
+    // Modal Actions: Opening Balances (الأرصدة الافتتاحية الحقيقية)
+    function openOpeningBalancesModal() {
+      document.getElementById('ob-cash').value = state.treasury.cash || 0;
+      document.getElementById('ob-rajhi').value = state.treasury.rajhi || 0;
+      document.getElementById('ob-ahli').value = state.treasury.ahli || 0;
+      openModal('openingBalancesModal');
+    }
+
+    function handleSaveOpeningBalances(e) {
+      e.preventDefault();
+      const cash = parseFloat(document.getElementById('ob-cash').value) || 0;
+      const rajhi = parseFloat(document.getElementById('ob-rajhi').value) || 0;
+      const ahli = parseFloat(document.getElementById('ob-ahli').value) || 0;
+
+      state.treasury.cash = cash;
+      state.treasury.rajhi = rajhi;
+      state.treasury.ahli = ahli;
+
+      const today = new Date().toISOString().substring(0, 10);
+      const totalInitial = cash + rajhi + ahli;
+
+      if (totalInitial > 0 && state.journals.length === 0) {
+        state.journals.push({
+          id: `JRN-001`,
+          date: today,
+          entity: 'all',
+          desc: 'إثبات قيد الأرصدة الافتتاحية للصناديق والبنوك',
+          debit: '1001 - الصناديق والبنوك',
+          credit: '3001 - رأس المال التأسيسي',
+          amount: totalInitial,
+          status: 'متزن'
+        });
+      }
+
+      saveState();
+      closeModal('openingBalancesModal');
+      renderAll();
+      showToast('تم حفظ واعتماد الأرصدة الافتتاحية بنجاح!', 'success');
+    }
+
+    // Modal Actions: Receipt Voucher (+ سند قبض)
+    function openReceiptModal() {
+      openModal('receiptModal');
+    }
+    function handleCreateReceipt(e) {
+      e.preventDefault();
+      const entity = document.getElementById('receipt-entity').value;
+      const amount = parseFloat(document.getElementById('receipt-amount').value) || 0;
+      const account = document.getElementById('receipt-account').value;
+      const payer = document.getElementById('receipt-payer').value.trim();
+      const notes = document.getElementById('receipt-notes').value.trim();
+      const date = new Date().toISOString().substring(0, 10);
+
+      const id = `RC-${String(state.vouchers.length + 101).padStart(3, '0')}`;
+      const accName = account === 'cash' ? 'الصندوق (كاش)' : (account === 'rajhi' ? 'مصرف الراجحي' : 'البنك الأهلي');
+
+      state.vouchers.unshift({ id, type: 'قبض', entity, date, account: accName, notes: `${notes} - من: ${payer}`, amount, user: 'حجاج' });
+
+      // Update treasury
+      if (account === 'cash') state.treasury.cash += amount;
+      else if (account === 'rajhi') state.treasury.rajhi += amount;
+      else state.treasury.ahli += amount;
+
+      // Add Journal entry
+      state.journals.unshift({
+        id: `JRN-${String(state.journals.length + 1).padStart(3, '0')}`,
+        date,
+        entity,
+        desc: `سند قبض رقم ${id} - ${notes}`,
+        debit: `1001 - ${accName}`,
+        credit: '4001 - إيرادات متنوعة',
+        amount,
+        status: 'متزن'
+      });
+
+      saveState();
+      closeModal('receiptModal');
+      renderAll();
+      updateCharts();
+      showToast(`تم حفظ سند القبض رقم ${id} بمبلغ ${formatSAR(amount)} ر.س`, 'success');
+    }
+
+    // Modal Actions: Payment Voucher (- سند صرف)
+    function openPaymentModal() {
+      openModal('paymentModal');
+    }
+    function handleCreatePayment(e) {
+      e.preventDefault();
+      const entity = document.getElementById('payment-entity').value;
+      const amount = parseFloat(document.getElementById('payment-amount').value) || 0;
+      const account = document.getElementById('payment-account').value;
+      const payee = document.getElementById('payment-payee').value.trim();
+      const notes = document.getElementById('payment-notes').value.trim();
+      const date = new Date().toISOString().substring(0, 10);
+
+      const id = `PV-${String(state.vouchers.length + 101).padStart(3, '0')}`;
+      const accName = account === 'cash' ? 'الصندوق (كاش)' : (account === 'rajhi' ? 'مصرف الراجحي' : 'البنك الأهلي');
+
+      state.vouchers.unshift({ id, type: 'صرف', entity, date, account: accName, notes: `${notes} - إلى: ${payee}`, amount, user: 'حجاج' });
+
+      // Deduct from treasury
+      if (account === 'cash') state.treasury.cash -= amount;
+      else if (account === 'rajhi') state.treasury.rajhi -= amount;
+      else state.treasury.ahli -= amount;
+
+      // Add Journal entry
+      state.journals.unshift({
+        id: `JRN-${String(state.journals.length + 1).padStart(3, '0')}`,
+        date,
+        entity,
+        desc: `سند صرف رقم ${id} - ${notes}`,
+        debit: '5001 - مصروفات تشغيلية وعمومية',
+        credit: `1001 - ${accName}`,
+        amount,
+        status: 'متزن'
+      });
+
+      saveState();
+      closeModal('paymentModal');
+      renderAll();
+      updateCharts();
+      showToast(`تم حفظ سند الصرف وخصم ${formatSAR(amount)} ر.س من ${accName}`, 'success');
+    }
+
+    // Modal Actions: Add Item
+    function openNewItemModal() {
+      openModal('newItemModal');
+    }
+    function handleCreateItem(e) {
+      e.preventDefault();
+      const sku = document.getElementById('item-sku').value.trim();
+      const name = document.getElementById('item-name').value.trim();
+      const entity = document.getElementById('item-entity').value;
+      const unit = document.getElementById('item-unit').value;
+      const qty = parseFloat(document.getElementById('item-qty').value) || 0;
+      const cost = parseFloat(document.getElementById('item-cost').value) || 0;
+      const price = parseFloat(document.getElementById('item-price').value) || 0;
+      const reorder = parseFloat(document.getElementById('item-reorder').value) || 10;
+
+      state.inventory.unshift({ sku, name, entity, unit, qty, cost, price, reorder });
+      saveState();
+      closeModal('newItemModal');
+      renderAll();
+      showToast(`تمت إضافة الصنف ${name} بنجاح`, 'success');
+    }
+
+    function adjustStock(sku) {
+      const item = state.inventory.find(i => i.sku === sku);
+      if (!item) return;
+      const newQty = prompt(`أدخل رصيد الجرد الفعلي للصنف: ${item.name}`, item.qty);
+      if (newQty !== null && !isNaN(newQty)) {
+        item.qty = parseFloat(newQty);
+        saveState();
+        renderAll();
+        showToast(`تم تحديث رصيد ${item.name} إلى ${item.qty} ${item.unit}`);
+      }
+    }
+
+    // Filter Invoices by Status
+    function filterInvoicesByStatus(status) {
+      document.querySelectorAll('.inv-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-gathern-100', 'text-gathern-800', 'font-bold');
+        btn.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      if (event && event.target) {
+        event.target.classList.add('bg-gathern-100', 'text-gathern-800', 'font-bold');
+        event.target.classList.remove('bg-slate-100', 'text-slate-600');
+      }
+
+      let list = getFilteredList(state.invoices);
+      if (status !== 'all') {
+        list = list.filter(i => i.status === status);
+      }
+      renderInvoicesTable(list);
+    }
+
+    function searchInvoices(query) {
+      const q = query.trim().toLowerCase();
+      let list = getFilteredList(state.invoices);
+      if (q) {
+        list = list.filter(i => (i.id && i.id.toLowerCase().includes(q)) || 
+                                (i.client && i.client.toLowerCase().includes(q)) || 
+                                (i.item && i.item.toLowerCase().includes(q)));
+      }
+      renderInvoicesTable(list);
+    }
+
+    function handleGlobalSearch(e) {
+      if (e.key === 'Enter') {
+        const query = e.target.value.trim();
+        if (query) {
+          switchView('invoices');
+          searchInvoices(query);
+          showToast(`نتائج البحث عن: ${query}`);
+        }
+      }
+    }
+
+    // Export & Reset
+    function exportAllData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", `qoyod_hajjaj_backup_${new Date().toISOString().substring(0,10)}.json`);
+      dlAnchor.click();
+      showToast('تم تحميل ملف النسخة الاحتياطية بنجاح');
+    }
+
+    function zeroOutAllData() {
+      if (confirm('هل أنت متأكد من تصفير كافة الحركات والفواتير والبدء من 0.00 ر.س؟')) {
+        state = JSON.parse(JSON.stringify(CLEAN_ZERO_DATA));
+        saveState();
+        renderAll();
+        updateCharts();
+        showToast('تم تصفير كافة البيانات وبدء النظام الفعلي بنجاح!');
+      }
+    }
+
+    // Main Render All
+    function renderAll() {
+      updateDashboardKPIs();
+      renderInvoicesTable();
+      renderInventoryTable();
+      renderPurchasesTable();
+      renderVouchersTable();
+      renderJournalsTable();
+      renderBranches();
+    }
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+      initCharts();
+    });
+  </script>
+
+</body>
+</html>
