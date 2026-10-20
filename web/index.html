@@ -522,7 +522,8 @@
           <div class="flex items-center gap-2">
             <span class="font-bold text-slate-500">تصفية حسب الحالة:</span>
             <button onclick="filterInvoicesByStatus('all')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-gathern-100 text-gathern-800 font-bold">الكل</button>
-            <button onclick="filterInvoicesByStatus('paid')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">مدفوعة</button>
+            <button onclick="filterInvoicesByStatus('paid')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">مسددة (مدفوعة)</button>
+            <button onclick="filterInvoicesByStatus('unpaid')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">غير مسددة</button>
             <button onclick="filterInvoicesByStatus('pending')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">معلقة</button>
             <button onclick="filterInvoicesByStatus('overdue')" class="inv-filter-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold">متأخرة</button>
           </div>
@@ -1130,7 +1131,14 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">حالة السداد:</label>
+            <select id="inv-status" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500 font-bold text-slate-800">
+              <option value="paid">✅ مسددة (مدفوعة)</option>
+              <option value="unpaid">⏳ غير مسددة (آجلة)</option>
+            </select>
+          </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">تاريخ الفاتورة:</label>
             <input type="date" id="inv-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-gathern-500">
@@ -2789,6 +2797,47 @@
     }
 
     // Render Inventory Table
+    
+    // تغيير حالة سداد الفاتورة (مسددة / غير مسددة)
+    function toggleInvoicePaidStatus(invId) {
+      const inv = state.invoices.find(i => i.id === invId);
+      if (!inv) return;
+      
+      const newStatus = (inv.status === 'paid') ? 'unpaid' : 'paid';
+      inv.status = newStatus;
+      
+      saveState();
+      renderAll();
+      updateCharts();
+      
+      if (newStatus === 'paid') {
+        showToast('تم تحديث الفاتورة ' + invId + ' إلى: مسددة بنجاح ✓', 'success');
+      } else {
+        showToast('تم تحديث الفاتورة ' + invId + ' إلى: غير مسددة (آجلة)', 'info');
+      }
+    }
+
+    // حذف فاتورة مبيعات
+    function deleteInvoice(invId) {
+      const inv = state.invoices.find(i => i.id === invId);
+      if (!inv) return;
+
+      if (!confirm('هل أنت متأكد من رغبتك في حذف الفاتورة رقم (' + invId + ') للعميل (' + inv.client + ')؟')) {
+        return;
+      }
+
+      // Remove invoice
+      state.invoices = state.invoices.filter(i => i.id !== invId);
+
+      // Remove related journal entry if found
+      state.journals = state.journals.filter(j => !j.desc || !j.desc.includes(invId));
+
+      saveState();
+      renderAll();
+      updateCharts();
+      showToast('تم حذف الفاتورة (' + invId + ') بنجاح', 'success');
+    }
+  
     function renderInventoryTable() {
       const list = getFilteredList(state.inventory);
       const tbody = document.getElementById('inventoryTableBody');
@@ -3242,7 +3291,7 @@
         vat,
         total,
         method,
-        status: 'paid',
+        status: document.getElementById('inv-status')?.value || 'paid',
         item: `${itemDesc} (${qty} × ${price})`
       };
 
