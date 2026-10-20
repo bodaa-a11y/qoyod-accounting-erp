@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ error: 'حدث خطأ في الخادم أثناء تسجيل الدخول' });
+    res.status(500).json({ error: 'حدث خطأ في الخادم أثناء تسجيل الدخول', details: err.message, stack: err.stack });
   }
 });
 

@@ -1,5 +1,5 @@
 {
-  "name": "qoyod-accounting-system",
+  "name": "qoyod",
   "version": "1.0.0",
   "description": "نظام قيد المحاسبي المتكامل لإدارة 5 كيانات مالية مع الامتثال للفوترة الإلكترونية هيئة الزكاة والضريبة (ZATCA)",
   "main": "src/server.js",
