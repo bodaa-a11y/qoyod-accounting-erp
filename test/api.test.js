@@ -1,7 +1,8 @@
 'use strict';
+require('dotenv').config();
 // End-to-end accounting cycle tests against a real (test) Postgres.
 // Usage:  TEST_DATABASE_URL=postgresql://... node --test test/api.test.js
-process.env.DATABASE_URL = process.env.TEST_DATABASE_URL;
+process.env.DATABASE_URL = process.env.TEST_DATABASE_URL || process.env.DATABASE_URL;
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret-test-secret-test-secret';
 process.env.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'TestPass123!';
 
@@ -30,15 +31,20 @@ test.before(async () => {
     VALUES ('admin@test.local', $1, 'Admin', 'admin') ON CONFLICT (email) DO NOTHING`,
     [await bcrypt.hash('TestPass123!', 4)]);
   process.env.PORT = '0';
-  await pool.end();
   // spawn server as child for full HTTP fidelity
   server = require('child_process').spawn('node', [path.join(__dirname, '..', 'src', 'server.js')],
-    { env: { ...process.env, PORT: '4123' }, stdio: 'ignore' });
-  base = 'http://localhost:4123';
-  await new Promise(r => setTimeout(r, 1200));
+    { env: { ...process.env, PORT: '4123' }, stdio: 'inherit' });
+  server.unref();
+  base = 'http://127.0.0.1:4123';
+  await new Promise(r => setTimeout(r, 3000));
 });
 
-test.after(async () => { server && server.kill(); });
+test.after(async () => {
+  if (server && server.pid) {
+    try { process.kill(server.pid); } catch (e) {}
+  }
+  try { await pool.end(); } catch (e) {}
+});
 
 test('full sales accounting cycle', async () => {
   // login
@@ -46,7 +52,7 @@ test('full sales accounting cycle', async () => {
   assert.strictEqual(r.status, 200); adminToken = r.body.token;
 
   // entity
-  r = await api('POST', '/entities', { code: 'test', name: 'منشأة اختبار' }, adminToken);
+  r = await api('POST', '/entities', { code: 'test_' + Date.now(), name: 'منشأة اختبار' }, adminToken);
   assert.strictEqual(r.status, 201); entityId = r.body.entity.id;
 
   // seed starter chart via inline minimal chart (accounts needed for posting)
@@ -151,10 +157,9 @@ test('full sales accounting cycle', async () => {
 
   // entity isolation: another user without membership gets 403
   const bcrypt = require('bcryptjs');
-  await pool.connect(); // ensure pool usable
   const c = await pool.connect();
   await c.query(`INSERT INTO users (email, password_hash, full_name, role)
-    VALUES ('out@test.local', $1, 'Outsider', 'accountant')`, [await bcrypt.hash('TestPass123!', 4)]);
+    VALUES ('out@test.local', $1, 'Outsider', 'accountant') ON CONFLICT (email) DO NOTHING`, [await bcrypt.hash('TestPass123!', 4)]);
   c.release();
   r = await api('POST', '/auth/login', { email: 'out@test.local', password: 'TestPass123!' });
   const outToken = r.body.token;
@@ -164,5 +169,4 @@ test('full sales accounting cycle', async () => {
   // audit log is populated
   r = await api('GET', `/entities/${entityId}/audit-log`, null, adminToken);
   assert.ok(r.body.audit.length > 3);
-  await pool.end();
 });

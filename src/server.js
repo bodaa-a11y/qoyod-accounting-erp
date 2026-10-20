@@ -31,7 +31,8 @@ app.use('/api/entities', reportsRoutes);
 // Serve Frontend SPA
 const publicDir = path.join(__dirname, '..', 'public');
 app.use(express.static(publicDir));
-app.get('*', (req, res) => {
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'المسار البرمجي غير موجود' });
   }

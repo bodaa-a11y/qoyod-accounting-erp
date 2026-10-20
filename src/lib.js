@@ -1,6 +1,7 @@
 'use strict';
 require('dotenv').config();
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
+types.setTypeParser(20, val => (val === null ? null : parseInt(val, 10)));
 const jwt = require('jsonwebtoken');
 
 // Money and Tax Precision Helpers (Integer Halalas)
