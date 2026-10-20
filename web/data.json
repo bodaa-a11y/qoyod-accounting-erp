@@ -1193,5 +1193,40 @@
       "status": "active",
       "description": "إهلاك أصول المطعم والمزرعة والصالون"
     }
+  ],
+  "users": [
+    {
+      "id": "user_1",
+      "name": "محمد بابكر",
+      "username": "mohamed.babiker",
+      "email": "mohamed.babiker@qoyod.com",
+      "password": "Babiker@2026",
+      "role": "cfo",
+      "roleTitle": "المدير المالي العام (CFO)",
+      "avatar": "م",
+      "color": "#6b21a8"
+    },
+    {
+      "id": "user_2",
+      "name": "احمد النادي",
+      "username": "ahmed.elnady",
+      "email": "ahmed.elnady@qoyod.com",
+      "password": "Elnady@2026",
+      "role": "chief_accountant",
+      "roleTitle": "رئيس الحسابات (Chief Accountant)",
+      "avatar": "أ",
+      "color": "#2563eb"
+    },
+    {
+      "id": "user_3",
+      "name": "عيد عبدالرحمن",
+      "username": "eid.abdulrahman",
+      "email": "eid.abdulrahman@qoyod.com",
+      "password": "Eid@2026",
+      "role": "auditor",
+      "roleTitle": "مراجع مالي ومدقق داخلي (Internal Auditor)",
+      "avatar": "ع",
+      "color": "#059669"
+    }
   ]
 }

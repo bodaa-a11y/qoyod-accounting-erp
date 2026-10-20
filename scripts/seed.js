@@ -26,6 +26,24 @@ async function runSeed() {
     const adminUser = userRes.rows[0];
     console.log(`👤 Admin user ready: ${adminUser.email}`);
 
+    // Additional Enterprise Users requested
+    const customUsers = [
+      { email: 'mohamed.babiker@qoyod.com', pass: 'Babiker@2026', name: 'محمد بابكر', role: 'cfo' },
+      { email: 'ahmed.elnady@qoyod.com', pass: 'Elnady@2026', name: 'احمد النادي', role: 'chief_accountant' },
+      { email: 'eid.abdulrahman@qoyod.com', pass: 'Eid@2026', name: 'عيد عبدالرحمن', role: 'auditor' }
+    ];
+
+    for (const u of customUsers) {
+      const uHash = await bcrypt.hash(u.pass, 10);
+      await client.query(`
+        INSERT INTO users (email, password_hash, full_name, role)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (email) DO UPDATE
+        SET full_name = EXCLUDED.full_name, role = EXCLUDED.role
+      `, [u.email, uHash, u.name, u.role]);
+      console.log(`👤 Seeded user: ${u.name} (${u.email})`);
+    }
+
     // 2. Insert Default Entities
     const defaultEntities = [
       { code: 'law', name: 'شركة حجاج للمحاماة والاستشارات القانونية', cr: '1010987654', vat: '310123456700003' },

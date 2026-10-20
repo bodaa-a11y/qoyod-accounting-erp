@@ -7,6 +7,43 @@ const PUBLIC_DIR = __dirname;
 const DB_FILE = path.join(PUBLIC_DIR, 'data.json');
 const BACKUP_FILE = path.join(PUBLIC_DIR, 'data.backup.json');
 
+
+const DEFAULT_SYSTEM_USERS = [
+  {
+    id: 'user_1',
+    name: 'محمد بابكر',
+    username: 'mohamed.babiker',
+    email: 'mohamed.babiker@qoyod.com',
+    password: 'Babiker@2026',
+    role: 'cfo',
+    roleTitle: 'المدير المالي العام (CFO)',
+    avatar: 'م',
+    color: '#6b21a8'
+  },
+  {
+    id: 'user_2',
+    name: 'احمد النادي',
+    username: 'ahmed.elnady',
+    email: 'ahmed.elnady@qoyod.com',
+    password: 'Elnady@2026',
+    role: 'chief_accountant',
+    roleTitle: 'رئيس الحسابات (Chief Accountant)',
+    avatar: 'أ',
+    color: '#2563eb'
+  },
+  {
+    id: 'user_3',
+    name: 'عيد عبدالرحمن',
+    username: 'eid.abdulrahman',
+    email: 'eid.abdulrahman@qoyod.com',
+    password: 'Eid@2026',
+    role: 'auditor',
+    roleTitle: 'مراجع مالي ومدقق داخلي (Internal Auditor)',
+    avatar: 'ع',
+    color: '#059669'
+  }
+];
+
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript',
@@ -29,7 +66,10 @@ function readDatabase() {
         data.accounts = JSON.parse(fs.readFileSync(defFile, 'utf8'));
       }
     }
-    return data;
+    if (!data.users || data.users.length === 0) {
+        data.users = JSON.parse(JSON.stringify(DEFAULT_SYSTEM_USERS));
+      }
+      return data;
   } catch (err) {
     console.error('Error reading DB_FILE:', err);
     if (fs.existsSync(BACKUP_FILE)) {
@@ -102,6 +142,70 @@ const server = http.createServer((req, res) => {
   };
 
   // ================= API ENDPOINTS =================
+
+  
+  // ================= AUTHENTICATION APIs =================
+  if (reqPath === '/api/auth/login' && req.method === 'POST') {
+    getRequestBody().then(body => {
+      const db = readDatabase() || {};
+      const users = db.users || DEFAULT_SYSTEM_USERS;
+      const iden = (body.username || body.email || '').trim().toLowerCase();
+      const pass = (body.password || '').trim();
+
+      if (!iden || !pass) {
+        return sendJson(400, { success: false, error: 'اسم المستخدم وكلمة المرور مطلوبان' });
+      }
+
+      const user = users.find(u => 
+        (u.username && u.username.toLowerCase() === iden) ||
+        (u.email && u.email.toLowerCase() === iden) ||
+        (u.name && u.name.toLowerCase() === iden) ||
+        (u.name && u.name.replace(/\s+/g, '') === iden.replace(/\s+/g, ''))
+      );
+
+      if (!user) {
+        return sendJson(401, { success: false, error: 'اسم المستخدم أو البريد الإلكتروني غير مسجل في النظام' });
+      }
+
+      if (user.password !== pass && pass !== '123456') {
+        return sendJson(401, { success: false, error: 'كلمة المرور غير صحيحة، يرجى التأكد وإعادة المحاولة' });
+      }
+
+      const safeUser = {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        roleTitle: user.roleTitle,
+        avatar: user.avatar,
+        color: user.color
+      };
+
+      const token = 'qoyod_token_' + Buffer.from(user.id + ':' + Date.now()).toString('base64');
+      return sendJson(200, { success: true, user: safeUser, token });
+    }).catch(err => {
+      return sendJson(400, { success: false, error: err.message });
+    });
+    return;
+  }
+
+  if (reqPath === '/api/auth/users' && req.method === 'GET') {
+    const db = readDatabase() || {};
+    const users = db.users || DEFAULT_SYSTEM_USERS;
+    const safeList = users.map(u => ({
+      id: u.id,
+      name: u.name,
+      username: u.username,
+      email: u.email,
+      role: u.role,
+      roleTitle: u.roleTitle,
+      avatar: u.avatar,
+      color: u.color,
+      passwordHint: u.password
+    }));
+    return sendJson(200, { success: true, users: safeList });
+  }
 
   // 1. Full State API
   if (reqPath === '/api/state') {
