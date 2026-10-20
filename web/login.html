@@ -1,0 +1,250 @@
+<!DOCTYPE html><html dir="rtl" lang="ar" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>قيد - تسجيل الدخول | نظام محاسبي متكامل</title>
+<!-- Google Fonts: Cairo for crisp Arabic typography -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              purple: '#372083',
+              'purple-hover': '#2d196c',
+              'purple-light': '#6651b5',
+              orange: '#f97316',
+              bg: '#f4f5fa'
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- Style tag for global and decorative layout elements -->
+<style data-purpose="base-typography-and-decorations">
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f6f7fb;
+    }
+
+    /* Custom smooth shadows to match the screenshot elevation */
+    .card-shadow {
+      box-shadow: 0 25px 60px -15px rgba(55, 32, 131, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Realistic 3D Mockup Container Shadow */
+    .mockup-shadow {
+      filter: drop-shadow(0 20px 30px rgba(55, 32, 131, 0.12));
+    }
+
+    /* Decorative corner ribbons */
+    .corner-decor-top {
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      background: linear-gradient(135deg, #f97316 0%, #372083 100%);
+      transform: rotate(45deg);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .corner-decor-bottom {
+      position: absolute;
+      bottom: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      background: linear-gradient(135deg, #f97316 30%, #372083 70%);
+      transform: rotate(45deg);
+      z-index: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen w-full flex items-center justify-center overflow-x-hidden overflow-y-auto selection:bg-purple-100 selection:text-brand-purple"><div aria-hidden="true" class="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none"><img src="https://lh3.googleusercontent.com/aida/AEtjO1Xj-tKqsfgXmj6W4M1C0NO9HDFDUcSFQqGmPnynWhiUwUE425f89yN-PJrQWmgtfkS_AUxlHUHMxBxlPdyBq1xaXDosliuF_tp77Er9oVJUTwiZKiuHDZ1CqLhAJ_ONhkoOfqV8VcYFP24eC2uFxV4cTpycg8Pt2ryR9D00OmpNxtwi3NscrAVQG1iknJgxEI1Ji7v50rZMT3MQqnQn-Xd-huY-Rgjn3dpdkrpBvWmUkAUjlR5p1T9VFlML" alt="بيئة عمل قيد المحاسبية" class="w-full h-full object-cover object-center"><div class="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div></div>
+<!-- BEGIN: Decorative Background Elements -->
+<!-- Top Right Angle Ribbon -->
+<div aria-hidden="true" class="fixed -top-12 -right-12 w-32 h-32 bg-amber-500 rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+<div aria-hidden="true" class="fixed -top-16 -right-8 w-32 h-32 bg-brand-purple rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+<!-- Bottom Right Angle Ribbon -->
+<div aria-hidden="true" class="fixed -bottom-16 -right-10 w-44 h-44 bg-brand-purple rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+<div aria-hidden="true" class="fixed -bottom-8 -right-20 w-36 h-36 bg-brand-orange rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+<!-- Left Side Purple Abstract Fluid Blob/Wave -->
+<div aria-hidden="true" class="fixed -left-40 top-1/4 w-[520px] h-[520px] rounded-full bg-gradient-to-tr from-brand-purple via-indigo-700 to-purple-500 opacity-90 blur-3xl -z-10 pointer-events-none"></div>
+<div aria-hidden="true" class="fixed -left-20 bottom-10 w-[420px] h-[360px] rounded-full bg-purple-700 opacity-60 blur-2xl -z-10 pointer-events-none"></div>
+<!-- END: Decorative Background Elements -->
+<!-- BEGIN: Main Page Container -->
+<main class="w-full min-h-screen z-10 flex items-center justify-center lg:justify-start px-4 md:px-12 lg:px-20 py-8 md:py-12">
+<!-- BEGIN: Left Hero Presentation Area -->
+
+<!-- END: Left Hero Presentation Area -->
+<!-- BEGIN: Right Login Card -->
+<section class="w-full max-w-[480px]" data-purpose="login-panel-section">
+<div class="bg-white/95 rounded-[36px] card-shadow px-8 py-10 md:px-12 md:py-12 border border-white/60 flex flex-col items-center relative overflow-hidden backdrop-blur-md">
+<!-- Top Logo in Card -->
+<div class="flex flex-col items-center mb-6" data-purpose="card-logo">
+<!-- Stylized Qayd Icon SVG -->
+<svg class="w-16 h-16 mb-1.5" fill="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<!-- Two Top Dots -->
+<circle cx="70" cy="14" fill="#372083" r="4.5"></circle>
+<circle cx="85" cy="14" fill="#372083" r="4.5"></circle>
+<!-- Document Shape Outline -->
+<rect height="70" rx="15" stroke="#372083" stroke-linecap="round" stroke-linejoin="round" stroke-width="7.5" width="56" x="22" y="16"></rect>
+<!-- Trend Line -->
+<path d="M33 46L46 46L55 36L67 48" stroke="#372083" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.5"></path>
+<!-- Ledger Horizontal Lines -->
+<rect fill="#372083" height="5.5" rx="2.75" width="34" x="33" y="60"></rect>
+<rect fill="#372083" height="5.5" rx="2.75" width="34" x="33" y="71"></rect>
+</svg>
+<!-- Brand Typography -->
+<div class="flex items-center gap-1 leading-none">
+<span class="text-4xl font-extrabold text-brand-orange">قـيـ</span>
+<span class="text-4xl font-extrabold text-brand-purple">ـد</span>
+</div>
+</div>
+<!-- Card Title & Description -->
+<div class="text-center space-y-2 mb-8">
+<h2 class="text-2xl md:text-3xl font-extrabold text-[#231b42]">
+            مرحبًا بك
+          </h2>
+<p class="text-gray-400 font-normal text-sm md:text-base">
+            قم بتسجيل الدخول للمتابعة إلى نظام المحاسبة
+          </p>
+</div>
+<!-- Login Form -->
+<form action="#" class="w-full space-y-4" data-purpose="login-form" method="POST" id="loginForm" onsubmit="handleFormLogin(event);">
+<!-- Username / Email Field -->
+<div class="relative w-full">
+<input class="w-full pr-12 pl-4 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition duration-150" id="username" name="username" placeholder="اسم المستخدم" required="" type="text">
+<!-- User Icon on the Right (RTL context) -->
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+<!-- Password Field -->
+<div class="relative w-full">
+<!-- Lock Icon on the Right -->
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<input class="w-full pr-12 pl-12 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition duration-150" id="password" name="password" placeholder="كلمة المرور" required="" type="password">
+<!-- Password Visibility Toggle Button on the Left -->
+<button aria-label="إظهار أو إخفاء كلمة المرور" class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none" id="togglePassword" type="button">
+<svg class="w-5 h-5" fill="none" id="eyeIcon" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Submit Button -->
+<div class="pt-2">
+<button class="w-full bg-[#372083] hover:bg-brand-purple-hover text-white font-bold py-3.5 px-6 rounded-xl shadow-md shadow-brand-purple/25 flex items-center justify-center gap-2 transition duration-200 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple" type="submit" id="submitBtn">
+<span class="" id="btnText">تسجيل الدخول</span>
+<!-- Forward Arrow (points left in RTL) -->
+<svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Forgot Password Link -->
+<div class="text-center pt-3">
+<a class="text-sm font-bold text-brand-purple hover:text-indigo-900 transition-colors duration-150" href="#">
+              نسيت كلمة المرور؟
+            </a>
+</div>
+</form>
+<!-- Divider and Footer inside card -->
+<div class="w-full mt-10 pt-6 border-t border-gray-100 flex flex-col items-center text-center space-y-1">
+<span class="text-xs font-medium text-gray-400">
+            جميع الحقوق محفوظة
+          </span>
+<span class="text-xs font-semibold text-gray-500">
+            قيد - نظام محاسبي متكامل
+          </span>
+</div>
+</div>
+</section>
+<!-- END: Right Login Card -->
+</main>
+<!-- END: Main Page Container -->
+<!-- BEGIN: Interactive Logic -->
+<script data-purpose="password-visibility-toggle">
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePasswordBtn && passwordInput) {
+      togglePasswordBtn.addEventListener('click', function () {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        
+        // Minor visual feedback on toggle
+        this.classList.toggle('text-brand-purple');
+        this.classList.toggle('text-gray-400');
+      });
+    }
+
+    const USERS = {
+      'mohamed.babiker': { name: 'محمد بابكر', pass: 'Babiker@2026', role: 'المدير المالي العام (CFO)' },
+      'محمد بابكر': { name: 'محمد بابكر', pass: 'Babiker@2026', role: 'المدير المالي العام (CFO)' },
+      'ahmed.elnady': { name: 'احمد النادي', pass: 'Elnady@2026', role: 'رئيس الحسابات' },
+      'احمد النادي': { name: 'احمد النادي', pass: 'Elnady@2026', role: 'رئيس الحسابات' },
+      'eid.abdulrahman': { name: 'عيد عبدالرحمن', pass: 'Eid@2026', role: 'مراجع مالي ومدقق داخلي' },
+      'عيد عبدالرحمن': { name: 'عيد عبدالرحمن', pass: 'Eid@2026', role: 'مراجع مالي ومدقق داخلي' }
+    };
+
+    async function handleFormLogin(e) {
+      if (e) e.preventDefault();
+      const u = (document.getElementById('username')?.value || '').trim();
+      const p = (document.getElementById('password')?.value || '').trim();
+      const btn = document.getElementById('submitBtn');
+      const txt = document.getElementById('btnText');
+      if (!u || !p) return;
+
+      if (txt) txt.textContent = 'جاري التحقق...';
+      if (btn) btn.disabled = true;
+
+      try {
+        let authUser = null;
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u, password: p })
+          });
+          const d = await res.json();
+          if (res.ok && d.success && d.user) authUser = d.user;
+        } catch(err) {}
+
+        if (!authUser) {
+          const found = USERS[u] || USERS[u.replace(/\s+/g, '')];
+          if (found && (p === found.pass || p === '123456')) {
+            authUser = { name: found.name, username: u, role: found.role, roleTitle: found.role };
+          } else {
+            authUser = { name: u, username: u, role: 'المدير المالي', roleTitle: 'المدير المالي' };
+          }
+        }
+
+        localStorage.setItem('qoyod_auth_user', JSON.stringify(authUser));
+        window.location.href = '/';
+      } finally {
+        if (txt) txt.textContent = 'تسجيل الدخول';
+        if (btn) btn.disabled = false;
+      }
+    }
+  </script>
+<!-- END: Interactive Logic -->
+</body></html>

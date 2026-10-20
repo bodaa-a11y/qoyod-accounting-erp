@@ -3918,90 +3918,68 @@
 
   
   
+  
   <!-- ================= EXACT STITCH AUTHENTICATION / LOGIN OVERLAY ================= -->
-  <div id="loginOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-[#f6f7fb] overflow-x-hidden overflow-y-auto selection:bg-purple-100 selection:text-[#372083]">
-    
-    <!-- Background Desk & Laptop Image -->
+  <div id="loginOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-[#f6f7fb] overflow-x-hidden overflow-y-auto selection:bg-purple-100 selection:text-brand-purple">
     <div aria-hidden="true" class="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
       <img src="https://lh3.googleusercontent.com/aida/AEtjO1Xj-tKqsfgXmj6W4M1C0NO9HDFDUcSFQqGmPnynWhiUwUE425f89yN-PJrQWmgtfkS_AUxlHUHMxBxlPdyBq1xaXDosliuF_tp77Er9oVJUTwiZKiuHDZ1CqLhAJ_ONhkoOfqV8VcYFP24eC2uFxV4cTpycg8Pt2ryR9D00OmpNxtwi3NscrAVQG1iknJgxEI1Ji7v50rZMT3MQqnQn-Xd-huY-Rgjn3dpdkrpBvWmUkAUjlR5p1T9VFlML" alt="بيئة عمل قيد المحاسبية" class="w-full h-full object-cover object-center">
-      <div class="absolute inset-0 bg-white/20 backdrop-blur-[1px]"></div>
+      <div class="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
     </div>
-
-    <!-- Decorative Corner Ribbons (Top & Bottom Right) -->
-    <div aria-hidden="true" class="fixed -top-12 -right-12 w-32 h-32 bg-[#f97316] rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
-    <div aria-hidden="true" class="fixed -top-16 -right-6 w-32 h-32 bg-[#372083] rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
-    <div aria-hidden="true" class="fixed -bottom-16 -right-10 w-44 h-44 bg-[#372083] rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
-    <div aria-hidden="true" class="fixed -bottom-8 -right-20 w-36 h-36 bg-[#f97316] rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
-
-    <!-- Left Side Fluid Purple Wave Gradient Blobs -->
-    <div aria-hidden="true" class="fixed -left-40 top-1/4 w-[520px] h-[520px] rounded-full bg-gradient-to-tr from-[#372083] via-indigo-700 to-purple-500 opacity-90 blur-3xl -z-10 pointer-events-none"></div>
+    <!-- BEGIN: Decorative Background Elements -->
+    <!-- Top Right Angle Ribbon -->
+    <div aria-hidden="true" class="fixed -top-12 -right-12 w-32 h-32 bg-amber-500 rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+    <div aria-hidden="true" class="fixed -top-16 -right-8 w-32 h-32 bg-brand-purple rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+    <!-- Bottom Right Angle Ribbon -->
+    <div aria-hidden="true" class="fixed -bottom-16 -right-10 w-44 h-44 bg-brand-purple rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+    <div aria-hidden="true" class="fixed -bottom-8 -right-20 w-36 h-36 bg-brand-orange rotate-45 transform pointer-events-none z-0 hidden lg:block"></div>
+    <!-- Left Side Purple Abstract Fluid Blob/Wave -->
+    <div aria-hidden="true" class="fixed -left-40 top-1/4 w-[520px] h-[520px] rounded-full bg-gradient-to-tr from-brand-purple via-indigo-700 to-purple-500 opacity-90 blur-3xl -z-10 pointer-events-none"></div>
     <div aria-hidden="true" class="fixed -left-20 bottom-10 w-[420px] h-[360px] rounded-full bg-purple-700 opacity-60 blur-2xl -z-10 pointer-events-none"></div>
+    <!-- END: Decorative Background Elements -->
 
-    <!-- Main Container: 2-Column Split (Right: Login Card, Left: Hero Presentation) -->
-    <main class="w-full min-h-screen z-10 flex flex-col lg:flex-row items-center justify-between px-6 md:px-12 lg:px-24 py-8 md:py-12 max-w-[1700px] mx-auto">
-      
-      <!-- RIGHT COLUMN: Login Card (First child in RTL aligns to the Right) -->
-      <section class="w-full max-w-[460px] my-auto" data-purpose="login-panel-section">
-        <div class="bg-white/95 rounded-[36px] shadow-[0_25px_60px_-15px_rgba(55,32,131,0.12),0_0_1px_1px_rgba(0,0,0,0.03)] px-8 py-10 md:px-11 md:py-11 border border-white/60 flex flex-col items-center relative overflow-hidden backdrop-blur-md">
-          
+    <!-- BEGIN: Main Page Container -->
+    <main class="w-full min-h-screen z-10 flex items-center justify-center lg:justify-start px-4 md:px-12 lg:px-20 py-8 md:py-12">
+      <!-- BEGIN: Left Hero Presentation Area -->
+
+      <!-- END: Left Hero Presentation Area -->
+      <!-- BEGIN: Right Login Card -->
+      <section class="w-full max-w-[480px]" data-purpose="login-panel-section">
+        <div class="bg-white/95 rounded-[36px] card-shadow px-8 py-10 md:px-12 md:py-12 border border-white/60 flex flex-col items-center relative overflow-hidden backdrop-blur-md">
           <!-- Top Logo in Card -->
-          <div class="flex flex-col items-center mb-5" data-purpose="card-logo">
+          <div class="flex flex-col items-center mb-6" data-purpose="card-logo">
             <!-- Stylized Qayd Icon SVG -->
-            <svg class="w-16 h-16 mb-1" fill="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-16 h-16 mb-1.5" fill="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <!-- Two Top Dots -->
               <circle cx="70" cy="14" fill="#372083" r="4.5"></circle>
               <circle cx="85" cy="14" fill="#372083" r="4.5"></circle>
+              <!-- Document Shape Outline -->
               <rect height="70" rx="15" stroke="#372083" stroke-linecap="round" stroke-linejoin="round" stroke-width="7.5" width="56" x="22" y="16"></rect>
+              <!-- Trend Line -->
               <path d="M33 46L46 46L55 36L67 48" stroke="#372083" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.5"></path>
+              <!-- Ledger Horizontal Lines -->
               <rect fill="#372083" height="5.5" rx="2.75" width="34" x="33" y="60"></rect>
               <rect fill="#372083" height="5.5" rx="2.75" width="34" x="33" y="71"></rect>
             </svg>
             <!-- Brand Typography -->
-            <div class="flex items-center gap-1 leading-none select-none">
-              <span class="text-4xl font-extrabold text-[#f97316]">قـيـ</span>
-              <span class="text-4xl font-extrabold text-[#372083]">ـد</span>
+            <div class="flex items-center gap-1 leading-none">
+              <span class="text-4xl font-extrabold text-brand-orange">قـيـ</span>
+              <span class="text-4xl font-extrabold text-brand-purple">ـد</span>
             </div>
           </div>
-
           <!-- Card Title & Description -->
-          <div class="text-center space-y-1.5 mb-5">
+          <div class="text-center space-y-2 mb-8">
             <h2 class="text-2xl md:text-3xl font-extrabold text-[#231b42]">
               مرحبًا بك
             </h2>
-            <p class="text-gray-400 font-normal text-xs md:text-sm">
+            <p class="text-gray-400 font-normal text-sm md:text-base">
               قم بتسجيل الدخول للمتابعة إلى نظام المحاسبة
             </p>
           </div>
-
-          <!-- Quick User Switcher Chips (3 Users) -->
-          <div class="w-full mb-4">
-            <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1.5 px-1">
-              <span>دخول سريع للمستخدمين:</span>
-              <span id="selectedPasswordHint" class="text-[#372083] font-bold"></span>
-            </div>
-            <div class="grid grid-cols-3 gap-1.5">
-              <button type="button" onclick="selectQuickUser('mohamed.babiker')" id="chip-mohamed" class="quick-user-chip text-center py-1.5 px-2 rounded-xl border border-slate-200 bg-white hover:border-[#372083] hover:bg-purple-50 transition text-xs font-bold text-slate-700">
-                محمد بابكر
-              </button>
-              <button type="button" onclick="selectQuickUser('ahmed.elnady')" id="chip-ahmed" class="quick-user-chip text-center py-1.5 px-2 rounded-xl border border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50 transition text-xs font-bold text-slate-700">
-                احمد النادي
-              </button>
-              <button type="button" onclick="selectQuickUser('eid.abdulrahman')" id="chip-eid" class="quick-user-chip text-center py-1.5 px-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-500 hover:bg-emerald-50 transition text-xs font-bold text-slate-700">
-                عيد عبدالرحمن
-              </button>
-            </div>
-          </div>
-
           <!-- Login Form -->
-          <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="w-full space-y-3.5" data-purpose="login-form">
-            
-            <!-- Error Alert -->
-            <div id="loginErrorAlert" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center">
-              <span id="loginErrorMessage">اسم المستخدم أو كلمة المرور غير صحيحة</span>
-            </div>
-
+          <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="w-full space-y-4" data-purpose="login-form">
             <!-- Username / Email Field -->
             <div class="relative w-full">
-              <input class="w-full pr-12 pl-4 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#372083]/20 focus:border-[#372083] transition duration-150" id="loginUsername" name="username" placeholder="اسم المستخدم" required="" type="text">
+              <input class="w-full pr-12 pl-4 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition duration-150" id="loginUsername" name="username" placeholder="اسم المستخدم" required="" type="text">
               <!-- User Icon on the Right (RTL context) -->
               <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -4009,7 +3987,6 @@
                 </svg>
               </div>
             </div>
-
             <!-- Password Field -->
             <div class="relative w-full">
               <!-- Lock Icon on the Right -->
@@ -4018,7 +3995,7 @@
                   <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
               </div>
-              <input class="w-full pr-12 pl-12 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#372083]/20 focus:border-[#372083] transition duration-150 font-mono" id="loginPassword" name="password" placeholder="كلمة المرور" required="" type="password">
+              <input class="w-full pr-12 pl-12 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition duration-150" id="loginPassword" name="password" placeholder="كلمة المرور" required="" type="password">
               <!-- Password Visibility Toggle Button on the Left -->
               <button aria-label="إظهار أو إخفاء كلمة المرور" class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer" id="togglePassword" onclick="togglePasswordVisibility()" type="button">
                 <svg class="w-5 h-5" fill="none" id="eyeIcon" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -4026,10 +4003,9 @@
                 </svg>
               </button>
             </div>
-
             <!-- Submit Button -->
             <div class="pt-2">
-              <button id="loginSubmitBtn" class="w-full bg-[#372083] hover:bg-[#2d196c] text-white font-bold py-3.5 px-6 rounded-xl shadow-md shadow-[#372083]/25 flex items-center justify-center gap-2 transition duration-200 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#372083] cursor-pointer" type="submit">
+              <button class="w-full bg-[#372083] hover:bg-brand-purple-hover text-white font-bold py-3.5 px-6 rounded-xl shadow-md shadow-brand-purple/25 flex items-center justify-center gap-2 transition duration-200 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-purple cursor-pointer" type="submit" id="loginSubmitBtn">
                 <span id="loginBtnText">تسجيل الدخول</span>
                 <!-- Forward Arrow (points left in RTL) -->
                 <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -4037,17 +4013,15 @@
                 </svg>
               </button>
             </div>
-
             <!-- Forgot Password Link -->
-            <div class="text-center pt-2">
-              <a class="text-sm font-bold text-[#372083] hover:text-indigo-900 transition-colors duration-150" href="javascript:void(0)" onclick="showToast('يرجى مراجعة إدارة النظام لاستعادة كلمة المرور')">
+            <div class="text-center pt-3">
+              <a class="text-sm font-bold text-brand-purple hover:text-indigo-900 transition-colors duration-150" href="javascript:void(0)" onclick="showToast('يرجى التواصل مع مسؤول النظام لاستعادة كلمة المرور')">
                 نسيت كلمة المرور؟
               </a>
             </div>
           </form>
-
           <!-- Divider and Footer inside card -->
-          <div class="w-full mt-6 pt-4 border-t border-gray-100 flex flex-col items-center text-center space-y-0.5">
+          <div class="w-full mt-10 pt-6 border-t border-gray-100 flex flex-col items-center text-center space-y-1">
             <span class="text-xs font-medium text-gray-400">
               جميع الحقوق محفوظة
             </span>
@@ -4055,43 +4029,11 @@
               قيد - نظام محاسبي متكامل
             </span>
           </div>
-
         </div>
       </section>
-
-      <!-- LEFT COLUMN: Hero Presentation Area (Second child in RTL aligns to the Left) -->
-      <section class="hidden lg:flex flex-col items-center lg:items-start text-center lg:text-right max-w-lg space-y-6 my-auto pr-8">
-        
-        <!-- Large Qoyod Logo -->
-        <div class="flex flex-col items-center lg:items-start">
-          <svg class="w-20 h-20 mb-2 drop-shadow-md" fill="none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="70" cy="14" fill="#372083" r="5"></circle>
-            <circle cx="85" cy="14" fill="#372083" r="5"></circle>
-            <rect height="70" rx="15" stroke="#372083" stroke-linecap="round" stroke-linejoin="round" stroke-width="7.5" width="56" x="22" y="16"></rect>
-            <path d="M33 46L46 46L55 36L67 48" stroke="#372083" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.5"></path>
-            <rect fill="#372083" height="5.5" rx="2.75" width="34" x="33" y="60"></rect>
-            <rect fill="#372083" height="5.5" rx="2.75" width="34" x="33" y="71"></rect>
-          </svg>
-          <div class="flex items-center gap-1 leading-none select-none">
-            <span class="text-5xl font-black text-[#f97316]">قـيـ</span>
-            <span class="text-5xl font-black text-[#372083]">ـد</span>
-          </div>
-        </div>
-
-        <!-- Typography Headlines -->
-        <div class="space-y-3">
-          <h1 class="text-4xl xl:text-5xl font-black text-[#231b42] leading-[1.3] tracking-tight">
-            إدارة محاسبية أسهل<br>
-            <span class="text-[#372083]">لأعمال أكثر نجاحاً</span>
-          </h1>
-          <p class="text-base xl:text-lg text-slate-500 font-semibold max-w-md leading-relaxed">
-            نظام محاسبي متكامل لدعم قراراتك المالية
-          </p>
-        </div>
-
-      </section>
-
+      <!-- END: Right Login Card -->
     </main>
+    <!-- END: Main Page Container -->
   </div>
 
 
