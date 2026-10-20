@@ -22,6 +22,65 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
+// Full System State API (Backed by Neon PostgreSQL)
+app.get('/api/state', async (req, res) => {
+  try {
+    const { pool } = require('./lib');
+    const result = await pool.query('SELECT data FROM system_state WHERE key = $1', ['main_state']);
+    if (result.rows.length > 0) {
+      return res.json(result.rows[0].data);
+    }
+    const dataFile = path.join(__dirname, '..', 'web', 'data.json');
+    if (fs.existsSync(dataFile)) {
+      return res.json(JSON.parse(fs.readFileSync(dataFile, 'utf8')));
+    }
+    res.json({});
+  } catch (err) {
+    console.error('State GET error:', err);
+    res.status(500).json({ error: 'خطأ في جلب بيانات النظام' });
+  }
+});
+
+app.post('/api/state', async (req, res) => {
+  try {
+    const { pool } = require('./lib');
+    const newState = req.body || {};
+    await pool.query(`
+      INSERT INTO system_state (key, data, updated_at)
+      VALUES ('main_state', $1, now())
+      ON CONFLICT (key) DO UPDATE
+      SET data = EXCLUDED.data, updated_at = now()
+    `, [newState]);
+    res.json({ success: true, message: 'تم حفظ البيانات بنجاح في قاعدة البيانات السحابية' });
+  } catch (err) {
+    console.error('State POST error:', err);
+    res.status(500).json({ error: 'خطأ في حفظ بيانات النظام' });
+  }
+});
+
+app.get('/api/auth/users', async (req, res) => {
+  try {
+    const { pool } = require('./lib');
+    const result = await pool.query('SELECT id, email, full_name, role FROM users');
+    const roleTitles = {
+      'cfo': 'المدير المالي العام (CFO)',
+      'chief_accountant': 'رئيس الحسابات (Chief Accountant)',
+      'auditor': 'مراجع مالي ومدقق داخلي (Internal Auditor)',
+      'admin': 'المدير العام'
+    };
+    const users = result.rows.map(u => ({
+      id: u.id,
+      name: u.full_name,
+      email: u.email,
+      role: u.role,
+      roleTitle: roleTitles[u.role] || u.role
+    }));
+    res.json({ success: true, users });
+  } catch (err) {
+    res.status(500).json({ error: 'خطأ في جلب قائمة المستخدمين' });
+  }
+});
+
 // Mount API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/entities', entityRoutes);
