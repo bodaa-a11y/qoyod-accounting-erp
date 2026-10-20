@@ -50,7 +50,6 @@
     <nav class="bg-white border-b border-slate-200/80 px-4">
       <div class="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto py-2 text-xs font-bold">
         <button onclick="switchTab('invoices')" id="tab-invoices" class="tab-btn px-4 py-2 rounded-xl bg-purple-50 text-purple-800">🧾 الفواتير والمبيعات</button>
-        <button onclick="switchTab('accounts')" id="tab-accounts" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">🌳 شجرة الحسابات</button>
         <button onclick="switchTab('journals')" id="tab-journals" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">⚖️ القيود اليومية</button>
         <button onclick="switchTab('trial-balance')" id="tab-trial-balance" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">📊 ميزان المراجعة</button>
         <button onclick="switchTab('balance-sheet')" id="tab-balance-sheet" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">🏛️ المركز المالي</button>
@@ -89,37 +88,6 @@
               </tr>
             </thead>
             <tbody id="invoicesTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- View 2: Chart of Accounts -->
-      <section id="view-accounts" class="space-y-4 hidden">
-        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-          <div>
-            <h2 class="text-base font-black text-slate-900">دليل وشجرة الحسابات</h2>
-            <p class="text-xs text-slate-400">الهيكل الهرمي للأصول والالتزامات وحقوق الملكية والإيرادات والمصروفات</p>
-          </div>
-          <button onclick="openNewAccountModal()" class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-black transition">
-            + إضافة حساب جديد
-          </button>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-          <table class="w-full text-right text-xs">
-            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
-              <tr>
-                <th class="p-3.5">الرمز</th>
-                <th class="p-3.5">اسم الحساب</th>
-                <th class="p-3.5 text-center">التصنيف</th>
-                <th class="p-3.5 text-center">النوع</th>
-                <th class="p-3.5 text-center">الطبيعة</th>
-                <th class="p-3.5 text-center">الحالة</th>
-              </tr>
-            </thead>
-            <tbody id="accountsTableBody" class="divide-y divide-slate-100 font-medium">
               <!-- Dynamically populated -->
             </tbody>
           </table>
