@@ -2,11 +2,25 @@
   "name": "qoyod-accounting-system",
   "version": "1.0.0",
   "description": "نظام قيد المحاسبي المتكامل لإدارة 5 كيانات مالية مع الامتثال للفوترة الإلكترونية هيئة الزكاة والضريبة (ZATCA)",
-  "main": "web/server.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node web/server.js",
-    "dev": "node web/server.js"
+    "start": "node src/server.js",
+    "test:unit": "node --test test/unit.test.js",
+    "test:api": "node --test test/api.test.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "migrate:legacy": "node scripts/migrate_legacy.js",
+    "backup": "node scripts/backup.js",
+    "dev": "node src/server.js"
   },
   "author": "Hajjaj",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1"
+  }
 }

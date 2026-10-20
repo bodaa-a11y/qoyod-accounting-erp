@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قيد ERP — النظام المحاسبي المتكامل</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #f8f9fc; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800">
+
+  <!-- Main Container -->
+  <div id="app" class="flex flex-col min-h-screen">
+    
+    <!-- Top Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-700 text-white flex items-center justify-center font-black text-xl shadow-xs">
+            ق
+          </div>
+          <div>
+            <h1 class="text-base font-black text-slate-900 leading-none">نظام قيد ERP</h1>
+            <span class="text-[11px] text-purple-700 font-bold">محاسبة القيد المزدوج 2.0</span>
+          </div>
+        </div>
+
+        <!-- Entity Switcher & User Status -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400 font-bold">المنشأة:</span>
+            <select id="entitySelector" onchange="onEntityChange(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-bold text-slate-800 focus:outline-none">
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <div class="flex items-center gap-2 pr-3 border-r border-slate-200 text-xs">
+            <span id="userNameBadge" class="font-bold text-slate-700">المدير المالي</span>
+            <button onclick="logout()" class="text-slate-400 hover:text-rose-600 transition" title="تسجيل الخروج">🚪</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="bg-white border-b border-slate-200/80 px-4">
+      <div class="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto py-2 text-xs font-bold">
+        <button onclick="switchTab('invoices')" id="tab-invoices" class="tab-btn px-4 py-2 rounded-xl bg-purple-50 text-purple-800">🧾 الفواتير والمبيعات</button>
+        <button onclick="switchTab('accounts')" id="tab-accounts" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">🌳 شجرة الحسابات</button>
+        <button onclick="switchTab('journals')" id="tab-journals" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">⚖️ القيود اليومية</button>
+        <button onclick="switchTab('trial-balance')" id="tab-trial-balance" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">📊 ميزان المراجعة</button>
+        <button onclick="switchTab('balance-sheet')" id="tab-balance-sheet" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">🏛️ المركز المالي</button>
+        <button onclick="switchTab('income-statement')" id="tab-income-statement" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">📈 قائمة الدخل</button>
+        <button onclick="switchTab('audit-log')" id="tab-audit-log" class="tab-btn px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-50">🔒 سجل التدقيق</button>
+      </div>
+    </nav>
+
+    <!-- Content Views -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 space-y-6">
+
+      <!-- View 1: Invoices & Receipts -->
+      <section id="view-invoices" class="space-y-4">
+        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-base font-black text-slate-900">فواتير المبيعات الضريبية</h2>
+            <p class="text-xs text-slate-400">إصدار وترحيل الفواتير وتحصيل سندات القبض مع ترحيل آلي للقيود</p>
+          </div>
+          <button onclick="openNewInvoiceModal()" class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-black transition shadow-xs">
+            + إنشاء فاتورة جديدة
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3.5">رقم الفاتورة</th>
+                <th class="p-3.5">العميل</th>
+                <th class="p-3.5">التاريخ</th>
+                <th class="p-3.5 text-left">المبلغ قبل الضريبة</th>
+                <th class="p-3.5 text-left">الضريبة (15%)</th>
+                <th class="p-3.5 text-left font-black text-slate-900">الإجمالي</th>
+                <th class="p-3.5 text-center">الحالة</th>
+                <th class="p-3.5 text-center">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 2: Chart of Accounts -->
+      <section id="view-accounts" class="space-y-4 hidden">
+        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-base font-black text-slate-900">دليل وشجرة الحسابات</h2>
+            <p class="text-xs text-slate-400">الهيكل الهرمي للأصول والالتزامات وحقوق الملكية والإيرادات والمصروفات</p>
+          </div>
+          <button onclick="openNewAccountModal()" class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-black transition">
+            + إضافة حساب جديد
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3.5">الرمز</th>
+                <th class="p-3.5">اسم الحساب</th>
+                <th class="p-3.5 text-center">التصنيف</th>
+                <th class="p-3.5 text-center">النوع</th>
+                <th class="p-3.5 text-center">الطبيعة</th>
+                <th class="p-3.5 text-center">الحالة</th>
+              </tr>
+            </thead>
+            <tbody id="accountsTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 3: Journals -->
+      <section id="view-journals" class="space-y-4 hidden">
+        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-base font-black text-slate-900">دفتر اليومية العامة</h2>
+            <p class="text-xs text-slate-400">سجل القيود المزدوجة المتزنة مع تتبع المصدر وإمكانية العكس المحاسبي</p>
+          </div>
+          <button onclick="openNewJournalModal()" class="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-black transition">
+            + قيد يدوي جديد
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3.5">رقم القيد</th>
+                <th class="p-3.5">التاريخ</th>
+                <th class="p-3.5">البيان</th>
+                <th class="p-3.5 text-center">المصدر</th>
+                <th class="p-3.5 text-left">المبلغ</th>
+                <th class="p-3.5 text-center">الحالة</th>
+                <th class="p-3.5 text-center">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="journalsTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 4: Trial Balance -->
+      <section id="view-trial-balance" class="space-y-4 hidden">
+        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <h2 class="text-base font-black text-slate-900">ميزان المراجعة بالأرصدة</h2>
+            <p class="text-xs text-slate-400">تدقيق إجمالي الحركات والأرصدة لضمان توازن المدين والدائن</p>
+          </div>
+          <span id="tbStatusBadge" class="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800">متزن ✓</span>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3.5">رمز الحساب</th>
+                <th class="p-3.5">اسم الحساب</th>
+                <th class="p-3.5 text-center">التصنيف</th>
+                <th class="p-3.5 text-left font-black text-blue-700">رصيد مدين</th>
+                <th class="p-3.5 text-left font-black text-purple-700">رصيد دائن</th>
+              </tr>
+            </thead>
+            <tbody id="trialBalanceTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically populated -->
+            </tbody>
+            <tfoot class="bg-slate-900 text-white font-black text-xs">
+              <tr>
+                <td class="p-3.5" colspan="3">المجموع الكلي</td>
+                <td class="p-3.5 text-left text-emerald-400" id="tbTotalDebit">0.00 ر.س</td>
+                <td class="p-3.5 text-left text-emerald-400" id="tbTotalCredit">0.00 ر.س</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 5: Balance Sheet -->
+      <section id="view-balance-sheet" class="space-y-4 hidden">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <h2 class="text-base font-black text-slate-900">قائمة المركز المالي (الميزانية العمومية)</h2>
+          <p class="text-xs text-slate-400">الأصول = الالتزامات + حقوق الملكية + أرباح الفترة الحالية</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="balanceSheetContent">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- View 6: Income Statement -->
+      <section id="view-income-statement" class="space-y-4 hidden">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <h2 class="text-base font-black text-slate-900">قائمة الدخل (الأرباح والخسائر)</h2>
+          <p class="text-xs text-slate-400">إجمالي الإيرادات، تكلفة النشاط، المصروفات وصافي الربح</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs max-w-xl mx-auto space-y-4 text-xs font-bold" id="incomeStatementContent">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- View 7: Audit Log -->
+      <section id="view-audit-log" class="space-y-4 hidden">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+          <h2 class="text-base font-black text-slate-900">سجل التدقيق الأمني والعمليات الحساسة</h2>
+          <p class="text-xs text-slate-400">سجل غير قابل للتعديل أو الحذف لتوثيق كل حركة مالية والمستخدم المنفذ</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3.5">الرقم</th>
+                <th class="p-3.5">الوقت والتاريخ</th>
+                <th class="p-3.5">المستخدم</th>
+                <th class="p-3.5">العملية</th>
+                <th class="p-3.5">نوع الكيان</th>
+                <th class="p-3.5">المعرف</th>
+              </tr>
+            </thead>
+            <tbody id="auditLogTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Modal: Receipt Voucher (+ سند قبض) -->
+  <div id="receiptModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 text-xs font-bold">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 class="text-sm font-black text-emerald-700">+ تسجيل سند قبض وتحصيل</h3>
+        <button onclick="closeModal('receiptModal')" class="text-slate-400 text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleCreateReceipt(event)" class="space-y-3">
+        <input type="hidden" id="receipt-invoice-id">
+        <div>
+          <label class="block text-slate-700 mb-1">المبلغ المحصل (ر.س):</label>
+          <input type="number" id="receipt-amount" step="0.01" required class="w-full border rounded p-2 text-emerald-700 font-black">
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1">حساب الإيداع (الصندوق أو البنك):</label>
+          <!-- Mandatory Correction 4: exact select rendering -->
+          <div id="raccContainer"></div>
+        </div>
+        <div>
+          <label class="block text-slate-700 mb-1">طريقة التحصيل:</label>
+          <select id="receipt-method" class="w-full border rounded p-2">
+            <option value="cash">نقداً (كاش)</option>
+            <option value="bank">تحويل بنكي</option>
+            <option value="pos">شبكة / مدى (POS)</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeModal('receiptModal')" class="px-3 py-1.5 text-slate-500 rounded">إلغاء</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-black">ترحيل السند</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-4 left-4 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 hidden"></div>
+
+  <!-- Core Client Script -->
+  <script>
+    const S = {
+      token: localStorage.getItem('qoyod_jwt') || '',
+      user: null,
+      entities: [],
+      currentEntityId: localStorage.getItem('qoyod_entity_id') || '',
+      accounts: [],
+      customers: [],
+      invoices: [],
+      journals: []
+    };
+
+    function esc(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Mandatory Correction 5:
+    // Support options._k for Idempotency-Key
+    async function api(method, path, body = null, opts = {}) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (S.token) headers['Authorization'] = 'Bearer ' + S.token;
+      if (opts._k) headers['Idempotency-Key'] = opts._k;
+
+      const res = await fetch('/api' + path, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : undefined
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'فشل الطلب البرمجي');
+      }
+      return data;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3500);
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-50', 'text-purple-800');
+        btn.classList.add('text-slate-600');
+      });
+
+      const targetSec = document.getElementById(`view-${tabName}`);
+      const targetBtn = document.getElementById(`tab-${tabName}`);
+      if (targetSec) targetSec.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.add('bg-purple-50', 'text-purple-800');
+        targetBtn.classList.remove('text-slate-600');
+      }
+
+      if (tabName === 'invoices') loadInvoices();
+      else if (tabName === 'accounts') loadAccounts();
+      else if (tabName === 'journals') loadJournals();
+      else if (tabName === 'trial-balance') loadTrialBalance();
+      else if (tabName === 'balance-sheet') loadBalanceSheet();
+      else if (tabName === 'income-statement') loadIncomeStatement();
+      else if (tabName === 'audit-log') loadAuditLog();
+    }
+
+    async function initApp() {
+      try {
+        const authRes = await api('GET', '/auth/me').catch(() => null);
+        if (!authRes || !authRes.user) {
+          // If not logged in, perform test auto-login or prompt
+          const loginRes = await api('POST', '/auth/login', {
+            email: 'admin@qoyod.local',
+            password: 'Admin123456!'
+          }).catch(() => null);
+          if (loginRes && loginRes.token) {
+            S.token = loginRes.token;
+            localStorage.setItem('qoyod_jwt', S.token);
+            S.user = loginRes.user;
+          }
+        } else {
+          S.user = authRes.user;
+        }
+
+        if (S.user) {
+          document.getElementById('userNameBadge').textContent = S.user.full_name || S.user.email;
+        }
+
+        // Load Entities
+        const entRes = await api('GET', '/entities');
+        S.entities = entRes.entities || [];
+        const selector = document.getElementById('entitySelector');
+        selector.innerHTML = '';
+        S.entities.forEach(e => {
+          const opt = document.createElement('option');
+          opt.value = e.id;
+          opt.textContent = `${e.name} (${e.code})`;
+          if (e.id === S.currentEntityId) opt.selected = true;
+          selector.appendChild(opt);
+        });
+
+        if (!S.currentEntityId && S.entities.length > 0) {
+          S.currentEntityId = S.entities[0].id;
+          localStorage.setItem('qoyod_entity_id', S.currentEntityId);
+        }
+
+        if (S.currentEntityId) {
+          await loadAccounts();
+          await loadInvoices();
+        }
+      } catch (err) {
+        console.error('Init error:', err);
+      }
+    }
+
+    function onEntityChange(newId) {
+      S.currentEntityId = newId;
+      localStorage.setItem('qoyod_entity_id', newId);
+      switchTab('invoices');
+    }
+
+    async function loadAccounts() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/accounts`);
+      S.accounts = res.accounts || [];
+
+      // Render Table
+      const tbody = document.getElementById('accountsTableBody');
+      if (tbody) {
+        tbody.innerHTML = S.accounts.map(a => `
+          <tr class="${a.is_group ? 'bg-slate-50 font-bold' : ''}">
+            <td class="p-3.5 font-mono text-purple-800">${esc(a.code)}</td>
+            <td class="p-3.5">${esc(a.name)}</td>
+            <td class="p-3.5 text-center">${esc(a.type)}</td>
+            <td class="p-3.5 text-center">${a.is_group ? 'رئيسي' : 'فرعي'}</td>
+            <td class="p-3.5 text-center">${a.nature === 'debit' ? 'مدين' : 'دائن'}</td>
+            <td class="p-3.5 text-center">${a.status === 'active' ? 'نشط' : 'معطل'}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Mandatory Correction 4:
+      // render receipt account selector
+      const raccContainer = document.getElementById('raccContainer');
+      if (raccContainer) {
+        raccContainer.innerHTML = `<select id="racc" class="w-full border rounded p-2 font-bold">${S.accounts.filter(a=>!a.is_group&&['cash','bank'].includes(a.sub_type)).map(a=>`<option value="${a.id}">${esc(a.code)} ${esc(a.name)}</option>`).join('')}</select>`;
+      }
+    }
+
+    async function loadInvoices() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/invoices`);
+      S.invoices = res.invoices || [];
+
+      const tbody = document.getElementById('invoicesTableBody');
+      if (!tbody) return;
+
+      if (S.invoices.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 font-bold">لا توجد فواتير مسجلة</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = S.invoices.map(inv => {
+        const sub = (inv.subtotal_halalas / 100).toFixed(2);
+        const vat = (inv.vat_halalas / 100).toFixed(2);
+        const tot = (inv.total_halalas / 100).toFixed(2);
+        const isDraft = inv.status === 'draft';
+        const isPosted = inv.status === 'posted';
+        const isPaid = inv.status === 'paid';
+
+        return `
+          <tr>
+            <td class="p-3.5 font-mono font-bold text-purple-900">${esc(inv.invoice_number)}</td>
+            <td class="p-3.5 font-bold">${esc(inv.customer_name || 'عميل')}</td>
+            <td class="p-3.5 text-slate-500">${esc(inv.issue_date)}</td>
+            <td class="p-3.5 text-left font-mono">${sub}</td>
+            <td class="p-3.5 text-left font-mono">${vat}</td>
+            <td class="p-3.5 text-left font-mono font-black text-slate-900">${tot} ر.س</td>
+            <td class="p-3.5 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${isPaid ? 'bg-emerald-100 text-emerald-800' : (isPosted ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800')}">
+                ${isPaid ? 'مدفوعة' : (isPosted ? 'مرحلة' : 'مسودة')}
+              </span>
+            </td>
+            <td class="p-3.5 text-center space-x-1 space-x-reverse">
+              ${isDraft ? `<button onclick="postInvoiceAction('${inv.id}')" class="px-2 py-1 bg-purple-700 text-white rounded text-[10px] font-bold">ترحيل</button>` : ''}
+              ${isPosted ? `<button onclick="openReceiptModalFor('${inv.id}', ${(inv.total_halalas - inv.paid_halalas)/100})" class="px-2 py-1 bg-emerald-600 text-white rounded text-[10px] font-bold">+ تحصيل</button>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function postInvoiceAction(id) {
+      try {
+        await api('POST', `/entities/${S.currentEntityId}/invoices/${id}/post`);
+        showToast('تم ترحيل الفاتورة بنجاح!');
+        loadInvoices();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    function openReceiptModalFor(invId, remaining) {
+      document.getElementById('receipt-invoice-id').value = invId;
+      document.getElementById('receipt-amount').value = remaining.toFixed(2);
+      document.getElementById('receiptModal').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    async function handleCreateReceipt(e) {
+      e.preventDefault();
+      const invoiceId = document.getElementById('receipt-invoice-id').value;
+      const amount = document.getElementById('receipt-amount').value;
+      const cashAccountId = document.getElementById('racc').value;
+      const method = document.getElementById('receipt-method').value;
+
+      try {
+        await api('POST', `/entities/${S.currentEntityId}/receipts`, {
+          invoice_id: invoiceId,
+          amount,
+          cash_account_id: cashAccountId,
+          method
+        });
+        closeModal('receiptModal');
+        showToast('تم تسجيل سند القبض وترحيل القيد بنجاح!');
+        loadInvoices();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function loadJournals() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/journals`);
+      const tbody = document.getElementById('journalsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = (res.journals || []).map(j => `
+        <tr>
+          <td class="p-3.5 font-mono text-purple-900">${esc(j.journal_number)}</td>
+          <td class="p-3.5 text-slate-500">${esc(j.date)}</td>
+          <td class="p-3.5 font-bold">${esc(j.description)}</td>
+          <td class="p-3.5 text-center">${esc(j.source_type)}</td>
+          <td class="p-3.5 text-left font-mono font-black">${(j.total_halalas / 100).toFixed(2)} ر.س</td>
+          <td class="p-3.5 text-center">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${j.status === 'reversed' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+              ${j.status === 'reversed' ? 'معكوس' : 'مرحل'}
+            </span>
+          </td>
+          <td class="p-3.5 text-center">
+            ${j.status !== 'reversed' ? `<button onclick="reverseJournalAction('${j.id}')" class="px-2 py-1 bg-slate-200 hover:bg-rose-100 hover:text-rose-700 text-slate-700 rounded text-[10px]">عكس</button>` : '-'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function reverseJournalAction(id) {
+      if (!confirm('هل تريد عكس هذا القيد محاسبياً؟')) return;
+      try {
+        await api('POST', `/entities/${S.currentEntityId}/journals/${id}/reverse`, { reason: 'عكس اختياري' });
+        showToast('تم عكس القيد بنجاح');
+        loadJournals();
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    async function loadTrialBalance() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/reports/trial-balance`);
+      const tbody = document.getElementById('trialBalanceTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = (res.accounts || []).map(a => `
+        <tr>
+          <td class="p-3.5 font-mono text-purple-900">${esc(a.code)}</td>
+          <td class="p-3.5 font-bold">${esc(a.name)}</td>
+          <td class="p-3.5 text-center">${esc(a.type)}</td>
+          <td class="p-3.5 text-left font-mono text-blue-700 font-bold">${a.netDebit > 0 ? a.debitFormatted : '-'}</td>
+          <td class="p-3.5 text-left font-mono text-purple-700 font-bold">${a.netCredit > 0 ? a.creditFormatted : '-'}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('tbTotalDebit').textContent = `${res.totals.debitFormatted} ر.س`;
+      document.getElementById('tbTotalCredit').textContent = `${res.totals.creditFormatted} ر.س`;
+      const badge = document.getElementById('tbStatusBadge');
+      if (res.totals.balanced) {
+        badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800';
+        badge.textContent = 'متزن ✓';
+      } else {
+        badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800';
+        badge.textContent = 'غير متزن ⚠️';
+      }
+    }
+
+    async function loadBalanceSheet() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/reports/balance-sheet`);
+      const container = document.getElementById('balanceSheetContent');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="bg-white p-5 rounded-2xl border space-y-3 text-xs">
+          <h3 class="font-black text-blue-700 border-b pb-2">الأصول (Assets)</h3>
+          ${res.assets.map(a => `<div class="flex justify-between py-1"><span>${esc(a.name)}</span><span class="font-mono">${a.formatted}</span></div>`).join('')}
+          <div class="flex justify-between border-t pt-2 font-black text-sm">
+            <span>إجمالي الأصول:</span>
+            <span class="font-mono">${res.totals.assetsFormatted} ر.س</span>
+          </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border space-y-3 text-xs">
+          <h3 class="font-black text-purple-700 border-b pb-2">الالتزامات وحقوق الملكية</h3>
+          ${res.liabilities.map(a => `<div class="flex justify-between py-1"><span>${esc(a.name)}</span><span class="font-mono">${a.formatted}</span></div>`).join('')}
+          ${res.equity.map(a => `<div class="flex justify-between py-1"><span>${esc(a.name)}</span><span class="font-mono">${a.formatted}</span></div>`).join('')}
+          <div class="flex justify-between py-1 text-emerald-700">
+            <span>أرباح الفترة الحالية:</span>
+            <span class="font-mono">${(res.totals.currentEarnings / 100).toFixed(2)}</span>
+          </div>
+          <div class="flex justify-between border-t pt-2 font-black text-sm">
+            <span>إجمالي الالتزامات وحقوق الملكية:</span>
+            <span class="font-mono">${res.totals.liabilitiesAndEquityFormatted} ر.س</span>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadIncomeStatement() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/reports/income-statement`);
+      const container = document.getElementById('incomeStatementContent');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="flex justify-between py-1 text-emerald-700">
+          <span>إجمالي الإيرادات:</span>
+          <span class="font-mono">+${res.totals.revenueFormatted} ر.س</span>
+        </div>
+        <div class="flex justify-between py-1 text-rose-600">
+          <span>تكلفة النشاط (COGS):</span>
+          <span class="font-mono">-${res.totals.cogsFormatted} ر.س</span>
+        </div>
+        <div class="flex justify-between py-2 border-t text-slate-900 font-black">
+          <span>إجمالي الربح:</span>
+          <span class="font-mono">${res.totals.grossFormatted} ر.س</span>
+        </div>
+        <div class="flex justify-between py-1 text-rose-600">
+          <span>المصروفات التشغيلية (OPEX):</span>
+          <span class="font-mono">-${res.totals.opexFormatted} ر.س</span>
+        </div>
+        <div class="flex justify-between py-3 border-t-2 text-base font-black text-purple-900 bg-purple-50 p-3 rounded-xl">
+          <span>صافي الربح:</span>
+          <span class="font-mono">${res.totals.netFormatted} ر.س</span>
+        </div>
+      `;
+    }
+
+    async function loadAuditLog() {
+      if (!S.currentEntityId) return;
+      const res = await api('GET', `/entities/${S.currentEntityId}/audit-log`);
+      const tbody = document.getElementById('auditLogTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = (res.audit || []).map(a => `
+        <tr>
+          <td class="p-3.5 font-mono">${a.id}</td>
+          <td class="p-3.5 text-slate-500">${new Date(a.created_at).toLocaleString('ar-SA')}</td>
+          <td class="p-3.5 font-bold">${esc(a.user_name || 'النظام')}</td>
+          <td class="p-3.5 font-black text-purple-800">${esc(a.action)}</td>
+          <td class="p-3.5">${esc(a.entity_type)}</td>
+          <td class="p-3.5 font-mono text-slate-400">${esc(a.entity_id_ref || '-')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function logout() {
+      localStorage.removeItem('qoyod_jwt');
+      location.reload();
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
