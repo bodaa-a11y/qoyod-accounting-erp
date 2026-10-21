@@ -3531,7 +3531,357 @@
     }
 
     // Modal Actions: Invoices
-    function openNewInvoiceModal() {
+    
+  // ================= MODERN INVOICE STUDIO SCRIPTS =================
+  let studioRows = [
+    { desc: 'أتعاب استشارات وتراخيص نظامية', qty: 1, price: 5000 }
+  ];
+
+  let currentCustomLogo = localStorage.getItem('qoyod_custom_invoice_logo') || '/logo.png';
+
+  function triggerLogoUpload() {
+    const fileInput = document.getElementById('customLogoFileInput');
+    if (fileInput) fileInput.click();
+  }
+
+  function handleCustomLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      currentCustomLogo = e.target.result;
+      localStorage.setItem('qoyod_custom_invoice_logo', currentCustomLogo);
+      const img = document.getElementById('studioPreviewLogo');
+      if (img) img.src = currentCustomLogo;
+      showToast('تم تحديث شعار الفاتورة بنجاح!', 'success');
+      renderStudioLivePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function toggleStudioLivePreview() {
+    const p = document.getElementById('studioLivePreviewContainer');
+    const txt = document.getElementById('previewToggleText');
+    if (!p) return;
+    if (p.classList.contains('hidden')) {
+      p.classList.remove('hidden');
+      if (txt) txt.textContent = 'إخفاء المعاينة';
+    } else {
+      p.classList.add('hidden');
+      if (txt) txt.textContent = 'إظهار المعاينة';
+    }
+  }
+
+  function updateStudioDocType() {
+    const type = document.getElementById('studio-doc-type').value;
+    const titleAr = document.getElementById('previewDocTitleAr');
+    const titleEn = document.getElementById('previewDocTitleEn');
+    const numInput = document.getElementById('studio-doc-number');
+
+    if (type === 'quotation') {
+      if (titleAr) titleAr.textContent = 'عرض سعر';
+      if (titleEn) titleEn.textContent = 'QUOTATION';
+      if (numInput && !numInput.value.startsWith('QUO-')) numInput.value = 'QUO-000100';
+    } else if (type === 'proforma') {
+      if (titleAr) titleAr.textContent = 'فاتورة مبدئية';
+      if (titleEn) titleEn.textContent = 'PROFORMA INVOICE';
+      if (numInput && !numInput.value.startsWith('PRO-')) numInput.value = 'PRO-000100';
+    } else {
+      if (titleAr) titleAr.textContent = 'فاتورة ضريبية';
+      if (titleEn) titleEn.textContent = 'TAX INVOICE';
+      if (numInput && (numInput.value.startsWith('QUO-') || numInput.value.startsWith('PRO-'))) numInput.value = 'INV-2026-' + String(state.invoices.length + 1).padStart(3, '0');
+    }
+    renderStudioLivePreview();
+  }
+
+  function onStudioEntityChange() {
+    const entity = document.getElementById('studio-entity').value;
+    const details = document.getElementById('studio-entity-details');
+    const entityInfo = {
+      law: { ar: 'شركة حجاج للمحاماة والاستشارات القانونية', en: 'Hajjaj Law & Legal Consultations', cr: '1010987654', vat: '310123456700003', addr: 'طريق الملك عبدالله، الرياض' },
+      restaurant: { ar: 'مطعم مذاق البخاري والشاورما', en: 'Mazaq Al Bukhari Restaurant', cr: '1010765432', vat: '310987654300003', addr: 'شارع التحلية، الرياض' },
+      farm: { ar: 'مزرعة الواحة الخضراء للمنتجات الزراعية', en: 'Green Oasis Farm', cr: '1010543210', vat: '310654321000003', addr: 'الخرج، منطقة الرياض' },
+      barber: { ar: 'صالون الأناقة الرجالي', en: 'Elegance Men Salon', cr: '1010432109', vat: '310432109800003', addr: 'حي الياسمين، الرياض' },
+      home: { ar: 'الذمة المالية الشخصية والمنزلية', en: 'Personal Household', cr: 'خاص', vat: 'غير خاضع', addr: 'الرياض' }
+    };
+
+    const cur = entityInfo[entity] || entityInfo.law;
+    if (details) details.textContent = `${cur.addr} • الرقم الضريبي: ${cur.vat}`;
+    renderStudioLivePreview();
+  }
+
+  function addStudioInvoiceRow() {
+    studioRows.push({ desc: '', qty: 1, price: 0 });
+    renderStudioEditorRows();
+    renderStudioLivePreview();
+  }
+
+  function removeStudioInvoiceRow(index) {
+    if (studioRows.length <= 1) {
+      showToast('يجب أن تحتوي الفاتورة على بند واحد على الأقل', 'error');
+      return;
+    }
+    studioRows.splice(index, 1);
+    renderStudioEditorRows();
+    renderStudioLivePreview();
+  }
+
+  function updateStudioRow(index, field, value) {
+    if (field === 'qty' || field === 'price') {
+      studioRows[index][field] = parseFloat(value) || 0;
+    } else {
+      studioRows[index][field] = value;
+    }
+    calculateStudioTotals();
+    renderStudioLivePreview();
+  }
+
+  function renderStudioEditorRows() {
+    const tbody = document.getElementById('studioItemsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    studioRows.forEach((row, i) => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50/50 transition';
+      const rowTotal = (row.qty || 0) * (row.price || 0) * 1.15;
+
+      tr.innerHTML = `
+        <td class="p-3 text-center font-bold text-slate-400">${i + 1}</td>
+        <td class="p-3">
+          <input type="text" value="${row.desc || ''}" placeholder="وصف الخدمة أو الصنف..." oninput="updateStudioRow(${i}, 'desc', this.value)" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-purple-600">
+        </td>
+        <td class="p-3">
+          <input type="number" min="1" step="1" value="${row.qty || 1}" oninput="updateStudioRow(${i}, 'qty', this.value)" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-center focus:outline-none focus:border-purple-600">
+        </td>
+        <td class="p-3">
+          <input type="number" min="0" step="0.01" value="${row.price || 0}" oninput="updateStudioRow(${i}, 'price', this.value)" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold focus:outline-none focus:border-purple-600">
+        </td>
+        <td class="p-3 text-slate-500 font-bold">15%</td>
+        <td class="p-3 font-black text-purple-900">${formatSAR(rowTotal)} ر.س</td>
+        <td class="p-3 text-center">
+          <button type="button" onclick="removeStudioInvoiceRow(${i})" class="text-slate-300 hover:text-red-500 transition p-1" title="حذف البند">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    const countSpan = document.getElementById('studioItemsCount');
+    if (countSpan) countSpan.textContent = studioRows.length;
+    calculateStudioTotals();
+  }
+
+  function calculateStudioTotals() {
+    let subtotal = 0;
+    studioRows.forEach(r => {
+      subtotal += (r.qty || 0) * (r.price || 0);
+    });
+    const vat = subtotal * 0.15;
+    const grand = subtotal + vat;
+
+    const s = document.getElementById('studioEditorSubtotal');
+    const v = document.getElementById('studioEditorVat');
+    const g = document.getElementById('studioEditorGrand');
+    if (s) s.textContent = formatSAR(subtotal);
+    if (v) v.textContent = formatSAR(vat);
+    if (g) g.textContent = formatSAR(grand);
+
+    return { subtotal, vat, grand };
+  }
+
+  function renderStudioLivePreview() {
+    const { subtotal, vat, grand } = calculateStudioTotals();
+    const entity = document.getElementById('studio-entity')?.value || 'law';
+    const client = document.getElementById('studio-client')?.value || 'العميل الكريم';
+    const date = document.getElementById('studio-date')?.value || new Date().toISOString().substring(0, 10);
+    const docNum = document.getElementById('studio-doc-number')?.value || 'INV-2026-001';
+    const status = document.getElementById('studio-status')?.value || 'paid';
+    const terms = document.getElementById('studio-terms')?.value || 'شكراً لتعاملكم معنا • نظام قـيـد المحاسبي المتكامل';
+    const template = document.getElementById('studio-template')?.value || 'modern_purple';
+
+    const entityInfo = {
+      law: { ar: 'شركة حجاج للمحاماة والاستشارات القانونية', en: 'Hajjaj Law & Legal Consultations', cr: '1010987654', vat: '310123456700003' },
+      restaurant: { ar: 'مطعم مذاق البخاري والشاورما', en: 'Mazaq Al Bukhari Restaurant', cr: '1010765432', vat: '310987654300003' },
+      farm: { ar: 'مزرعة الواحة الخضراء للمنتجات الزراعية', en: 'Green Oasis Farm', cr: '1010543210', vat: '310654321000003' },
+      barber: { ar: 'صالون الأناقة الرجالي', en: 'Elegance Men Salon', cr: '1010432109', vat: '310432109800003' },
+      home: { ar: 'الذمة المالية الشخصية والمنزلية', en: 'Personal Household', cr: 'خاص', vat: 'غير خاضع' }
+    };
+    const curEnt = entityInfo[entity] || entityInfo.law;
+
+    // Apply template themes to paper
+    const paper = document.getElementById('studioPaperDocument');
+    if (paper) {
+      if (template === 'clean_corporate') {
+        paper.style.borderColor = '#cbd5e1';
+        paper.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.05)';
+      } else if (template === 'minimalist_classic') {
+        paper.style.borderColor = '#000000';
+        paper.style.boxShadow = 'none';
+      } else {
+        paper.style.borderColor = '#e2e8f0';
+        paper.style.boxShadow = '0 20px 35px -10px rgba(109, 40, 217, 0.12)';
+      }
+    }
+
+    const nameAr = document.getElementById('previewEntityName');
+    const nameEn = document.getElementById('previewEntityEnName');
+    const crVat = document.getElementById('previewEntityCR');
+    if (nameAr) nameAr.textContent = curEnt.ar;
+    if (nameEn) nameEn.textContent = curEnt.en;
+    if (crVat) crVat.textContent = `س.ت: ${curEnt.cr} | ر.ض: ${curEnt.vat}`;
+
+    const docNumSpan = document.getElementById('previewDocNum');
+    const docDateSpan = document.getElementById('previewDocDate');
+    const clientSpan = document.getElementById('previewClientName');
+    if (docNumSpan) docNumSpan.textContent = docNum;
+    if (docDateSpan) docDateSpan.textContent = date;
+    if (clientSpan) clientSpan.textContent = client;
+
+    // Status Badge
+    const badgeContainer = document.getElementById('previewStatusBadge');
+    if (badgeContainer) {
+      if (status === 'paid') {
+        badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px]">مسددة ✓</span>';
+      } else if (status === 'unpaid') {
+        badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-black text-[10px]">غير مسددة ⏳</span>';
+      } else {
+        badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 font-black text-[10px]">معلقة</span>';
+      }
+    }
+
+    // Items Tbody
+    const tbody = document.getElementById('previewItemsTbody');
+    if (tbody) {
+      tbody.innerHTML = '';
+      studioRows.forEach((r, idx) => {
+        const itemSub = (r.qty || 0) * (r.price || 0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-2 text-center text-slate-400 font-bold">${idx + 1}</td>
+          <td class="p-2 font-bold text-slate-800">${r.desc || 'بند مالي'}</td>
+          <td class="p-2 text-center text-slate-600">${r.qty || 1}</td>
+          <td class="p-2 text-slate-600">${formatSAR(r.price || 0)}</td>
+          <td class="p-2 text-left font-black text-slate-900">${formatSAR(itemSub)} ر.س</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Totals
+    const pSub = document.getElementById('previewSubtotal');
+    const pVat = document.getElementById('previewVat');
+    const pGrand = document.getElementById('previewGrandTotal');
+    if (pSub) pSub.textContent = `${formatSAR(subtotal)} ر.س`;
+    if (pVat) pVat.textContent = `${formatSAR(vat)} ر.س`;
+    if (pGrand) pGrand.textContent = `${formatSAR(grand)} ر.س`;
+
+    // Footer Terms
+    const footTerms = document.getElementById('previewFooterTerms');
+    if (footTerms) footTerms.textContent = terms;
+
+    // Render ZATCA QR
+    const qrDiv = document.getElementById('studioLiveQrContainer');
+    if (qrDiv) {
+      qrDiv.innerHTML = '';
+      const zatcaPayload = `Seller:${curEnt.ar}|VAT:${curEnt.vat}|Time:${date}T12:00:00Z|Total:${grand}|VAT:${vat}`;
+      new QRCode(qrDiv, {
+        text: zatcaPayload,
+        width: 70,
+        height: 70,
+        colorDark: "#1e1b4b",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+  }
+
+  // Override openNewInvoiceModal to launch Studio
+  function openNewInvoiceModal() {
+    const today = new Date().toISOString().substring(0, 10);
+    const d1 = document.getElementById('studio-date');
+    const d2 = document.getElementById('studio-due-date');
+    if (d1) d1.value = today;
+    if (d2) d2.value = today;
+
+    const numInput = document.getElementById('studio-doc-number');
+    if (numInput) numInput.value = 'INV-2026-' + String(state.invoices.length + 1).padStart(3, '0');
+
+    if (state.currentEntity && state.currentEntity !== 'all') {
+      const ent = document.getElementById('studio-entity');
+      if (ent) ent.value = state.currentEntity;
+    }
+
+    const logoImg = document.getElementById('studioPreviewLogo');
+    if (logoImg) logoImg.src = currentCustomLogo;
+
+    renderStudioEditorRows();
+    onStudioEntityChange();
+    renderStudioLivePreview();
+    openModal('newInvoiceModal');
+  }
+
+  function handleStudioSaveInvoice(e) {
+    e.preventDefault();
+    const docType = document.getElementById('studio-doc-type').value;
+    const docNum = document.getElementById('studio-doc-number').value.trim() || `INV-2026-${String(state.invoices.length + 1).padStart(3, '0')}`;
+    const entity = document.getElementById('studio-entity').value;
+    const client = document.getElementById('studio-client').value.trim();
+    const date = document.getElementById('studio-date').value;
+    const dueDate = document.getElementById('studio-due-date').value;
+    const status = document.getElementById('studio-status').value;
+    const { subtotal, vat, grand } = calculateStudioTotals();
+
+    const itemsSummary = studioRows.map(r => `${r.desc || 'خدمة'} (${r.qty} × ${r.price})`).join(' + ');
+
+    const newInvoice = {
+      id: docNum,
+      entity,
+      client,
+      date,
+      dueDate,
+      subtotal,
+      vat,
+      total: grand,
+      method: 'تحويل بنكي',
+      status,
+      item: itemsSummary,
+      docType,
+      items: [...studioRows]
+    };
+
+    state.invoices.unshift(newInvoice);
+
+    // If paid, create matching journal entry
+    if (status === 'paid') {
+      state.journals.unshift({
+        id: `JRN-${String(state.journals.length + 1).padStart(3, '0')}`,
+        date,
+        entity,
+        desc: `فاتورة مبيعات رقم ${docNum} - ${client}`,
+        debit: '1002 - مصرف الراجحي',
+        credit: '4001 - إيرادات مبيعات وخدمات',
+        amount: grand,
+        status: 'متزن'
+      });
+      state.treasury.rajhi += grand;
+    }
+
+    saveState();
+    closeModal('newInvoiceModal');
+    renderAll();
+    updateCharts();
+    showToast(`تم حفظ وإصدار ${docNum} بنجاح!`, 'success');
+    viewTaxInvoice(docNum);
+  }
+
+  function printStudioInvoice() {
+    window.print();
+  }
+
+    function _oldOpenNewInvoiceModal() {
       const today = new Date().toISOString().substring(0, 10);
       const d1 = document.getElementById('inv-date');
       const d2 = document.getElementById('inv-due-date');
