@@ -103,6 +103,67 @@
         width: 100%;
       }
     }
+  
+    /* Navigation Flyout Popover & Submenu Styling */
+    .nav-popover {
+      position: absolute;
+      right: 100%;
+      top: 0;
+      width: 230px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 14px 40px -10px rgba(55, 32, 131, 0.16), 0 0 1px 1px rgba(0,0,0,0.06);
+      border: 1px solid #f1f3f9;
+      padding: 8px;
+      z-index: 100;
+      display: none;
+      animation: popoverFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateX(8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .has-popover:hover .nav-popover,
+    .has-popover:focus-within .nav-popover {
+      display: block;
+    }
+    .popover-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      text-align: right;
+      width: 100%;
+    }
+    .popover-item:hover {
+      background: #f5f3ff;
+      color: #6d28d9;
+      transform: translateX(-3px);
+    }
+    .popover-item.danger-hover:hover {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    .popover-header {
+      padding: 6px 14px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      border-bottom: 1px solid #f8fafc;
+      margin-bottom: 4px;
+    }
+    .popover-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 6px 8px;
+    }
+  
   </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -1853,8 +1914,131 @@
     }
 
     // View Switcher (التنقل بين الصفحات والأقسام)
+    
+    // مسيرات العمل للأقسام الفرعية - المبيعات
+    function switchSalesSection(subSection) {
+      switchView('invoices');
+      const titleEl = document.querySelector('#view-invoices h2');
+      const descEl = document.querySelector('#view-invoices p');
+      
+      switch(subSection) {
+        case 'clients':
+          if (titleEl) titleEl.textContent = 'قائمة العملاء والذمم المدينة';
+          if (descEl) descEl.textContent = 'بيانات وأرصدة العملاء وسجلات التواصل والفواتير المرتبطة بكل عميل';
+          filterInvoicesByClient();
+          break;
+        case 'quotes':
+          if (titleEl) titleEl.textContent = 'عروض الأسعار والفواتير المبدئية (Quotations)';
+          if (descEl) descEl.textContent = 'إصدار ومتابعة عروض الأسعار غير الملزمة وتحويلها لفواتير بضغطة واحدة';
+          filterInvoicesByStatus('pending');
+          break;
+        case 'invoices':
+          if (titleEl) titleEl.textContent = 'فواتير البيع المعتمدة';
+          if (descEl) descEl.textContent = 'إدارة ومتابعة فواتير المبيعات الضريبية المعتمدة ورموز ZATCA QR';
+          filterInvoicesByStatus('all');
+          break;
+        case 'customer-receipts':
+          if (titleEl) titleEl.textContent = 'سندات العملاء (سندات القبض)';
+          if (descEl) descEl.textContent = 'متابعة سندات القبض والتحصيلات المسجلة من العملاء عبر الحسابات';
+          openReceiptModal();
+          break;
+        case 'recurring':
+          if (titleEl) titleEl.textContent = 'الفواتير المجدولة والدورية';
+          if (descEl) descEl.textContent = 'جدولة الفواتير والاشتراكات المتكررة شهرياً وسنوياً بشكل آلي';
+          showToast('قسم الفواتير المجدولة: تم تفعيل الدورة التلقائية', 'info');
+          break;
+        case 'credit-notes':
+          if (titleEl) titleEl.textContent = 'الإشعارات الدائنة (Credit Notes - مردودات مبيعات)';
+          if (descEl) descEl.textContent = 'إصدار إشعارات دائنة لتسوية المرتجعات والتخفيضات الضريبية';
+          showToast('الإشعارات الدائنة المعتمدة لدى هيئة الزكاة', 'info');
+          break;
+        case 'cash-invoices':
+          if (titleEl) titleEl.textContent = 'الفواتير النقدية (نقاط البيع والكاش)';
+          if (descEl) descEl.textContent = 'فواتير المبيعات المسددة نقداً وفورياً عبر الصناديق ونقاط البيع';
+          filterInvoicesByStatus('paid');
+          break;
+        case 'settings':
+          switchView('settings');
+          showToast('إعدادات ترقيم وطباعة فواتير المبيعات', 'info');
+          break;
+      }
+    }
+
+    function filterInvoicesByClient() {
+      showToast('عرض سجلات العملاء والفواتير المرتبطة بهم', 'info');
+    }
+
+    // مسيرات العمل للأقسام الفرعية - المشتريات
+    function switchPurchasesSection(subSection) {
+      switchView('purchases');
+      const titleEl = document.querySelector('#view-purchases h2');
+      const descEl = document.querySelector('#view-purchases p');
+
+      switch(subSection) {
+        case 'suppliers':
+          if (titleEl) titleEl.textContent = 'سجل وبيانات الموردين';
+          if (descEl) descEl.textContent = 'قائمة الموردين المعتمدين، أرقامهم الضريبية، وحجم التعاملات';
+          showToast('سجل الموردين المعتمدين', 'info');
+          break;
+        case 'bills':
+          if (titleEl) titleEl.textContent = 'فواتير المشتريات والمصروفات';
+          if (descEl) descEl.textContent = 'تسجيل فواتير المشتريات واعتماد خصم الضريبة المدخلة للمنشأة';
+          break;
+        case 'supplier-receipts':
+          if (titleEl) titleEl.textContent = 'سندات الموردين (سندات الصرف والمدفوعات)';
+          if (descEl) descEl.textContent = 'سندات الصرف المسددة للموردين لتسوية فواتير المشتريات';
+          openPaymentModal();
+          break;
+        case 'cash-expenses':
+          if (titleEl) titleEl.textContent = 'المصروفات النقدية والنثرية';
+          if (descEl) descEl.textContent = 'صرف العهد والمصاريف التشغيلية اليومية البسيطة من الصناديق';
+          openPaymentModal();
+          break;
+        case 'debit-notes':
+          if (titleEl) titleEl.textContent = 'الإشعارات المدينة (Debit Notes - مردودات المشتريات)';
+          if (descEl) descEl.textContent = 'إثبات مرتجعات البضائع للموردين وتخفيض الالتزامات';
+          showToast('الإشعارات المدينة للموردين', 'info');
+          break;
+        case 'purchase-orders':
+          if (titleEl) titleEl.textContent = 'أوامر الشراء (Purchase Orders)';
+          if (descEl) descEl.textContent = 'أوامر الشراء الصادرة قبل استلام البضائع والفواتير النهائية';
+          openNewPurchaseModal();
+          break;
+      }
+    }
+
+    // مسيرات العمل للأقسام الفرعية - المحاسبة
+    function switchAccountingSection(subSection) {
+      switch(subSection) {
+        case 'banks':
+          switchView('treasury');
+          showToast('الحسابات البنكية وحركات التدفق النقدي', 'info');
+          break;
+        case 'manual-journals':
+          switchView('journal');
+          showToast('دفتر القيود اليومية اليدوية والمزدوجة', 'info');
+          break;
+        case 'batch-recategorize':
+          switchView('journal');
+          showToast('أداة إعادة التصنيف الجماعي للعمليات المحاسبية', 'info');
+          break;
+        case 'chart-of-accounts':
+          switchView('accounts');
+          showToast('شجرة الحسابات والدليل المحاسبي الهرمي', 'info');
+          break;
+        case 'fixed-assets':
+          switchView('accounts');
+          showToast('سجل الأصول الثابتة وحسابات الإهلاك الدوري', 'info');
+          break;
+        case 'settings':
+          switchView('settings');
+          showToast('إعدادات السنة المالية والفترات المحاسبية', 'info');
+          break;
+      }
+    }
+  
     function switchView(viewName) {
-      const views = ['dashboard', 'invoices', 'inventory', 'purchases', 'treasury', 'journal', 'accounts', 'reports', 'zatca', 'branches', 'settings'];
+      const views = ['dashboard', 'invoices', 'inventory', 'purchases', 'treasury', 'journal', 'accounts', 'reports', 'zatca', 'branches', 'settings', 'payroll'];
       views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         const navEl = document.getElementById(`nav-${v}`);
