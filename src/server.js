@@ -3,9 +3,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs'); // FIX: was missing — caused ReferenceError on /api/state fallback
 
 const authRoutes = require('./routes-auth');
-const { router: entityRoutes } = require('./routes-entities');
+const { router: entityRoutes, requireAuth } = require('./routes-entities');
 const salesRoutes = require('./routes-sales');
 const reportsRoutes = require('./routes-reports');
 
@@ -23,7 +24,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // Full System State API (Backed by Neon PostgreSQL)
-app.get('/api/state', async (req, res) => {
+// FIX: requireAuth added — previously anyone could read/write the entire app state
+app.get('/api/state', requireAuth, async (req, res) => {
   try {
     const { pool } = require('./lib');
     const result = await pool.query('SELECT data FROM system_state WHERE key = $1', ['main_state']);
@@ -41,8 +43,12 @@ app.get('/api/state', async (req, res) => {
   }
 });
 
-app.post('/api/state', async (req, res) => {
+// FIX: requireAuth + role check — previously unauthenticated full-state overwrite
+app.post('/api/state', requireAuth, async (req, res) => {
   try {
+    if (req.user.role !== 'admin' && req.user.role !== 'cfo') {
+      return res.status(403).json({ error: 'غير مصرح لك بحفظ بيانات النظام' });
+    }
     const { pool } = require('./lib');
     const newState = req.body || {};
     await pool.query(`
@@ -58,8 +64,12 @@ app.post('/api/state', async (req, res) => {
   }
 });
 
-app.get('/api/auth/users', async (req, res) => {
+// FIX: requireAuth + admin/cfo only — previously exposed the full user list to anyone
+app.get('/api/auth/users', requireAuth, async (req, res) => {
   try {
+    if (req.user.role !== 'admin' && req.user.role !== 'cfo') {
+      return res.status(403).json({ error: 'غير مصرح لك بعرض قائمة المستخدمين' });
+    }
     const { pool } = require('./lib');
     const result = await pool.query('SELECT id, email, full_name, role FROM users');
     const roleTitles = {
