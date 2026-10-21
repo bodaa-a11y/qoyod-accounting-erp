@@ -305,7 +305,11 @@
             <button onclick="switchSalesSection('quotes')" class="popover-item">
               <span>عروض أسعار و فواتير مبدئية</span>
             </button>
-            <button onclick="switchSalesSection('invoices')" class="popover-item font-black text-purple-700 bg-purple-50">
+            <button onclick="openNewInvoiceModal()" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
+              <span>+ إنشاء فاتورة مبيعات</span>
+              <span class="text-[10px] bg-purple-700 text-white px-1.5 py-0.5 rounded">جديد</span>
+            </button>
+            <button onclick="switchSalesSection('invoices')" class="popover-item">
               <span>فواتير بيع</span>
             </button>
             <button onclick="switchSalesSection('customer-receipts')" class="popover-item">
@@ -343,7 +347,11 @@
             <button onclick="switchPurchasesSection('suppliers')" class="popover-item">
               <span>الموردون</span>
             </button>
-            <button onclick="switchPurchasesSection('bills')" class="popover-item font-black text-purple-700 bg-purple-50">
+            <button onclick="openNewPurchaseModal()" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
+              <span>+ تسجيل فاتورة شراء</span>
+              <span class="text-[10px] bg-purple-700 text-white px-1.5 py-0.5 rounded">جديد</span>
+            </button>
+            <button onclick="switchPurchasesSection('bills')" class="popover-item">
               <span>فواتير مشتريات</span>
             </button>
             <button onclick="switchPurchasesSection('supplier-receipts')" class="popover-item">
@@ -2049,6 +2057,9 @@
           if (titleEl) titleEl.textContent = 'فواتير البيع المعتمدة';
           if (descEl) descEl.textContent = 'إدارة ومتابعة فواتير المبيعات الضريبية المعتمدة ورموز ZATCA QR';
           filterInvoicesByStatus('all');
+          break;
+        case 'new-invoice':
+          openNewInvoiceModal();
           break;
         case 'customer-receipts':
           if (titleEl) titleEl.textContent = 'سندات العملاء (سندات القبض)';
@@ -3800,27 +3811,36 @@
 
   // Override openNewInvoiceModal to launch Studio
   function openNewInvoiceModal() {
-    const today = new Date().toISOString().substring(0, 10);
-    const d1 = document.getElementById('studio-date');
-    const d2 = document.getElementById('studio-due-date');
-    if (d1) d1.value = today;
-    if (d2) d2.value = today;
+    try {
+      openModal('newInvoiceModal');
+      
+      const today = new Date().toISOString().substring(0, 10);
+      const d1 = document.getElementById('studio-date');
+      const d2 = document.getElementById('studio-due-date');
+      if (d1 && !d1.value) d1.value = today;
+      if (d2 && !d2.value) d2.value = today;
 
-    const numInput = document.getElementById('studio-doc-number');
-    if (numInput) numInput.value = 'INV-2026-' + String(state.invoices.length + 1).padStart(3, '0');
+      const numInput = document.getElementById('studio-doc-number');
+      if (numInput && (!numInput.value || numInput.value === 'INV-2026-001')) {
+        const invLen = (state && state.invoices) ? state.invoices.length + 1 : 1;
+        numInput.value = 'INV-2026-' + String(invLen).padStart(3, '0');
+      }
 
-    if (state.currentEntity && state.currentEntity !== 'all') {
-      const ent = document.getElementById('studio-entity');
-      if (ent) ent.value = state.currentEntity;
+      if (state && state.currentEntity && state.currentEntity !== 'all') {
+        const ent = document.getElementById('studio-entity');
+        if (ent) ent.value = state.currentEntity;
+      }
+
+      const logoImg = document.getElementById('studioPreviewLogo');
+      if (logoImg && currentCustomLogo) logoImg.src = currentCustomLogo;
+
+      renderStudioEditorRows();
+      onStudioEntityChange();
+      renderStudioLivePreview();
+    } catch (e) {
+      console.error('Error opening studio modal:', e);
+      openModal('newInvoiceModal');
     }
-
-    const logoImg = document.getElementById('studioPreviewLogo');
-    if (logoImg) logoImg.src = currentCustomLogo;
-
-    renderStudioEditorRows();
-    onStudioEntityChange();
-    renderStudioLivePreview();
-    openModal('newInvoiceModal');
   }
 
   function handleStudioSaveInvoice(e) {
