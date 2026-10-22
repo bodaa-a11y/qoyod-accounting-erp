@@ -106,6 +106,78 @@
       }
     }
   
+        /* Navigation Flyout Popover & Submenu Styling */
+    .nav-popover {
+      position: absolute;
+      right: 100%;
+      top: 0;
+      width: 240px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 14px 40px -10px rgba(55, 32, 131, 0.22), 0 0 1px 1px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+      padding: 8px;
+      z-index: 100;
+      display: none;
+      animation: popoverFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translateX(8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .has-popover.open > .nav-popover,
+    .has-popover:hover > .nav-popover,
+    .has-popover:focus-within > .nav-popover {
+      display: block;
+    }
+    .popover-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      text-align: right;
+      width: 100%;
+    }
+    .popover-item:hover {
+      background: #f5f3ff;
+      color: #6d28d9;
+      transform: translateX(-3px);
+    }
+    .popover-item.danger-hover:hover {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    .popover-header {
+      padding: 6px 14px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #94a3b8;
+      border-bottom: 1px solid #f8fafc;
+      margin-bottom: 4px;
+    }
+    .popover-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 4px 6px;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; }
+    }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  
     /* Clean Inline Sidebar Sub-navigation Styling */
     .sidebar-sub-item {
       display: flex;
@@ -240,7 +312,7 @@
         </button>
 
         <!-- لوحة البيانات -->
-        <button onclick="switchView('dashboard')" id="nav-dashboard" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition sidebar-active">
+        <button onclick="switchView('dashboard')" id="nav-dashboard" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition sidebar-active">
           <span></span>
           <div class="flex items-center gap-3">
             <span>لوحة البيانات</span>
@@ -248,109 +320,8 @@
           </div>
         </button>
 
-        <!-- المبيعات والفواتير (تفتح الصفحة مباشرة وقائمة فرعية مدمجة) -->
-        <div class="sidebar-group">
-          <button onclick="toggleSidebarGroup('sales'); switchView('invoices');" id="nav-sales-parent" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
-            <svg id="chevron-sales" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            <div class="flex items-center gap-3">
-              <span>المبيعات</span>
-              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            </div>
-          </button>
-          <div id="sub-sales" class="pr-5 pl-1 py-1 space-y-1">
-            <button onclick="switchView('invoices')" id="nav-invoices" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-purple-500 ml-1"></span>
-              <span>فواتير بيع</span>
-            </button>
-            <button onclick="switchView('clients')" id="nav-clients" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>العملاء</span>
-            </button>
-            <button onclick="switchView('quotes')" id="nav-quotes" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>عروض أسعار</span>
-            </button>
-            <button onclick="openNewInvoiceModal()" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-black text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition mt-1">
-              <span class="text-[9px] bg-purple-600 text-white px-1.5 py-0.5 rounded font-bold">PDF</span>
-              <span>+ إنشاء فاتورة</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- المشتريات والمصروفات -->
-        <div class="sidebar-group">
-          <button onclick="toggleSidebarGroup('purchases'); switchView('purchases');" id="nav-purchases-parent" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
-            <svg id="chevron-purchases" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            <div class="flex items-center gap-3">
-              <span>المشتريات</span>
-              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            </div>
-          </button>
-          <div id="sub-purchases" class="pr-5 pl-1 py-1 space-y-1 hidden">
-            <button onclick="switchView('purchases')" id="nav-purchases" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-purple-500 ml-1"></span>
-              <span>فواتير مشتريات</span>
-            </button>
-            <button onclick="switchView('suppliers')" id="nav-suppliers" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>الموردون</span>
-            </button>
-            <button onclick="openNewPurchaseModal()" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-black text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition mt-1">
-              <span class="text-[9px] bg-amber-600 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
-              <span>+ فاتورة شراء</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- المخزون -->
-        <button onclick="switchView('inventory')" id="nav-inventory" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
-          <span></span>
-          <div class="flex items-center gap-3">
-            <span>المخزون</span>
-            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-          </div>
-        </button>
-
-        <!-- المحاسبة والمالية -->
-        <div class="sidebar-group">
-          <button onclick="toggleSidebarGroup('accounting'); switchView('journal');" id="nav-accounting-parent" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
-            <svg id="chevron-accounting" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            <div class="flex items-center gap-3">
-              <span>المحاسبة</span>
-              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            </div>
-          </button>
-          <div id="sub-accounting" class="pr-5 pl-1 py-1 space-y-1 hidden">
-            <button onclick="switchView('treasury')" id="nav-treasury" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>الحسابات البنكية</span>
-            </button>
-            <button onclick="switchView('journal')" id="nav-journal" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>القيود اليدوية</span>
-            </button>
-            <button onclick="switchView('accounts')" id="nav-accounts" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>شجرة الحسابات</span>
-            </button>
-            <button onclick="switchView('fixed-assets')" id="nav-fixed-assets" class="sidebar-sub-item">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-300 ml-1"></span>
-              <span>الأصول الثابتة</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- الرواتب و الموظفين -->
-        <button onclick="switchView('payroll')" id="nav-payroll" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
-          <span></span>
-          <div class="flex items-center gap-3">
-            <span>الرواتب و الموظفين</span>
-            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-          </div>
-        </button>
-
         <!-- التقارير -->
-        <button onclick="switchView('reports')" id="nav-reports" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
+        <button onclick="switchView('reports')" id="nav-reports" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
           <span></span>
           <div class="flex items-center gap-3">
             <span>التقارير</span>
@@ -358,8 +329,169 @@
           </div>
         </button>
 
+        <!-- المبيعات مع السهم وقائمة منبثقة تفتح بالضغط أو التمرير -->
+        <div class="relative has-popover" id="popover-sales">
+          <button onclick="toggleNavPopover('popover-sales', event); switchView('invoices');" id="nav-invoices" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-purple-600 hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            <div class="flex items-center gap-3">
+              <span>المبيعات</span>
+              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+          </button>
+          
+          <!-- قائمة المبيعات المنسدلة المرفقة بالصورة -->
+          <div class="nav-popover">
+            <button onclick="switchView('clients'); closeAllNavPopovers();" class="popover-item">
+              <span>العملاء</span>
+            </button>
+            <button onclick="switchView('quotes'); closeAllNavPopovers();" class="popover-item">
+              <span>عروض أسعار و فواتير مبدئية</span>
+            </button>
+            <button onclick="openNewInvoiceModal(); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
+              <span>+ إنشاء فاتورة مبيعات</span>
+              <span class="text-[10px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
+            </button>
+            <button onclick="switchView('invoices'); closeAllNavPopovers();" class="popover-item">
+              <span>فواتير بيع</span>
+            </button>
+            <button onclick="switchSalesSection('customer-receipts'); closeAllNavPopovers();" class="popover-item">
+              <span>سندات العملاء</span>
+            </button>
+            <button onclick="switchSalesSection('recurring'); closeAllNavPopovers();" class="popover-item">
+              <span>فواتير مجدولة</span>
+            </button>
+            <button onclick="switchSalesSection('credit-notes'); closeAllNavPopovers();" class="popover-item">
+              <span>إشعارات دائنة</span>
+            </button>
+            <button onclick="switchSalesSection('cash-invoices'); closeAllNavPopovers();" class="popover-item">
+              <span>فواتير نقدية</span>
+            </button>
+            <div class="popover-divider"></div>
+            <button onclick="switchSalesSection('settings'); closeAllNavPopovers();" class="popover-item text-slate-500">
+              <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+              <span>إعداد المبيعات</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- المشتريات مع السهم وقائمة منبثقة تفتح بالضغط أو التمرير -->
+        <div class="relative has-popover" id="popover-purchases">
+          <button onclick="toggleNavPopover('popover-purchases', event); switchView('purchases');" id="nav-purchases" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-purple-600 hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            <div class="flex items-center gap-3">
+              <span>المشتريات</span>
+              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+          </button>
+          
+          <!-- قائمة المشتريات المنسدلة المرفقة بالصورة -->
+          <div class="nav-popover">
+            <button onclick="switchView('suppliers'); closeAllNavPopovers();" class="popover-item">
+              <span>الموردون</span>
+            </button>
+            <button onclick="openNewPurchaseModal(); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
+              <span>+ تسجيل فاتورة شراء</span>
+              <span class="text-[10px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
+            </button>
+            <button onclick="switchPurchasesSection('bills'); closeAllNavPopovers();" class="popover-item">
+              <span>فواتير مشتريات</span>
+            </button>
+            <button onclick="switchPurchasesSection('supplier-receipts'); closeAllNavPopovers();" class="popover-item">
+              <span>سندات الموردين</span>
+            </button>
+            <button onclick="switchPurchasesSection('cash-expenses'); closeAllNavPopovers();" class="popover-item">
+              <span>مصروفات نقدية</span>
+            </button>
+            <button onclick="switchPurchasesSection('debit-notes'); closeAllNavPopovers();" class="popover-item">
+              <span>إشعارات مدينة</span>
+            </button>
+            <button onclick="switchPurchasesSection('purchase-orders'); closeAllNavPopovers();" class="popover-item">
+              <span>أوامر شراء</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- المحاسبة مع السهم وقائمة منبثقة تفتح بالضغط أو التمرير -->
+        <div class="relative has-popover" id="popover-accounting">
+          <button onclick="toggleNavPopover('popover-accounting', event); switchView('journal');" id="nav-accounting" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-purple-600 hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            <div class="flex items-center gap-3">
+              <span>المحاسبة</span>
+              <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+          </button>
+          
+          <!-- قائمة المحاسبة المنسدلة المرفقة بالصورة -->
+          <div class="nav-popover">
+            <button onclick="switchView('treasury'); closeAllNavPopovers();" class="popover-item">
+              <span>الحسابات البنكية</span>
+            </button>
+            <button onclick="switchView('journal'); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50">
+              <span>القيود اليدوية</span>
+            </button>
+            <button onclick="switchView('journal'); closeAllNavPopovers(); showToast('تم تفعيل وضع تصنيف القيود المزدوجة', 'info');" class="popover-item">
+              <span>إعادة التصنيف الجماعي</span>
+            </button>
+            <button onclick="switchView('accounts'); closeAllNavPopovers();" class="popover-item">
+              <span>شجرة الحسابات</span>
+            </button>
+            <button onclick="switchView('fixed-assets'); closeAllNavPopovers();" class="popover-item">
+              <span>الأصول الثابتة</span>
+            </button>
+            <div class="popover-divider"></div>
+            <button onclick="switchAccountingSection('settings'); closeAllNavPopovers();" class="popover-item text-slate-500">
+              <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+              <span>إعدادات المحاسبة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- الرواتب و الموظفين -->
+        <button onclick="switchView('payroll')" id="nav-payroll" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+          <span></span>
+          <div class="flex items-center gap-3">
+            <span>الرواتب و الموظفين</span>
+            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          </div>
+        </button>
+
+        <!-- المخزون -->
+        <button onclick="switchView('inventory')" id="nav-inventory" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+          <span></span>
+          <div class="flex items-center gap-3">
+            <span>المخزون</span>
+            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+          </div>
+        </button>
+
+        <!-- المساعدة مع السهم وقائمة منبثقة -->
+        <div class="relative has-popover" id="popover-help">
+          <button onclick="toggleNavPopover('popover-help', event); switchView('help');" id="nav-help" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-purple-600 hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            <div class="flex items-center gap-3">
+              <span>المساعدة</span>
+              <div class="relative">
+                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
+              </div>
+            </div>
+          </button>
+          
+          <div class="nav-popover">
+            <button onclick="switchView('help'); closeAllNavPopovers();" class="popover-item">
+              <span>مركز المساعدة والدعم</span>
+            </button>
+            <button onclick="showToast('فريق الدعم الفني متواجد لمساعدتكم 24/7', 'info'); closeAllNavPopovers();" class="popover-item">
+              <span>تواصل مع الدعم الفني</span>
+            </button>
+            <button onclick="showToast('تم فتح دليل الاستخدام السريع للنظام', 'info'); closeAllNavPopovers();" class="popover-item">
+              <span>الأسئلة الشائعة والأدلة</span>
+            </button>
+          </div>
+        </div>
+
         <!-- التوافق الضريبي ZATCA -->
-        <button onclick="switchView('zatca')" id="nav-zatca" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
+        <button onclick="switchView('zatca')" id="nav-zatca" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
           <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-black">ZATCA</span>
           <div class="flex items-center gap-3">
             <span>التوافق الضريبي</span>
@@ -368,7 +500,7 @@
         </button>
 
         <!-- الفروع -->
-        <button onclick="switchView('branches')" id="nav-branches" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
+        <button onclick="switchView('branches')" id="nav-branches" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
           <span></span>
           <div class="flex items-center gap-3">
             <span>الفروع والكيانات</span>
@@ -376,25 +508,14 @@
           </div>
         </button>
 
-        <!-- المساعدة -->
-        <button onclick="switchView('help')" id="nav-help" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
-          <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          <div class="flex items-center gap-3">
-            <span>المساعدة</span>
-            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </div>
-        </button>
-
         <!-- الإعدادات -->
-        <button onclick="switchView('settings')" id="nav-settings" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-700 hover:bg-slate-50 transition">
+        <button onclick="switchView('settings')" id="nav-settings" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
           <span></span>
           <div class="flex items-center gap-3">
             <span>الإعدادات واللوجو</span>
             <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
           </div>
         </button>
-
-      </div>
 
       <!-- أسفل القائمة: اللغة والمستخدم -->
       <div class="pt-4 border-t border-slate-100 flex flex-col items-center gap-3">
@@ -5455,6 +5576,8 @@
       checkAuthStatus();
     });
   </script>
+  <!-- Hash Router & Side Popover Navigation -->
+  <script src="js/router.js"></script>
 
 
   

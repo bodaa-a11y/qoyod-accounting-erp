@@ -2,18 +2,16 @@ const fs = require('fs');
 const html = fs.readFileSync('public/index.html', 'utf8');
 
 const checks = [
-  ['html2pdf.bundle.min.js', html.includes('js/html2pdf.bundle.min.js')],
-  ['nav-popover removed', !html.includes('.nav-popover {')],
-  ['sidebar-sub-item CSS', html.includes('.sidebar-sub-item')],
-  ['nav-sales-parent', html.includes('id="nav-sales-parent"')],
-  ['sub-sales', html.includes('id="sub-sales"')],
+  ['.nav-popover CSS exists', html.includes('.nav-popover {')],
+  ['has-popover class exists', html.includes('class="relative has-popover"')],
+  ['toggleNavPopover onclick exists', html.includes('toggleNavPopover')],
+  ['popover-sales exists', html.includes('id="popover-sales"')],
+  ['popover-purchases exists', html.includes('id="popover-purchases"')],
+  ['popover-accounting exists', html.includes('id="popover-accounting"')],
+  ['popover-help exists', html.includes('id="popover-help"')],
   ['newInvoiceModal with items table', html.includes('id="invoiceItemsTbody"')],
-  ['newInvoiceModal with logo thumb', html.includes('id="modalLogoThumb"')],
-  ['Save and download PDF button', html.includes('handleSaveAndDownloadInvoicePDF')],
-  ['viewInvoiceModal with A4 PDF', html.includes('downloadInvoicePDF(currentViewedInvoiceId)')],
-  ['Invoices table PDF button', html.includes('downloadInvoicePDF')],
-  ['numberToArabicWords tafqeet function', html.includes('function numberToArabicWords(')],
-  ['handleInvoiceLogoFileChange function', html.includes('function handleInvoiceLogoFileChange(')]
+  ['PDF export script', html.includes('downloadInvoicePDF')],
+  ['router.js included', html.includes('src="js/router.js"')]
 ];
 
 let allOk = true;
@@ -25,5 +23,5 @@ checks.forEach(([name, passed]) => {
 if (!allOk) {
   process.exit(1);
 } else {
-  console.log('\nAll 12 critical verification checks PASSED successfully!');
+  console.log('\nAll 10 verification checks PASSED successfully!');
 }

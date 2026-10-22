@@ -1,4 +1,4 @@
-// public/js/router.js — Full Page Routing & Sidebar Accordion Navigation
+// public/js/router.js — Hash routing & Side Popover Navigation Support
 (function () {
   const VALID_VIEWS = [
     'dashboard', 'invoices', 'inventory', 'purchases', 'treasury',
@@ -21,6 +21,7 @@
     const r = _switchView ? _switchView.apply(this, arguments) : undefined;
     updateBreadcrumb(viewName);
     highlightNav(viewName);
+    window.closeAllNavPopovers();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return r;
   };
@@ -31,6 +32,7 @@
     if (_switchView) _switchView(v);
     updateBreadcrumb(v);
     highlightNav(v);
+    window.closeAllNavPopovers();
   });
 
   const TITLES = {
@@ -60,57 +62,47 @@
                    '<span class="mx-1.5 text-slate-300">/</span><span class="font-bold text-slate-800">' + (TITLES[view] || view) + '</span>';
   }
 
-  window.toggleSidebarGroup = function (group) {
-    const sub = document.getElementById('sub-' + group);
-    const chevron = document.getElementById('chevron-' + group);
-    if (!sub) return;
-    const isHidden = sub.classList.contains('hidden');
-    if (isHidden) {
-      sub.classList.remove('hidden');
-      if (chevron) chevron.style.transform = 'rotate(180deg)';
-    } else {
-      sub.classList.add('hidden');
-      if (chevron) chevron.style.transform = 'rotate(0deg)';
+  window.toggleNavPopover = function (id, e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const target = document.getElementById(id);
+    if (!target) return;
+    const wasOpen = target.classList.contains('open');
+    window.closeAllNavPopovers();
+    if (!wasOpen) {
+      target.classList.add('open');
     }
   };
 
-  function expandGroup(group) {
-    const sub = document.getElementById('sub-' + group);
-    const chevron = document.getElementById('chevron-' + group);
-    if (sub && sub.classList.contains('hidden')) {
-      sub.classList.remove('hidden');
-      if (chevron) chevron.style.transform = 'rotate(180deg)';
+  window.closeAllNavPopovers = function () {
+    document.querySelectorAll('.has-popover').forEach(el => el.classList.remove('open'));
+  };
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.has-popover')) {
+      window.closeAllNavPopovers();
     }
-  }
+  });
 
   function highlightNav(view) {
-    document.querySelectorAll('.sidebar-nav-item, .sidebar-sub-item').forEach(b => {
-      b.classList.remove('sidebar-active', 'bg-purple-100', 'text-purple-800', 'font-black');
+    document.querySelectorAll('.sidebar-nav-item').forEach(b => {
+      b.classList.remove('sidebar-active', 'text-purple-700', 'bg-purple-50');
     });
 
-    const btn = document.getElementById('nav-' + view);
-    if (btn) {
-      if (btn.classList.contains('sidebar-sub-item')) {
-        btn.classList.add('bg-purple-100', 'text-purple-800', 'font-black');
-      } else {
-        btn.classList.add('sidebar-active');
-      }
+    let targetId = 'nav-' + view;
+    if (['clients', 'quotes', 'invoices'].includes(view)) {
+      targetId = 'nav-invoices';
+    } else if (['suppliers', 'purchases'].includes(view)) {
+      targetId = 'nav-purchases';
+    } else if (['treasury', 'journal', 'accounts', 'fixed-assets'].includes(view)) {
+      targetId = 'nav-accounting';
     }
 
-    // Auto-expand parent group
-    if (['invoices', 'clients', 'quotes'].includes(view)) {
-      expandGroup('sales');
-      const parent = document.getElementById('nav-sales-parent');
-      if (parent) parent.classList.add('text-purple-700', 'bg-purple-50/50');
-    } else if (['purchases', 'suppliers'].includes(view)) {
-      expandGroup('purchases');
-      const parent = document.getElementById('nav-purchases-parent');
-      if (parent) parent.classList.add('text-purple-700', 'bg-purple-50/50');
-    } else if (['treasury', 'journal', 'accounts', 'fixed-assets'].includes(view)) {
-      expandGroup('accounting');
-      const parent = document.getElementById('nav-accounting-parent');
-      if (parent) parent.classList.add('text-purple-700', 'bg-purple-50/50');
-    }
+    const btn = document.getElementById(targetId);
+    if (btn) btn.classList.add('sidebar-active');
   }
 
   document.addEventListener('DOMContentLoaded', () => {
