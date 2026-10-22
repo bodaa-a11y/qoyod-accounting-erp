@@ -207,6 +207,28 @@
     }
   
   </style>
+
+  <script>
+    // Early resilient modal helper
+    window.openModal = function(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.setProperty('display', 'flex', 'important');
+        modal.style.setProperty('z-index', '99999', 'important');
+        modal.style.setProperty('visibility', 'visible', 'important');
+        modal.style.setProperty('opacity', '1', 'important');
+      }
+    };
+    window.closeModal = function(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.setProperty('display', 'none', 'important');
+      }
+    };
+  </script>
+
 </head>
 <body class="flex flex-col min-h-screen">
 
@@ -1645,7 +1667,7 @@
 
   <!-- Modal 1: CREATE NEW INVOICE -->
   <!-- Modal 1: CREATE NEW INVOICE WITH LOGO & MULTI-LINE ITEMS -->
-  <div id="newInvoiceModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5 hidden">
+  <div id="newInvoiceModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 hidden" style="display: none; z-index: 99999;">
     <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[92vh] overflow-y-auto">
       
       <!-- Studio Header -->
@@ -3135,13 +3157,28 @@
     }
 
     // Modal Helpers
+    window.openModal = function(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.style.setProperty('display', 'flex', 'important');
+        modal.style.setProperty('z-index', '99999', 'important');
+        modal.style.setProperty('visibility', 'visible', 'important');
+        modal.style.setProperty('opacity', '1', 'important');
+      }
+    };
     function openModal(id) {
-      const modal = document.getElementById(id);
-      if (modal) modal.classList.remove('hidden');
+      window.openModal(id);
     }
-    function closeModal(id) {
+    window.closeModal = function(id) {
       const modal = document.getElementById(id);
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.setProperty('display', 'none', 'important');
+      }
+    };
+    function closeModal(id) {
+      window.closeModal(id);
     }
 
     // Toast Notifications
@@ -4713,7 +4750,8 @@
   }
 
   function onInvoiceEntityChanged() {
-    const entity = document.getElementById('inv-entity').value;
+    const entitySelect = document.getElementById('inv-entity');
+    const entity = entitySelect ? entitySelect.value : 'law';
     const badge = document.getElementById('inv-entity-legal-badge');
     const legalDetails = {
       law: 'س.ت: 1010987654 • ر.ض: 310123456700003 • الرياض، طريق الملك عبدالله',
@@ -4726,33 +4764,44 @@
   }
 
   // Override openNewInvoiceModal to setup new form
+  window.openNewInvoiceModal = function() {
+    window.openModal('newInvoiceModal');
+    try {
+      if (typeof initInvoiceLogoState === 'function') initInvoiceLogoState();
+    } catch (e) {
+      console.warn('initInvoiceLogoState warning:', e);
+    }
+
+    try {
+      const today = new Date().toISOString().substring(0, 10);
+      const dDate = document.getElementById('inv-date');
+      const dDue = document.getElementById('inv-due-date');
+      if (dDate && !dDate.value) dDate.value = today;
+      if (dDue && !dDue.value) dDue.value = today;
+
+      const numInput = document.getElementById('inv-number');
+      if (numInput && (!numInput.value || numInput.value === 'INV-2026-001')) {
+        const invLen = (typeof state !== 'undefined' && state && state.invoices) ? state.invoices.length + 1 : 1;
+        numInput.value = 'INV-2026-' + String(invLen).padStart(3, '0');
+      }
+
+      if (typeof state !== 'undefined' && state && state.currentEntity && state.currentEntity !== 'all') {
+        const entSelect = document.getElementById('inv-entity');
+        if (entSelect) entSelect.value = state.currentEntity;
+      }
+
+      if (typeof modalInvoiceRows === 'undefined' || !window.modalInvoiceRows || window.modalInvoiceRows.length === 0) {
+        window.modalInvoiceRows = [{ desc: 'أتعاب استشارات وتراخيص نظامية', qty: 1, price: 5000, discount: 0 }];
+      }
+
+      if (typeof onInvoiceEntityChanged === 'function') onInvoiceEntityChanged();
+      if (typeof renderInvoiceRows === 'function') renderInvoiceRows();
+    } catch (err) {
+      console.warn('Non-blocking warning in openNewInvoiceModal:', err);
+    }
+  };
   function openNewInvoiceModal() {
-    openModal('newInvoiceModal');
-    initInvoiceLogoState();
-
-    const today = new Date().toISOString().substring(0, 10);
-    const dDate = document.getElementById('inv-date');
-    const dDue = document.getElementById('inv-due-date');
-    if (dDate) dDate.value = today;
-    if (dDue) dDue.value = today;
-
-    const numInput = document.getElementById('inv-number');
-    if (numInput) {
-      const invLen = (state && state.invoices) ? state.invoices.length + 1 : 1;
-      numInput.value = 'INV-2026-' + String(invLen).padStart(3, '0');
-    }
-
-    if (state && state.currentEntity && state.currentEntity !== 'all') {
-      const entSelect = document.getElementById('inv-entity');
-      if (entSelect) entSelect.value = state.currentEntity;
-    }
-
-    if (modalInvoiceRows.length === 0) {
-      modalInvoiceRows = [{ desc: 'أتعاب استشارات وتراخيص نظامية', qty: 1, price: 5000, discount: 0 }];
-    }
-
-    onInvoiceEntityChanged();
-    renderInvoiceRows();
+    window.openNewInvoiceModal();
   }
 
   function handleCreateInvoice(e) {
