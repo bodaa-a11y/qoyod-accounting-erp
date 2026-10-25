@@ -23,8 +23,8 @@ async function requireEntityAccess(req, res, next) {
   const entityId = req.params.entityId || req.params.id;
   if (!entityId) return next();
 
-  // Admin role has full access to all entities
-  if (req.user && req.user.role === 'admin') {
+  // Admin and CFO roles have full access to all entities
+  if (req.user && ['admin', 'cfo', 'chief_accountant', 'auditor'].includes(req.user.role)) {
     return next();
   }
 

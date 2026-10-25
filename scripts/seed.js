@@ -26,11 +26,16 @@ async function runSeed() {
     const adminUser = userRes.rows[0];
     console.log(`👤 Admin user ready: ${adminUser.email}`);
 
-    // Additional Enterprise Users requested
+    // Additional Enterprise Users requested (Updated credentials)
+    await client.query(`
+      DELETE FROM users
+      WHERE email IN ('mohamed.babiker@qoyod.com', 'ahmed.elnady@qoyod.com', 'eid.abdulrahman@qoyod.com')
+    `);
+
     const customUsers = [
-      { email: 'mohamed.babiker@qoyod.com', pass: 'Babiker@2026', name: 'محمد بابكر', role: 'cfo' },
-      { email: 'ahmed.elnady@qoyod.com', pass: 'Elnady@2026', name: 'احمد النادي', role: 'chief_accountant' },
-      { email: 'eid.abdulrahman@qoyod.com', pass: 'Eid@2026', name: 'عيد عبدالرحمن', role: 'auditor' }
+      { email: 'm.babiker@qoyod.sa', pass: 'MB@Qoyod2026!', name: 'محمد بابكر', role: 'cfo' },
+      { email: 'a.elnady@qoyod.sa', pass: 'AN@Qoyod2026!', name: 'احمد النادي', role: 'chief_accountant' },
+      { email: 'e.abdulrahman@qoyod.sa', pass: 'EA@Qoyod2026!', name: 'عيد عبدالرحمن', role: 'auditor' }
     ];
 
     for (const u of customUsers) {
@@ -39,7 +44,7 @@ async function runSeed() {
         INSERT INTO users (email, password_hash, full_name, role)
         VALUES ($1, $2, $3, $4)
         ON CONFLICT (email) DO UPDATE
-        SET full_name = EXCLUDED.full_name, role = EXCLUDED.role
+        SET password_hash = EXCLUDED.password_hash, full_name = EXCLUDED.full_name, role = EXCLUDED.role
       `, [u.email, uHash, u.name, u.role]);
       console.log(`👤 Seeded user: ${u.name} (${u.email})`);
     }

@@ -13,7 +13,10 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'اسم المستخدم أو البريد الإلكتروني وكلمة المرور مطلوبة' });
     }
 
-    const result = await pool.query('SELECT * FROM users WHERE LOWER(email) = $1 OR LOWER(full_name) = $1', [identifier]);
+    const result = await pool.query(
+      'SELECT * FROM users WHERE LOWER(email) = $1 OR LOWER(full_name) = $1 OR LOWER(SPLIT_PART(email, \'@\', 1)) = $1',
+      [identifier]
+    );
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
     }

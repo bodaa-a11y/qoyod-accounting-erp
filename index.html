@@ -218,6 +218,40 @@
       body.printing-invoice #printClone { width: 100% !important; max-width: 100% !important; padding: 0 !important; }
       @page { size: A4; margin: 10mm; }
     }
+
+    @media print {
+      body.printing-report * { visibility: hidden !important; }
+      body.printing-report #view-reports,
+      body.printing-report #view-reports * { visibility: visible !important; }
+      body.printing-report #view-reports { position: absolute !important; top: 0 !important; right: 0 !important; width: 100% !important; display: block !important; background: #fff !important; }
+      body.printing-report #printArea { display: none !important; }
+      body.printing-report .no-print { display: none !important; }
+      body.printing-report { background: #fff !important; }
+    }
+
+    /* ===== Invoice studio & preview redesign ===== */
+    .inv-card { background:#fff; border:1px solid #e2e8f0; border-radius:18px; padding:18px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .inv-card-title { display:flex; align-items:center; gap:8px; font-weight:900; font-size:13px; color:#0f172a; margin-bottom:14px; }
+    .inv-step { width:22px; height:22px; border-radius:9999px; background:#6d28d9; color:#fff; font-size:11px; font-weight:900; display:inline-flex; align-items:center; justify-content:center; }
+    .inv-label { display:block; font-weight:800; font-size:11px; color:#475569; margin-bottom:5px; }
+    .inv-input { width:100%; padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; color:#0f172a; font-size:12px; transition:all .15s; }
+    .inv-input:hover { border-color:#cbd5e1; }
+    .inv-input:focus { outline:none; background:#fff; border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,.14); }
+    .inv-chip { padding:5px 10px; border-radius:10px; background:#fff; border:1px solid #e2e8f0; font-weight:800; color:#334155; transition:all .15s; }
+    .inv-chip:hover { border-color:#a78bfa; color:#6d28d9; background:#faf5ff; }
+    .inv-items-table thead th { padding:10px 12px; background:#f8fafc; color:#64748b; font-size:11px; font-weight:900; border-bottom:1px solid #e2e8f0; }
+    .inv-items-table tbody tr { border-bottom:1px solid #f1f5f9; }
+    .inv-items-table tbody td { padding:8px 10px; vertical-align:middle; }
+    .inv-items-table tbody input { width:100%; padding:8px 10px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; font-weight:700; font-size:12px; }
+    .inv-items-table tbody input:focus { outline:none; background:#fff; border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,.12); }
+    .inv-paper { font-family: 'Cairo', sans-serif; }
+    .inv-paper tbody tr:nth-child(even) { background:#faf8ff; }
+    .inv-paper tbody td { padding:10px 12px; }
+
+    @media print {
+      body.printing-invoice #printClone { width: 210mm !important; max-width: 210mm !important; min-height: 297mm !important; box-shadow: none !important; margin: 0 !important; }
+      @page { size: A4; margin: 0; }
+    }
 </style>
 
   <script>
@@ -239,6 +273,14 @@
         modal.style.setProperty('display', 'none', 'important');
       }
     };
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        ['viewInvoiceModal', 'newInvoiceModal', 'receiptModal', 'paymentModal', 'newItemModal', 'newPurchaseModal', 'newJournalModal', 'accountModal', 'accountLedgerModal', 'newClientModal', 'newSupplierModal', 'newEmployeeModal', 'newAssetModal'].forEach(function(id) {
+          const m = document.getElementById(id);
+          if (m && !m.classList.contains('hidden')) window.closeModal(id);
+        });
+      }
+    });
   </script>
 
 </head>
@@ -1212,17 +1254,34 @@
         </div>
       </div>
 
-      <!-- View 7: REPORTS (التقارير المالية والأرباح وقائمة الدخل) -->
+        <!-- View 7: REPORTS (التقارير المالية والأرباح وقائمة الدخل) -->
       <div id="view-reports" class="space-y-6 hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
           <div>
             <h2 class="text-xl font-black text-slate-800">التقارير المالية الختامية والأرباح</h2>
             <p class="text-xs text-slate-400 font-medium">قائمة الدخل، الأرباح والخسائر، وإقرار ضريبة القيمة المضافة</p>
           </div>
-          <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+          <button onclick="printFinancialReport()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition no-print">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
             <span>طباعة التقرير المالي</span>
           </button>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs no-print">
+          <div class="flex flex-col md:flex-row md:items-end gap-3">
+            <div class="flex-1">
+              <label for="report-month-from" class="block text-xs font-bold text-slate-700 mb-1">من شهر</label>
+              <input id="report-month-from" type="month" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm" onchange="updateFinancialReports()">
+            </div>
+            <div class="flex-1">
+              <label for="report-month-to" class="block text-xs font-bold text-slate-700 mb-1">إلى شهر</label>
+              <input id="report-month-to" type="month" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm" onchange="updateFinancialReports()">
+            </div>
+            <button type="button" onclick="resetReportPeriod()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold">كل الفترات</button>
+            <button type="button" onclick="printFinancialReport()" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold">طباعة الفترة المحددة</button>
+          </div>
+          <p id="report-period-label" class="mt-3 text-xs text-slate-500">الفترة: كل الفترات المتاحة</p>
+          <p class="mt-1 text-[11px] text-amber-700">التقرير الحالي ملخص من بيانات النظام ومزامنته مع قاعدة البيانات؛ يجب مطابقة نتائجه مع دفتر الأستاذ والقيود المرحلة قبل الاعتماد المحاسبي النهائي.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1324,39 +1383,222 @@
         </div>
       </div>
 
-      <!-- View 8: ZATCA COMPLIANCE (الزكاة والضريبة) -->
+            <!-- View 8: ZATCA COMPLIANCE (الزكاة والضريبة) -->
       <div id="view-zatca" class="space-y-6 hidden">
-        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <!-- Header & Entity Selector -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 class="text-xl font-black text-slate-800">الربط والتكامل مع هيئة الزكاة والضريبة والجمارك (ZATCA)</h2>
-            <p class="text-xs text-slate-400 font-medium">الامتثال التام للائحة الفوترة الإلكترونية - المرحلة الثانية</p>
+            <div class="flex items-center gap-2">
+              <h2 class="text-xl font-black text-slate-800">الربط والتكامل مع هيئة الزكاة والضريبة والجمارك (ZATCA)</h2>
+              <span id="zatca-phase-badge" class="px-2.5 py-0.5 bg-amber-100 text-amber-800 text-[11px] font-black rounded-full">الطبقة التأسيسية — معاينة وتجهيز</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium mt-1">إعدادات المنشأة الضريبية، فحص جاهزية الربط (Readiness)، ومعاينة XML UBL 2.1 ورمز QR وتجزئة SHA-256</p>
           </div>
-          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-black rounded-lg">الحالة: متصل ومعتمد</span>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-bold text-slate-600">المنشأة:</label>
+            <select id="zatca-entity-select" onchange="loadZatcaDashboard()" class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-800">
+              <option value="law">🏢 شركة المحاماة والاستشارات</option>
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ صالون الحلاقة</option>
+            </select>
+            <button onclick="loadZatcaDashboard()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">تحديث الفحص ↻</button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <h4 class="text-sm font-black text-slate-800">بيانات المنشأة الضريبية</h4>
-            <div class="text-xs space-y-1.5 text-slate-600">
-              <div><strong class="text-slate-800">الاسم التجاري:</strong> مؤسسة حجاج للمحاماة والاستثمار</div>
-              <div><strong class="text-slate-800">الرقم الضريبي:</strong> 310123456700003</div>
-              <div><strong class="text-slate-800">السجل التجاري:</strong> 1010987654</div>
-              <div><strong class="text-slate-800">نوع الفواتير:</strong> ضريبية مبسطة + ضريبية للمنشآت</div>
+        <!-- Warning Banner -->
+        <div class="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 flex items-start gap-3">
+          <span class="text-lg leading-none">⚠️</span>
+          <div class="space-y-1 leading-relaxed">
+            <div class="font-black">تنبيه مهم: هذه الطبقة التأسيسية لتكامل الفوترة الإلكترونية (Development Preview)</div>
+            <div id="zatca-warning-text" class="text-amber-800">النسخة الحالية تجهّز سجلات XML وQR والتجزئة (SHA-256) وتفحص جاهزية البيانات في قاعدة البيانات دون إرسال فعلي إلى خوادم ZATCA. يلزم إكمال التوقيع الرقمي (XAdES) والتحقق بـ SDK الرسمي وربط CSID قبل الاستخدام الإنتاجي.</div>
+          </div>
+        </div>
+
+        <!-- Main Grid: Readiness Checklist + Entity Settings Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Readiness Checklist (5 cols) -->
+          <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-sm font-black text-slate-800">فحص الجاهزية (Readiness Check)</h3>
+                <p class="text-[11px] text-slate-400 font-semibold">حالة المتطلبات الأساسية للمنشأة المختارة</p>
+              </div>
+              <span id="zatca-ready-pill" class="px-2.5 py-1 rounded-lg text-[11px] font-black bg-slate-100 text-slate-700">جاري الفحص...</span>
+            </div>
+            <div id="zatca-checks-list" class="space-y-2.5 text-xs"></div>
+            <div class="pt-3 border-t border-slate-100 grid grid-cols-2 gap-3 text-center">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-[11px] text-slate-400 font-bold">إجمالي الفواتير المسجلة</div>
+                <div id="zatca-stat-invoices" class="text-lg font-black text-slate-800 mt-0.5">0</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-[11px] text-slate-400 font-bold">مسودات قيد التجهيز</div>
+                <div id="zatca-stat-drafts" class="text-lg font-black text-amber-700 mt-0.5">0</div>
+              </div>
             </div>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <h4 class="text-sm font-black text-slate-800">رمز الاستجابة السريع (QR TLV)</h4>
-            <p class="text-xs text-slate-500 leading-relaxed">
-              تشفير اسم المورد، الرقم الضريبي، الطابع الزمني، إجمالي الفاتورة، ومبلغ الضريبة بصيغة TLV Base64 القياسية المعتمدة من الهيئة.
-            </p>
+          <!-- Entity ZATCA Settings Form (7 cols) -->
+          <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-sm font-black text-slate-800">إعدادات المنشأة والعنوان الوطني لدى ZATCA</h3>
+                <p class="text-[11px] text-slate-400 font-semibold">تُحفظ في جدول <code class="bg-slate-100 px-1 rounded">zatca_entity_settings</code> في قاعدة بيانات Neon</p>
+              </div>
+              <span id="zatca-configured-badge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">غير محفوظ</span>
+            </div>
+
+            <form id="zatcaSettingsForm" onsubmit="saveZatcaSettings(event)" class="space-y-3.5 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">اسم البائع بالعربية *</label>
+                  <input type="text" id="zs-seller-ar" required placeholder="شركة حجاج عبدالرحمن الضويحي للمحاماة والاستشارات القانونية" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">اسم البائع بالإنجليزية</label>
+                  <input type="text" id="zs-seller-en" dir="ltr" placeholder="Hajjaj Abdulrahman Al-Dhuwaihi Law Firm" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">الرقم الضريبي (15 رقماً يبدأ وينتهي بـ 3) *</label>
+                  <input type="text" id="zs-vat" dir="ltr" required maxlength="15" placeholder="311228238200003" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold text-slate-900">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">رقم السجل التجاري (CRN) *</label>
+                  <input type="text" id="zs-cr" dir="ltr" required placeholder="1011149366" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono font-bold text-slate-900">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">رقم المبنى *</label>
+                  <input type="text" id="zs-building" dir="ltr" placeholder="3754" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-mono">
+                </div>
+                <div class="col-span-1 sm:col-span-2">
+                  <label class="block font-bold text-slate-700 mb-1">الشارع *</label>
+                  <input type="text" id="zs-street" placeholder="طريق الملك عبدالله" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">الحي *</label>
+                  <input type="text" id="zs-district" placeholder="الورود" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">المدينة *</label>
+                  <input type="text" id="zs-city" placeholder="الخرج" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">الرمز البريدي *</label>
+                  <input type="text" id="zs-postal" dir="ltr" placeholder="16278" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">نوع الفواتير المصدرة</label>
+                  <select id="zs-inv-type" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                    <option value="both">قياسية + مبسطة (Both)</option>
+                    <option value="simplified">ضريبية مبسطة فقط (B2C)</option>
+                    <option value="standard">ضريبية قياسية فقط (B2B)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">بيئة الربط</label>
+                  <select id="zs-env" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                    <option value="sandbox">بيئة التجربة (Sandbox)</option>
+                    <option value="simulation">المحاكاة (Simulation)</option>
+                    <option value="production">الإنتاج (Production)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">اسم الحل التقني (EGS)</label>
+                  <input type="text" id="zs-sol-name" dir="ltr" placeholder="Qoyod-ERP" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">إصدار النظام</label>
+                  <input type="text" id="zs-sol-ver" dir="ltr" placeholder="1.0.0" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">الرقم التسلسلي للوحدة</label>
+                  <input type="text" id="zs-serial" dir="ltr" placeholder="1-QOYOD|2-V1|3-0001" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px]">
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+                <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-700">
+                  <input type="checkbox" id="zs-enabled" class="rounded text-gathern-700">
+                  <span>تفعيل تجهيز الفوترة الإلكترونية لهذه المنشأة</span>
+                </label>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="fillDefaultZatcaSettings()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition">تعبئة تلقائية لبيانات المنشأة</button>
+                  <button type="submit" class="gathern-gradient-btn text-white px-5 py-2 rounded-xl font-black shadow-xs transition">حفظ إعدادات الهيئة</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- XML & QR Preview Generator + Submissions Audit Table -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-sm font-black text-slate-800">مولّد معاينة الفاتورة الإلكترونية (UBL 2.1 XML & Hash & QR)</h3>
+                <p class="text-[11px] text-slate-400 font-semibold">اختر فاتورة لتوليد XML المبدئي وحساب التجزئة SHA-256 ورمز QR TLV</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5 text-xs">
+              <select id="zatca-invoice-select" class="flex-1 min-w-[200px] p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800">
+                <option value="">-- اختر فاتورة لتجهيز معاينة XML --</option>
+              </select>
+              <select id="zatca-prepare-type" class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700">
+                <option value="simplified">فاتورة مبسطة (0200000)</option>
+                <option value="standard">فاتورة ضريبية قياسية (0100000)</option>
+              </select>
+              <button onclick="prepareZatcaInvoiceXml()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl font-black shadow-xs transition">تجهيز ومعاينة XML ⚡</button>
+            </div>
+
+            <div id="zatca-prepare-result" class="hidden space-y-3 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200/80">
+                <div>
+                  <span class="text-slate-400 font-bold block text-[10px]">UUID الفاتورة:</span>
+                  <code id="zp-uuid" dir="ltr" class="font-mono font-bold text-slate-800 text-[11px] break-all">-</code>
+                </div>
+                <div>
+                  <span class="text-slate-400 font-bold block text-[10px]">تجزئة SHA-256 (Invoice Hash):</span>
+                  <code id="zp-hash" dir="ltr" class="font-mono font-bold text-emerald-800 text-[11px] break-all">-</code>
+                </div>
+                <div class="sm:col-span-2">
+                  <span class="text-slate-400 font-bold block text-[10px]">QR TLV Base64:</span>
+                  <code id="zp-qr" dir="ltr" class="font-mono text-purple-800 text-[10px] break-all">-</code>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-slate-700">محتوى UBL 2.1 XML المولّد (معاينة تطويرية):</span>
+                  <button type="button" onclick="copyZatcaXml()" class="text-[11px] font-bold text-gathern-700 hover:underline">نسخ XML 📋</button>
+                </div>
+                <textarea id="zp-xml" dir="ltr" readonly rows="8" class="w-full p-3 bg-slate-900 text-emerald-300 font-mono text-[11px] rounded-xl border border-slate-700 leading-relaxed"></textarea>
+              </div>
+            </div>
           </div>
 
-          <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-            <h4 class="text-sm font-black text-slate-800">الأرشفة والتوثيق الأمني</h4>
-            <p class="text-xs text-slate-500 leading-relaxed">
-              حفظ تسلسلي غير قابل للتعديل لكل فاتورة مع تجزئة التشفير (Cryptographic Stamp Hash) لضمان موثوقية السجلات المالية.
-            </p>
+          <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-sm font-black text-slate-800">سجل محاولات الإرسال والتدقيق</h3>
+                <p class="text-[11px] text-slate-400 font-semibold">جدول <code class="bg-slate-100 px-1 rounded">zatca_submissions</code></p>
+              </div>
+            </div>
+            <div id="zatca-submissions-list" class="text-xs text-slate-500 space-y-2 max-h-80 overflow-y-auto">
+              <div class="py-8 text-center text-slate-400 font-bold">لا توجد عمليات إرسال مسجلة بعد (وضع التجهيز الآمن)</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1679,363 +1921,401 @@
 
   <!-- Modal 1: CREATE NEW INVOICE -->
   <!-- Modal 1: CREATE NEW INVOICE WITH LOGO & MULTI-LINE ITEMS -->
-  <div id="newInvoiceModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 hidden" style="display: none; z-index: 99999;">
-    <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[92vh] overflow-y-auto">
-      
-      <!-- Studio Header -->
-      <div class="flex items-start justify-between border-b border-slate-100 pb-4">
-        <div>
-          <div class="flex items-center gap-3">
-            <h3 class="text-xl font-black text-slate-900">إنشاء فاتورة مبيعات ضريبية إلكترونية</h3>
-            <span class="bg-purple-100 text-purple-800 text-[11px] font-black px-2.5 py-0.5 rounded-full border border-purple-200">ZATCA Compliant</span>
+  <div id="newInvoiceModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 hidden" style="display: none; z-index: 99999;">
+    <div class="inv-shell bg-slate-50 rounded-3xl w-full max-w-6xl shadow-2xl border border-slate-200 flex flex-col max-h-[95vh] overflow-hidden">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between gap-3 px-5 sm:px-7 py-4 bg-white border-b border-slate-200">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-2xl gathern-gradient-btn text-white flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="text-lg sm:text-xl font-black text-slate-900">إنشاء فاتورة مبيعات</h3>
+              <span class="bg-emerald-50 text-emerald-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">ZATCA</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-slate-500 font-semibold mt-0.5 truncate">الضريبة 15% تُحسب تلقائياً • شعار مخصص • تصدير PDF بمقاس A4</p>
           </div>
-          <p class="text-xs text-slate-500 font-semibold mt-1">تحديد البنود، حساب الضريبة 15% تلقائياً، إرفاق الشعار المخصص، وتصدير PDF عالي الجودة</p>
         </div>
-        <button onclick="closeModal('newInvoiceModal')" class="text-slate-400 hover:text-slate-600 font-black text-2xl p-1 leading-none">&times;</button>
+        <button type="button" onclick="closeModal('newInvoiceModal')" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition" aria-label="إغلاق"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
       </div>
 
-      <form id="newInvoiceForm" onsubmit="handleCreateInvoice(event)" class="space-y-6 text-xs">
-        
-        <!-- Top Row: Entity, Custom Logo Box & Document Info -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80">
-          
-          <!-- Company & Details -->
-          <div class="space-y-3">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">النشاط / المنشأة المصدرة:</label>
-              <select id="inv-entity" onchange="onInvoiceEntityChanged()" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold text-slate-800">
-                <option value="law">🏢 شركة المحاماة والاستشارات</option>
-                <option value="restaurant">🍔 المطعم والمأكولات</option>
-                <option value="farm">🌾 المزرعة والإنتاج الزراعي</option>
-                <option value="barber">✂️ صالون الأناقة الرجالي</option>
-                <option value="home">🏡 الحساب الشخصي</option>
-              </select>
-            </div>
-            <div id="inv-entity-legal-badge" class="text-[11px] font-bold text-slate-500 bg-white p-2.5 rounded-xl border border-slate-200">
-              س.ت: 1010987654 • ر.ض: 310123456700003
-            </div>
-          </div>
+      <form id="newInvoiceForm" onsubmit="handleCreateInvoice(event)" class="flex-1 min-h-0 flex flex-col text-xs">
+        <div class="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-          <!-- Logo Management Box -->
-          <div class="bg-white p-3 rounded-xl border border-purple-200/80 shadow-2xs flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-black text-purple-900 text-xs">شعار الفاتورة (Logo)</span>
-              <span class="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">معتمد</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="w-16 h-14 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-center p-1 overflow-hidden">
-                <img id="modalLogoThumb" src="/logo.png" alt="الشعار" class="max-h-full max-w-full object-contain">
-              </div>
-              <div class="flex-1 space-y-1.5">
-                <button type="button" onclick="triggerInvoiceLogoPicker()" class="w-full py-1.5 px-3 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-lg border border-purple-200 transition text-[11px] flex items-center justify-center gap-1.5">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                  <span>تغيير / رفع اللوجو</span>
-                </button>
-                <button type="button" onclick="resetInvoiceLogo()" class="text-[10px] text-slate-400 hover:text-slate-600 font-bold">استعادة الشعار الأصلي</button>
-              </div>
-            </div>
-            <input type="file" id="modalLogoFileInput" accept="image/*" class="hidden" onchange="handleInvoiceLogoFileChange(event)">
-          </div>
+            <!-- Main column -->
+            <div class="lg:col-span-2 space-y-5">
 
-          <!-- Document Meta (Type & Number) -->
-          <div class="space-y-3">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">نوع الوثيقة:</label>
-              <select id="inv-doc-type" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold text-slate-800">
-                <option value="tax_invoice">فاتورة ضريبية (TAX INVOICE)</option>
-                <option value="simplified">فاتورة ضريبية مبسطة</option>
-                <option value="quote">عرض سعر معتمد (QUOTATION)</option>
-                <option value="proforma">فاتورة مبدئية (PROFORMA)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">رقم الفاتورة:</label>
-              <input type="text" id="inv-number" required class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold text-slate-900 text-left" dir="ltr" value="INV-2026-001">
-            </div>
-          </div>
+              <!-- 1) Issuer & document -->
+              <section class="inv-card">
+                <div class="inv-card-title"><span class="inv-step">1</span> المنشأة والمستند</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div class="sm:col-span-2">
+                    <label class="inv-label">المنشأة المصدرة</label>
+                    <select id="inv-entity" onchange="onInvoiceEntityChanged()" class="inv-input font-bold">
+                      <option value="law">🏢 شركة المحاماة والاستشارات</option>
+                      <option value="restaurant">🍔 المطعم والمأكولات</option>
+                      <option value="farm">🌾 المزرعة والإنتاج الزراعي</option>
+                      <option value="barber">✂️ صالون الأناقة الرجالي</option>
+                      <option value="home">🏡 الحساب الشخصي</option>
+                    </select>
+                    <div id="inv-entity-legal-badge" class="mt-2 text-[11px] font-bold text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-dashed border-slate-200">س.ت: 1010987654 • ر.ض: 310123456700003</div>
+                  </div>
+                  <div>
+                    <label class="inv-label">نوع الوثيقة</label>
+                    <select id="inv-doc-type" class="inv-input font-bold">
+                      <option value="tax_invoice">فاتورة ضريبية (TAX INVOICE)</option>
+                      <option value="simplified">فاتورة ضريبية مبسطة</option>
+                      <option value="quote">عرض سعر معتمد (QUOTATION)</option>
+                      <option value="proforma">فاتورة مبدئية (PROFORMA)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="inv-label">رقم الفاتورة</label>
+                    <input type="text" id="inv-number" required class="inv-input font-black text-left" dir="ltr" value="INV-2026-001">
+                  </div>
+                  <div>
+                    <label class="inv-label">تاريخ الإصدار</label>
+                    <input type="date" id="inv-date" required class="inv-input font-bold">
+                  </div>
+                  <div>
+                    <label class="inv-label">تاريخ الاستحقاق</label>
+                    <input type="date" id="inv-due-date" required class="inv-input font-bold">
+                  </div>
+                </div>
+              </section>
 
+              <!-- 2) Customer & payment -->
+              <section class="inv-card">
+                <div class="inv-card-title"><span class="inv-step">2</span> بيانات العميل والسداد</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div class="sm:col-span-2">
+                    <label class="inv-label">اسم العميل / المستفيد <span class="text-rose-500">*</span></label>
+                    <input type="text" id="inv-client" required placeholder="مثال: شركة الفيصلية القابضة" class="inv-input font-bold">
+                  </div>
+                  <div>
+                    <label class="inv-label">الرقم الضريبي للعميل (اختياري)</label>
+                    <input type="text" id="inv-client-vat" placeholder="300000000000003" maxlength="15" class="inv-input text-left font-semibold" dir="ltr">
+                  </div>
+                  <div>
+                    <label class="inv-label">عنوان العميل</label>
+                    <input type="text" id="inv-client-address" placeholder="الرياض، المملكة العربية السعودية" class="inv-input font-semibold">
+                  </div>
+                  <div>
+                    <label class="inv-label">حالة السداد</label>
+                    <select id="inv-status" class="inv-input font-bold">
+                      <option value="paid">✅ مسددة (مدفوعة بالكامل)</option>
+                      <option value="unpaid">⏳ غير مسددة (آجلة)</option>
+                      <option value="partial">🔄 مدفوعة جزئياً</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="inv-label">طريقة السداد</label>
+                    <select id="inv-payment-method" class="inv-input font-bold">
+                      <option value="تحويل بنكي">تحويل بنكي (مصرف الراجحي)</option>
+                      <option value="نقداً">نقداً (الصندوق الرئيسي)</option>
+                      <option value="شبكة مدى / نقاط بيع">شبكة مدى / نقاط بيع</option>
+                      <option value="بطاقة ائتمانية">بطاقة ائتمانية</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+
+              <!-- 3) Items -->
+              <section class="inv-card !p-0 overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 py-3 border-b border-slate-200 bg-white">
+                  <div class="inv-card-title !mb-0"><span class="inv-step">3</span> بنود الفاتورة <span id="invItemsCountBadge" class="bg-purple-100 text-purple-800 text-[10px] font-black px-2 py-0.5 rounded-full">1 بند</span></div>
+                  <button type="button" onclick="addInvoiceItemRow()" class="bg-purple-700 hover:bg-purple-800 text-white px-3.5 py-2 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-sm transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg><span>إضافة بند</span></button>
+                </div>
+                <div class="overflow-x-auto bg-white">
+                  <table class="inv-items-table w-full text-right text-xs min-w-[640px]">
+                    <thead>
+                      <tr>
+                        <th class="w-10 text-center">#</th>
+                        <th>البيان / وصف الخدمة</th>
+                        <th class="w-24 text-center">الكمية</th>
+                        <th class="w-32">السعر (ر.س)</th>
+                        <th class="w-24">الخصم</th>
+                        <th class="w-20 text-center">الضريبة</th>
+                        <th class="w-36 text-left">الإجمالي</th>
+                        <th class="w-12"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="invoiceItemsTbody"></tbody>
+                  </table>
+                </div>
+                <div class="px-4 sm:px-5 py-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center gap-2 text-[11px]">
+                  <span class="text-slate-400 font-bold">إضافة سريعة:</span>
+                  <button type="button" onclick="addPresetItem('أتعاب استشارات وتراخيص نظامية', 1, 5000)" class="inv-chip">+ أتعاب استشارات (5,000)</button>
+                  <button type="button" onclick="addPresetItem('خدمات إدارة حسابات وتدقيق مالي', 1, 3500)" class="inv-chip">+ تدقيق مالي (3,500)</button>
+                  <button type="button" onclick="addPresetItem('توريد مستلزمات وبضائع تجارية', 10, 150)" class="inv-chip">+ توريد بضاعة</button>
+                </div>
+              </section>
+
+              <!-- 4) Notes -->
+              <section class="inv-card">
+                <div class="inv-card-title"><span class="inv-step">4</span> الشروط والملاحظات وخيار الإرسال</div>
+                <textarea id="inv-notes" rows="3" class="inv-input font-semibold" placeholder="شكراً لتعاملكم معنا • جميع الفواتير الصادرة تخضع للائحة هيئة الزكاة والضريبة والجمارك"></textarea>
+                <div class="mt-2 text-[11px] text-slate-500 bg-purple-50/70 px-3 py-2 rounded-xl border border-purple-100 font-bold">🏦 الحساب البنكي: مصرف الراجحي | الآيبان: SA0380000123456789012345</div>
+                <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
+                  <div class="font-black text-slate-800 text-xs">بعد إنشاء الفاتورة</div>
+                  <label class="flex items-start gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                    <input type="radio" name="invoice-next-action" value="save-only" checked class="mt-0.5">
+                    <span>حفظ الفاتورة داخل النظام فقط — بدون إرسال للهيئة</span>
+                  </label>
+                  <label class="flex items-start gap-2 text-xs font-bold text-slate-400">
+                    <input type="radio" name="invoice-next-action" value="zatca-submit" disabled class="mt-0.5">
+                    <span>إرسال الفاتورة إلى هيئة الزكاة والضريبة والجمارك <span class="block font-medium text-[11px] mt-0.5">معطل حالياً لحين اكتمال التوقيع الرقمي وربط Reporting/Clearance مع الهيئة.</span></span>
+                  </label>
+                </div>
+              </section>
+            </div>
+
+            <!-- Side column -->
+            <aside class="space-y-5 lg:sticky lg:top-0 self-start">
+
+              <!-- Logo -->
+              <section class="inv-card">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="font-black text-slate-800 text-xs">شعار الفاتورة</span>
+                  <span class="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">يظهر في الفاتورة و PDF</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="w-20 h-16 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center p-1.5 overflow-hidden">
+                    <img id="modalLogoThumb" src="/logo.png" alt="الشعار" class="max-h-full max-w-full object-contain">
+                  </div>
+                  <div class="flex-1 space-y-1.5">
+                    <button type="button" onclick="triggerInvoiceLogoPicker()" class="w-full py-2 px-3 bg-purple-50 hover:bg-purple-100 text-purple-700 font-black rounded-xl border border-purple-200 transition text-[11px] flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span>تغيير / رفع الشعار</span></button>
+                    <button type="button" onclick="resetInvoiceLogo()" class="w-full text-[10px] text-slate-400 hover:text-slate-600 font-bold">استعادة الشعار الأصلي</button>
+                  </div>
+                </div>
+                <input type="file" id="modalLogoFileInput" accept="image/*" class="hidden" onchange="handleInvoiceLogoFileChange(event)">
+              </section>
+
+              <!-- Totals -->
+              <section class="rounded-2xl p-5 text-white shadow-lg" style="background:linear-gradient(135deg,#3b1d8f 0%,#6d28d9 100%)">
+                <div class="text-[11px] font-bold text-purple-200 mb-3">ملخص الفاتورة</div>
+                <div class="space-y-2 font-bold text-[13px]">
+                  <div class="flex justify-between text-purple-100"><span>المجموع قبل الضريبة</span><span id="modal-subtotal-disp" class="text-white font-black">0.00 ر.س</span></div>
+                  <div class="flex justify-between text-purple-100"><span>إجمالي الخصومات</span><span id="modal-discount-disp" class="text-rose-200 font-black">0.00 ر.س</span></div>
+                  <div class="flex justify-between text-purple-100"><span>ضريبة القيمة المضافة 15%</span><span id="modal-vat-disp" class="text-white font-black">0.00 ر.س</span></div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-white/20">
+                  <div class="text-[11px] text-purple-200 font-bold">الإجمالي المستحق</div>
+                  <div id="modal-grand-disp" class="text-3xl font-black mt-1">0.00 ر.س</div>
+                </div>
+                <div id="modal-tafqeet-disp" class="mt-3 text-[11px] font-black text-purple-50 bg-white/10 rounded-xl px-3 py-2 leading-relaxed">فقط صفر ريال سعودي لا غير</div>
+              </section>
+            </aside>
+          </div>
         </div>
 
-        <!-- Customer & Payment Metadata Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">اسم العميل / المستفيد:</label>
-            <input type="text" id="inv-client" required placeholder="مثال: شركة الفيصلية القابضة" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold text-slate-800">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">الرقم الضريبي للعميل (إن وجد):</label>
-            <input type="text" id="inv-client-vat" placeholder="300000000000003" maxlength="15" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 text-left font-semibold" dir="ltr">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">حالة السداد:</label>
-            <select id="inv-status" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold text-slate-800">
-              <option value="paid">✅ مسددة (مدفوعة بالكامل)</option>
-              <option value="unpaid">⏳ غير مسددة (آجلة)</option>
-              <option value="partial">🔄 مدفوعة جزئياً</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">طريقة السداد:</label>
-            <select id="inv-payment-method" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold text-slate-800">
-              <option value="تحويل بنكي">تحويل بنكي (مصرف الراجحي)</option>
-              <option value="نقداً">نقداً (الصندوق الرئيسي)</option>
-              <option value="شبكة مدى / نقاط بيع">شبكة مدى / نقاط بيع</option>
-              <option value="بطاقة ائتمانية">بطاقة ائتمانية</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">تاريخ الإصدار:</label>
-            <input type="date" id="inv-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">تاريخ الاستحقاق:</label>
-            <input type="date" id="inv-due-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-bold">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">عنوان / فرع العميل:</label>
-            <input type="text" id="inv-client-address" placeholder="الرياض، المملكة العربية السعودية" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-semibold">
-          </div>
-        </div>
-
-        <!-- Line items Builder Table (تحديد البنود) -->
-        <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-2xs">
-          <div class="bg-slate-100/80 px-4 py-3 flex items-center justify-between border-b border-slate-200">
-            <div class="flex items-center gap-2">
-              <span class="font-black text-slate-800 text-sm">بنود الفاتورة والخدمات</span>
-              <span id="invItemsCountBadge" class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">1 بند</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="addInvoiceItemRow()" class="bg-purple-700 hover:bg-purple-800 text-white px-3 py-1.5 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-2xs transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
-                <span>إضافة بند جديد</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-right text-xs">
-              <thead class="bg-slate-50 text-slate-600 font-black border-b border-slate-200 text-[11px]">
-                <tr>
-                  <th class="p-3 w-10 text-center">#</th>
-                  <th class="p-3">البيان / وصف الخدمة أو السلعة</th>
-                  <th class="p-3 w-24 text-center">الكمية</th>
-                  <th class="p-3 w-32">السعر الإفرادي (ر.س)</th>
-                  <th class="p-3 w-24">الخصم (ر.س)</th>
-                  <th class="p-3 w-24 text-center">الضريبة</th>
-                  <th class="p-3 w-36 text-left">المجموع شامل الضريبة</th>
-                  <th class="p-3 w-12 text-center">إجراء</th>
-                </tr>
-              </thead>
-              <tbody id="invoiceItemsTbody" class="divide-y divide-slate-100">
-                <!-- Generated dynamically by renderInvoiceRows() -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Quick Presets -->
-          <div class="bg-slate-50/50 p-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2 text-[11px]">
-            <span class="text-slate-400 font-bold">نماذج سريعة:</span>
-            <button type="button" onclick="addPresetItem('أتعاب استشارات وتراخيص نظامية', 1, 5000)" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-purple-300 font-bold text-slate-700 hover:text-purple-700 transition">+ أتعاب استشارات (5,000)</button>
-            <button type="button" onclick="addPresetItem('خدمات إدارة حسابات وتدقيق مالي', 1, 3500)" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-purple-300 font-bold text-slate-700 hover:text-purple-700 transition">+ تدقيق مالي (3,500)</button>
-            <button type="button" onclick="addPresetItem('توريد مستلزمات وبضائع تجارية', 10, 150)" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-purple-300 font-bold text-slate-700 hover:text-purple-700 transition">+ توريد بضاعة</button>
-          </div>
-        </div>
-
-        <!-- Totals, Tafqeet & Terms Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
-          <!-- Notes & Terms -->
-          <div class="space-y-2">
-            <label class="block font-bold text-slate-700">شروط وملاحظات الفاتورة:</label>
-            <textarea id="inv-notes" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-600 font-semibold" placeholder="شكراً لتعاملكم معنا • جميع الفواتير الصادرة تخضع للائحة هيئة الزكاة والضريبة والجمارك"></textarea>
-            <div class="text-[11px] text-slate-500 bg-purple-50/60 p-2.5 rounded-xl border border-purple-100 font-bold">
-              🏦 الحساب البنكي: مصرف الراجحي | الآيبان: SA0380000123456789012345
-            </div>
-          </div>
-
-          <!-- Financial Calculation Card -->
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2.5 font-bold">
-            <div class="flex justify-between text-slate-600">
-              <span>المجموع الفرعي (غير شامل الضريبة):</span>
-              <span id="modal-subtotal-disp" class="text-slate-900 font-black">0.00 ر.س</span>
-            </div>
-            <div class="flex justify-between text-slate-600">
-              <span>إجمالي الخصومات:</span>
-              <span id="modal-discount-disp" class="text-rose-600 font-black">0.00 ر.س</span>
-            </div>
-            <div class="flex justify-between text-slate-600">
-              <span>ضريبة القيمة المضافة (15%):</span>
-              <span id="modal-vat-disp" class="text-purple-700 font-black">0.00 ر.س</span>
-            </div>
-            <div class="flex justify-between items-center text-base font-black text-slate-900 pt-2.5 border-t border-slate-200">
-              <span class="text-purple-950 font-black">الإجمالي النهائي المستحق:</span>
-              <span id="modal-grand-disp" class="text-purple-700 text-lg font-black">0.00 ر.س</span>
-            </div>
-            <!-- Arabic Tafqeet Box -->
-            <div class="pt-2 border-t border-slate-200/80 text-[11px] font-black text-purple-900 bg-white p-2.5 rounded-xl border border-purple-100" id="modal-tafqeet-disp">
-              فقط صفر ريال سعودي لا غير
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
+        <!-- Sticky footer actions -->
+        <div class="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-white border-t border-slate-200">
           <button type="button" onclick="closeModal('newInvoiceModal')" class="px-5 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl font-bold transition">إلغاء</button>
-          
-          <div class="flex items-center gap-3">
-            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl font-black shadow-xs transition flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-              <span>حفظ الفاتورة</span>
-            </button>
-            <button type="button" onclick="handleSaveAndDownloadInvoicePDF(event)" class="gathern-gradient-btn text-white px-6 py-2.5 rounded-xl font-black shadow-md hover:shadow-lg transition flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span>حفظ وتحميل PDF فوراً (A4)</span>
-            </button>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl font-black shadow-sm transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>حفظ الفاتورة</span></button>
+            <button type="button" onclick="handleSaveAndDownloadInvoicePDF(event)" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black shadow-md hover:shadow-lg transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg><span>حفظ وتحميل PDF</span></button>
           </div>
         </div>
-
       </form>
     </div>
   </div>
 
   <!-- Modal 2: PRINT & VIEW TAX INVOICE WITH VECTOR A4 PDF EXPORT -->
-  <div id="viewInvoiceModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-6 hidden">
-    <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 max-h-[95vh] overflow-y-auto">
-      
-      <!-- Top Action Toolbar -->
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100 no-print">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-          <span class="font-black text-slate-800 text-sm">معاينة الفاتورة الضريبية الرسمية</span>
+  <div id="viewInvoiceModal" onclick="if(event.target===this)closeModal('viewInvoiceModal')" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-slate-100 rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+
+      <!-- Toolbar -->
+      <div class="shrink-0 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-white border-b border-slate-200 no-print">
+        <div class="flex items-center gap-2.5">
+          <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></span>
+          <div>
+            <div class="font-black text-slate-900 text-sm">معاينة الفاتورة</div>
+            <div class="text-[11px] text-slate-500 font-semibold">معاينة الفاتورة للطباعة وتحميل PDF (نسخة محلية غير مرسلة للهيئة)</div>
+          </div>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-xs transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            <span>تحميل PDF (A4)</span>
-          </button>
-          <button onclick="printInvoice(currentViewedInvoiceId)" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-            <span>طباعة</span>
-          </button>
-          <button onclick="closeModal('viewInvoiceModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 font-bold text-lg leading-none">&times;</button>
+          <button type="button" onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-sm transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg><span>تحميل PDF</span></button>
+          <button type="button" onclick="printInvoice(currentViewedInvoiceId)" class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg><span>طباعة</span></button>
+          <button type="button" onclick="closeModal('viewInvoiceModal')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition" aria-label="إغلاق"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg><span>إغلاق</span></button>
         </div>
       </div>
 
-      <!-- Printable A4 Invoice Container -->
-      <div id="printArea" class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-xs space-y-6 text-slate-800">
-        
-        <!-- Header: Entity Info, Logo & ZATCA QR -->
-        <div class="flex items-start justify-between border-b-2 border-purple-900 pb-5">
-          <div class="space-y-1">
-            <img id="print-logo" src="/logo.png" alt="شعار المنشأة" class="h-14 w-auto object-contain mb-2 customizable-invoice-logo">
-            <div class="text-xl font-black text-slate-950" id="print-entity-name">مؤسسة حجاج للمحاماة والاستشارات</div>
-            <div class="text-xs font-bold text-slate-500" id="print-entity-en">Hajjaj Legal Firm & Consultations</div>
-            <div class="text-xs text-slate-600 font-semibold mt-1">الرقم الضريبي: <span id="print-entity-vat" class="font-bold text-slate-900" dir="ltr">310123456700003</span></div>
-            <div class="text-xs text-slate-600 font-semibold">السجل التجاري: <span id="print-entity-cr" class="font-bold text-slate-900" dir="ltr">1010987654</span></div>
-          </div>
-          
-          <div class="flex flex-col items-center">
-            <div class="px-3 py-1 bg-purple-900 text-white font-black text-xs rounded-lg mb-2 text-center">
-              فاتورة ضريبية<br><span class="text-[9px] font-normal tracking-wider">TAX INVOICE</span>
-            </div>
-            <div id="zatcaQrCodeContainer" class="p-1 bg-white border border-slate-200 rounded-lg shadow-2xs"></div>
-            <span class="text-[9px] font-bold text-slate-400 mt-1">ZATCA e-Invoice</span>
-          </div>
+      <!-- Paper -->
+      <div class="flex-1 min-h-0 overflow-auto p-3 sm:p-6 bg-slate-200/70">
+      <div id="printArea" class="inv-sheet" dir="ltr" style="width:794px;min-height:1122px;margin:0 auto;background:#fff;color:#2b3a4f;font-family:'Cairo',sans-serif;font-size:11px;padding:44px 48px 34px;display:flex;flex-direction:column;box-sizing:border-box;direction:ltr;text-align:left;box-shadow:0 4px 24px rgba(15,23,42,.18);">
+
+        <!-- Header: English (LEFT) | Logo (CENTER) | Arabic (RIGHT) -->
+        <table dir="ltr" style="width:100%;border-collapse:collapse;direction:ltr;table-layout:fixed;">
+          <tbody>
+            <tr>
+              <td dir="ltr" style="width:39%;vertical-align:top;text-align:left;direction:ltr;line-height:1.55;padding:0;">
+                <div id="print-entity-en" style="font-size:16.5px;font-weight:800;line-height:1.35;margin-bottom:6px;color:#2b3a4f;">Hajjaj Abdulrahman Al-Dhuwaihi Law Firm and Legal Consultations</div>
+                <div id="print-entity-addr-en" style="font-size:10px;color:#3b4a5e;">3754, طريق الملك عبدالله, الورود, الخرج, 16278, Kingdom of Saudi Arabia</div>
+                <div id="print-entity-email" style="font-size:10px;color:#3b4a5e;">hajaj.alduwaihi@gmail.com</div>
+                <div id="print-entity-phone" style="font-size:10px;color:#3b4a5e;">0555102509</div>
+                <div style="font-size:10px;color:#3b4a5e;">VAT number <span id="print-entity-vat">311228238200003</span></div>
+                <div style="font-size:10px;color:#3b4a5e;">CR Number <span id="print-entity-cr">1011149366</span></div>
+              </td>
+              <td style="width:22%;vertical-align:middle;text-align:center;padding:8px 10px 0;">
+                <img id="print-logo" src="/logo.png" alt="شعار المنشأة" class="customizable-invoice-logo" style="max-height:66px;max-width:140px;object-fit:contain;display:inline-block;">
+              </td>
+              <td dir="rtl" style="width:39%;vertical-align:top;text-align:right;direction:rtl;line-height:1.55;padding:0;">
+                <div id="print-entity-name" style="font-size:16.5px;font-weight:800;line-height:1.38;margin-bottom:6px;color:#2b3a4f;">شركة حجاج عبدالرحمن الضويحي للمحاماة والاستشارات القانونية</div>
+                <div id="print-entity-addr-ar" style="font-size:10px;color:#3b4a5e;">3754، طريق الملك عبدالله، الورود، الخرج، 16278، المملكة العربية السعودية</div>
+                <div id="print-entity-email-ar" style="font-size:10px;color:#3b4a5e;" dir="ltr">hajaj.alduwaihi@gmail.com</div>
+                <div id="print-entity-phone-ar" style="font-size:10px;color:#3b4a5e;" dir="ltr">0555102509</div>
+                <div style="font-size:10px;color:#3b4a5e;">رقم التسجيل الضريبي <span id="print-entity-vat-ar" dir="ltr">311228238200003</span></div>
+                <div style="font-size:10px;color:#3b4a5e;">رقم السجل التجاري <span id="print-entity-cr-ar" dir="ltr">1011149366</span></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="border-top:1.5px solid #c5d1de;margin:14px 0 14px;"></div>
+
+        <!-- Title -->
+        <div dir="ltr" style="text-align:center;font-size:25px;font-weight:800;color:#2b3a4f;margin-bottom:16px;line-height:1.3;direction:ltr;">
+          <span id="print-doc-title-en">Tax Invoice</span>&nbsp;&nbsp;<span id="print-doc-title" dir="rtl">فاتورة ضريبية</span>
         </div>
 
-        <!-- Details Grid (Document & Client Info) -->
-        <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200/80">
-          <div class="space-y-1.5">
-            <div><strong class="text-slate-500">رقم الفاتورة:</strong> <span id="print-inv-no" class="font-black text-slate-950 text-sm">#INV-2026-001</span></div>
-            <div><strong class="text-slate-500">تاريخ الإصدار:</strong> <span id="print-inv-date" class="font-bold text-slate-800">2026-10-21</span></div>
-            <div><strong class="text-slate-500">تاريخ الاستحقاق:</strong> <span id="print-inv-due-date" class="font-bold text-slate-800">2026-10-21</span></div>
-            <div><strong class="text-slate-500">طريقة الدفع:</strong> <span id="print-inv-method" class="font-bold text-slate-800">تحويل بنكي</span></div>
-          </div>
-          <div class="space-y-1.5">
-            <div><strong class="text-slate-500">العميل / المستفيد:</strong> <span id="print-inv-client" class="font-black text-slate-950 text-sm">شركة النور للمقاولات</span></div>
-            <div><strong class="text-slate-500">الرقم الضريبي للعميل:</strong> <span id="print-inv-client-vat" class="font-bold text-slate-800 font-mono">310000000000003</span></div>
-            <div><strong class="text-slate-500">عنوان العميل:</strong> <span id="print-inv-client-address" class="font-semibold text-slate-700">الرياض، المملكة العربية السعودية</span></div>
-            <div><strong class="text-slate-500">حالة الفاتورة:</strong> <span id="print-inv-status" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">مسددة بالكامل ✓</span></div>
-          </div>
+        <!-- Customer / Invoice Meta Table (exact 6-column structure matching reference) -->
+        <table dir="ltr" style="width:100%;border-collapse:collapse;border:1px solid #c5d1de;font-size:10.5px;margin-bottom:22px;direction:ltr;table-layout:fixed;">
+          <tbody>
+            <tr style="border-bottom:1px solid #d8e1eb;">
+              <td dir="ltr" style="width:16%;padding:5px 10px;font-weight:800;text-align:left;color:#2b3a4f;">Customer</td>
+              <td id="print-inv-client" dir="rtl" colspan="4" style="width:68%;padding:5px 10px;text-align:center;color:#2b3a4f;font-weight:600;">عبدالله مهدي</td>
+              <td dir="rtl" style="width:16%;padding:5px 10px;font-weight:800;text-align:right;color:#2b3a4f;">العميل</td>
+            </tr>
+            <tr style="border-bottom:1px solid #d8e1eb;">
+              <td dir="ltr" style="padding:5px 10px;font-weight:800;text-align:left;color:#2b3a4f;">Address</td>
+              <td id="print-inv-client-address" dir="rtl" colspan="4" style="padding:5px 10px;text-align:center;color:#2b3a4f;">المملكة العربية السعودية ،الخرج</td>
+              <td dir="rtl" style="padding:5px 10px;font-weight:800;text-align:right;color:#2b3a4f;">العنوان</td>
+            </tr>
+            <tr id="print-client-vat-row" style="border-bottom:1px solid #d8e1eb;display:none;">
+              <td dir="ltr" style="padding:5px 10px;font-weight:800;text-align:left;color:#2b3a4f;">VAT number</td>
+              <td id="print-inv-client-vat" dir="ltr" colspan="4" style="padding:5px 10px;text-align:center;color:#2b3a4f;">300000000000003</td>
+              <td dir="rtl" style="padding:5px 10px;font-weight:800;text-align:right;color:#2b3a4f;">الرقم الضريبي</td>
+            </tr>
+            <tr>
+              <td dir="ltr" style="width:16%;padding:5px 10px;font-weight:800;text-align:left;color:#2b3a4f;">Invoice number</td>
+              <td id="print-inv-no" dir="ltr" style="width:21%;padding:5px 10px;text-align:center;color:#2b3a4f;">SINV-000100</td>
+              <td dir="rtl" style="width:13%;padding:5px 10px;font-weight:800;text-align:right;border-right:1px solid #c5d1de;color:#2b3a4f;">رقم الفاتورة</td>
+              <td dir="ltr" style="width:10%;padding:5px 10px;font-weight:800;text-align:left;color:#2b3a4f;">Date</td>
+              <td id="print-inv-date" dir="ltr" style="width:24%;padding:5px 10px;text-align:center;color:#2b3a4f;">2023-01-31</td>
+              <td dir="rtl" style="width:16%;padding:5px 10px;font-weight:800;text-align:right;color:#2b3a4f;">التاريخ</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Hidden compatibility placeholders so existing code never breaks -->
+        <span id="print-inv-due-date" style="display:none"></span>
+        <span id="print-inv-method" style="display:none"></span>
+        <span id="print-inv-status" style="display:none"></span>
+
+        <!-- Line Items Table (LEFT-to-RIGHT column order matching reference PDF) -->
+        <table dir="ltr" style="width:100%;border-collapse:collapse;border:1px solid #c5d1de;font-size:10.5px;direction:ltr;table-layout:fixed;">
+          <thead>
+            <tr style="border-bottom:1px solid #c5d1de;color:#2b3a4f;">
+              <th style="width:14%;padding:8px 8px;text-align:center;font-weight:800;line-height:1.35;">
+                <div dir="rtl">المجموع</div>
+                <div dir="ltr">Line amount</div>
+              </th>
+              <th style="width:14%;padding:8px 8px;text-align:center;font-weight:800;line-height:1.35;">
+                <div dir="rtl">القيمة المضافة</div>
+                <div dir="ltr">VAT amount</div>
+              </th>
+              <th style="width:18%;padding:8px 8px;text-align:center;font-weight:800;line-height:1.35;">
+                <div dir="rtl">المبلغ الخاضع للضريبة</div>
+                <div dir="ltr">Taxable amount</div>
+              </th>
+              <th style="width:11%;padding:8px 8px;text-align:center;font-weight:800;line-height:1.35;">
+                <div dir="rtl">السعر</div>
+                <div dir="ltr">Price</div>
+              </th>
+              <th style="width:9%;padding:8px 8px;text-align:center;font-weight:800;line-height:1.35;">
+                <div dir="rtl">الكمية</div>
+                <div dir="ltr">Qty</div>
+              </th>
+              <th style="width:29%;padding:8px 10px;text-align:right;font-weight:800;line-height:1.35;">
+                <div dir="rtl">الوصف</div>
+                <div dir="ltr" style="text-align:right;">Description</div>
+              </th>
+              <th style="width:5%;padding:8px 8px;text-align:right;font-weight:800;vertical-align:top;">#</th>
+            </tr>
+          </thead>
+          <tbody id="print-inv-items"></tbody>
+        </table>
+
+        <!-- Bottom Section: Totals on LEFT | ZATCA QR on RIGHT (matching reference) -->
+        <table dir="ltr" style="width:100%;border-collapse:collapse;margin-top:14px;direction:ltr;table-layout:fixed;">
+          <tbody>
+            <tr>
+              <td style="width:58%;vertical-align:top;padding:4px 0 0 28px;">
+                <table dir="ltr" style="border-collapse:collapse;font-size:10.5px;color:#2b3a4f;direction:ltr;">
+                  <tbody>
+                    <tr>
+                      <td id="print-subtotal" style="padding:6px 12px 6px 0;font-weight:800;text-align:left;min-width:68px;">0.00</td>
+                      <td style="padding:6px 26px 6px 4px;font-weight:800;text-align:left;">&#65020;</td>
+                      <td style="padding:6px 0;font-weight:800;text-align:left;">Subtotal <span dir="rtl">المجموع الفرعي</span></td>
+                    </tr>
+                    <tr id="print-discount-row" style="display:none;">
+                      <td id="print-discount" style="padding:6px 12px 6px 0;font-weight:800;text-align:left;">0.00</td>
+                      <td style="padding:6px 26px 6px 4px;font-weight:800;text-align:left;">&#65020;</td>
+                      <td style="padding:6px 0;font-weight:800;text-align:left;">Discount <span dir="rtl">إجمالي الخصم</span></td>
+                    </tr>
+                    <tr>
+                      <td id="print-vat" style="padding:6px 12px 6px 0;font-weight:800;text-align:left;">0.00</td>
+                      <td style="padding:6px 26px 6px 4px;font-weight:800;text-align:left;">&#65020;</td>
+                      <td style="padding:6px 0;font-weight:800;text-align:left;">Total VAT <span dir="rtl">إجمالي ضريبة القيمة المضافة</span></td>
+                    </tr>
+                    <tr>
+                      <td id="print-grand" style="padding:6px 12px 6px 0;font-weight:800;text-align:left;">0.00</td>
+                      <td style="padding:6px 26px 6px 4px;font-weight:800;text-align:left;">&#65020;</td>
+                      <td style="padding:6px 0;font-weight:800;text-align:left;">Total <span dir="rtl">المجموع شامل القيمة المضافة</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div id="print-tafqeet" style="display:none;"></div>
+                <div id="print-inv-notes" style="margin-top:8px;font-size:9.5px;color:#64748b;direction:rtl;text-align:right;"></div>
+              </td>
+              <td style="width:42%;vertical-align:top;text-align:right;padding-top:2px;">
+                <div id="zatcaQrCodeContainer" style="display:inline-block;"></div>
+                <div style="font-size:7px;line-height:1.45;color:#4a5568;margin-top:3px;text-align:right;">
+                  <div dir="rtl">تم ترميز هذا الرمز وفقاً لمتطلبات هيئة الزكاة والضريبة والجمارك للفوترة الإلكترونية</div>
+                  <div dir="ltr">This QR code is encoded as per ZATCA e-invoicing requirements</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Bottom Page Footer (matching reference PDF) -->
+        <table dir="ltr" style="width:100%;border-collapse:collapse;margin-top:auto;padding-top:28px;font-size:8.5px;color:#2b3a4f;direction:ltr;table-layout:fixed;">
+          <tbody>
+            <tr>
+              <td style="width:58%;text-align:center;line-height:1.45;color:#4a5568;">
+                <div id="print-footer-en" dir="ltr">Hajaj Abdulrahman Al-Dhuwaihi Law Firm and Legal Consultations</div>
+                <div id="print-footer-ar" dir="rtl">شركة حجاج عبدالرحمن الضويحي للمحاماة والاستشارات القانونية</div>
+              </td>
+              <td style="width:22%;text-align:center;vertical-align:bottom;font-weight:700;">Page 1 of 1 -</td>
+              <td id="print-footer-no" style="width:20%;text-align:right;vertical-align:bottom;font-weight:700;">SINV-000100</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+
+      <!-- Sticky Bottom Footer Bar -->
+      <div class="shrink-0 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-white border-t border-slate-200 no-print">
+        <button type="button" onclick="closeModal('viewInvoiceModal')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          <span>إغلاق المعاينة</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="printInvoice(currentViewedInvoiceId)" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition">طباعة</button>
+          <button type="button" onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm transition">تحميل PDF</button>
         </div>
-
-        <!-- Items Table -->
-        <div class="border border-slate-200 rounded-xl overflow-hidden">
-          <table class="w-full text-right text-xs">
-            <thead class="bg-slate-100 text-slate-700 font-black border-b border-slate-200">
-              <tr>
-                <th class="p-2.5 w-10 text-center">#</th>
-                <th class="p-2.5">البيان / وصف الخدمة أو البضاعة</th>
-                <th class="p-2.5 text-center w-20">الكمية</th>
-                <th class="p-2.5 w-28">السعر الإفرادي</th>
-                <th class="p-2.5 w-20">الخصم</th>
-                <th class="p-2.5 text-left w-32">المجموع شامل الضريبة</th>
-              </tr>
-            </thead>
-            <tbody id="print-inv-items" class="divide-y divide-slate-100 font-semibold text-slate-800">
-              <!-- Item rows -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Totals & Tafqeet Breakdown -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-          
-          <!-- Bank & Terms -->
-          <div class="text-[11px] space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200/60">
-            <div class="font-black text-slate-800">بيانات التحويل البنكي:</div>
-            <div class="text-slate-600">مصرف الراجحي • SA0380000123456789012345</div>
-            <div id="print-inv-notes" class="text-slate-500 pt-1 border-t border-slate-200">شكراً لتعاملكم معنا</div>
-          </div>
-
-          <!-- Financial summary -->
-          <div class="border-2 border-slate-100 p-3.5 rounded-xl space-y-1.5 text-xs bg-white">
-            <div class="flex justify-between text-slate-600">
-              <span>المجموع الفرعي الخاضع للضريبة:</span>
-              <span id="print-subtotal" class="font-bold text-slate-900">0.00 ر.س</span>
-            </div>
-            <div class="flex justify-between text-slate-600">
-              <span>إجمالي الخصم:</span>
-              <span id="print-discount" class="font-bold text-rose-600">0.00 ر.س</span>
-            </div>
-            <div class="flex justify-between text-slate-600">
-              <span>ضريبة القيمة المضافة (15%):</span>
-              <span id="print-vat" class="font-bold text-purple-700">0.00 ر.س</span>
-            </div>
-            <div class="flex justify-between text-base font-black text-slate-950 pt-2 border-t-2 border-purple-900">
-              <span>المجموع الإجمالي النهائي:</span>
-              <span id="print-grand" class="text-purple-700 text-lg">0.00 ر.س</span>
-            </div>
-            <div class="text-[11px] font-black text-purple-900 pt-1 border-t border-slate-100" id="print-tafqeet">
-              فقط صفر ريال سعودي لا غير
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Stamp & Signatures Area -->
-        <div class="grid grid-cols-2 gap-8 pt-4 border-t border-slate-200 text-center text-xs">
-          <div>
-            <div class="font-black text-slate-700 mb-8">توقيع المستلم / العميل:</div>
-            <div class="border-b border-dashed border-slate-300 w-3/4 mx-auto"></div>
-          </div>
-          <div>
-            <div class="font-black text-purple-900 mb-8">الختم والتوقيع المعتمد:</div>
-            <div class="inline-block px-4 py-2 border-2 border-purple-800 rounded-xl text-[10px] font-black text-purple-800 uppercase tracking-wider">
-              مؤسسة حجاج • فاتورة معتمدة إلكترونياً
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="text-center text-[10px] text-slate-400 pt-4 border-t border-slate-100">
-          تم إصدار هذه الفاتورة الإلكترونية عبر نظام قيد المحاسبي وهي معتمدة ومطابقة لمتطلبات هيئة الزكاة والضريبة والجمارك (ZATCA)
-        </div>
-
       </div>
 
     </div>
@@ -2566,7 +2846,7 @@
     }
 
     // Sync with backend database data.json on startup
-    fetch('/api/state')
+    fetch('/api/state', { headers: typeof getZatcaAuthHeaders === 'function' ? getZatcaAuthHeaders() : {} })
       .then(res => res.json())
       .then(serverData => {
         if (serverData && (serverData.invoices || serverData.treasury)) {
@@ -2591,7 +2871,7 @@
       if (syncBackend) {
         fetch('/api/state', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: typeof getZatcaAuthHeaders === 'function' ? getZatcaAuthHeaders() : { 'Content-Type': 'application/json' },
           body: JSON.stringify(state)
         }).catch(err => console.log('API save warning:', err));
       }
@@ -3096,11 +3376,8 @@
 
   function openNewQuoteModal() {
     openNewInvoiceModal();
-    const docType = document.getElementById('studio-doc-type');
-    if (docType) {
-      docType.value = 'quotation';
-      updateStudioDocType();
-    }
+    const docType = document.getElementById('inv-doc-type');
+    if (docType) docType.value = 'quote';
   }
 
   function convertQuoteToInvoice(quoteId) {
@@ -3132,11 +3409,10 @@
 
   function openNewInvoiceModalForClient(clientName, entity) {
     openNewInvoiceModal();
-    const cInput = document.getElementById('studio-client');
-    const eInput = document.getElementById('studio-entity');
+    const cInput = document.getElementById('inv-client');
+    const eInput = document.getElementById('inv-entity');
     if (cInput) cInput.value = clientName;
-    if (eInput) { eInput.value = entity; onStudioEntityChange(); }
-    renderStudioLivePreview();
+    if (eInput && entity) { eInput.value = entity; if (typeof onInvoiceEntityChanged === 'function') onInvoiceEntityChanged(); }
   }
 
   function openPaymentModalForSupplier(supplierName) {
@@ -4361,10 +4637,66 @@
     }
 
     // Dynamic Financial Reports (P&L & VAT 15%)
+    function getReportPeriodBounds() {
+      const fromValue = document.getElementById('report-month-from')?.value || '';
+      const toValue = document.getElementById('report-month-to')?.value || '';
+      const from = fromValue ? `${fromValue}-01` : '';
+      let to = '';
+      if (toValue) {
+        const [year, month] = toValue.split('-').map(Number);
+        const lastDay = new Date(year, month, 0).getDate();
+        to = `${toValue}-${String(lastDay).padStart(2, '0')}`;
+      }
+      return { from, to, fromValue, toValue };
+    }
+
+    function getReportPeriodList(items) {
+      const { from, to } = getReportPeriodBounds();
+      const entityItems = getFilteredList(items);
+      if (!from && !to) return entityItems;
+      return entityItems.filter(item => {
+        const date = String(item.date || item.issue_date || item.created_at || '').slice(0, 10);
+        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+        return (!from || date >= from) && (!to || date <= to);
+      });
+    }
+
+    function updateReportPeriodLabel() {
+      const label = document.getElementById('report-period-label');
+      if (!label) return;
+      const { fromValue, toValue } = getReportPeriodBounds();
+      if (!fromValue && !toValue) label.textContent = 'الفترة: كل الفترات المتاحة';
+      else label.textContent = `الفترة المحددة: ${fromValue || 'البداية غير محددة'} إلى ${toValue || 'النهاية غير محددة'}`;
+    }
+
+    function resetReportPeriod() {
+      const from = document.getElementById('report-month-from');
+      const to = document.getElementById('report-month-to');
+      if (from) from.value = '';
+      if (to) to.value = '';
+      updateFinancialReports();
+    }
+
+    function printFinancialReport() {
+      updateReportPeriodLabel();
+      document.body.classList.add('printing-report');
+      const cleanup = () => document.body.classList.remove('printing-report');
+      window.addEventListener('afterprint', cleanup, { once: true });
+      window.print();
+      setTimeout(cleanup, 1500);
+    }
+
     function updateFinancialReports() {
-      const filteredInvoices = getFilteredList(state.invoices);
-      const filteredPurchases = getFilteredList(state.purchases);
-      const filteredVouchers = getFilteredList(state.vouchers);
+      const period = getReportPeriodBounds();
+      if (period.fromValue && period.toValue && period.fromValue > period.toValue) {
+        const label = document.getElementById('report-period-label');
+        if (label) label.textContent = 'تنبيه: شهر البداية يجب أن يكون قبل شهر النهاية أو مساويًا له.';
+        return;
+      }
+      const filteredInvoices = getReportPeriodList(state.invoices);
+      const filteredPurchases = getReportPeriodList(state.purchases);
+      const filteredVouchers = getReportPeriodList(state.vouchers);
+      updateReportPeriodLabel();
 
       // Real Revenue = sum of invoice subtotals
       const totalRevenue = filteredInvoices.reduce((sum, i) => sum + (i.status === 'paid' ? (Number(i.subtotal) || 0) : 0), 0);
@@ -4823,7 +5155,7 @@
     const docNum = document.getElementById('inv-number').value.trim() || ('INV-2026-' + String(state.invoices.length + 1).padStart(3, '0'));
     const entity = document.getElementById('inv-entity').value;
     const client = document.getElementById('inv-client').value.trim();
-    const clientVat = document.getElementById('inv-client-vat').value.trim() || '300000000000003';
+    const clientVat = document.getElementById('inv-client-vat').value.trim();
     const clientAddress = document.getElementById('inv-client-address').value.trim() || 'الرياض، المملكة العربية السعودية';
     const date = document.getElementById('inv-date').value;
     const dueDate = document.getElementById('inv-due-date').value;
@@ -4909,107 +5241,124 @@
     currentViewedInvoiceId = invId;
 
     const entityNames = {
-      law: { ar: 'شركة حجاج للمحاماة والاستشارات القانونية', en: 'Hajjaj Law & Legal Consultations', cr: '1010987654', vat: '310123456700003' },
-      restaurant: { ar: 'مطعم مذاق البخاري والشاورما', en: 'Mazaq Al Bukhari Restaurant', cr: '1010765432', vat: '310987654300003' },
-      farm: { ar: 'مزرعة الواحة الخضراء للمنتجات الزراعية', en: 'Green Oasis Farm', cr: '1010543210', vat: '310654321000003' },
-      barber: { ar: 'صالون الأناقة الرجالي', en: 'Elegance Men Salon', cr: '1010432109', vat: '310432109800003' },
-      home: { ar: 'الذمة المالية الشخصية والمنزلية', en: 'Personal Household', cr: 'خاص', vat: 'غير خاضع' }
+      law: { ar: 'شركة حجاج عبدالرحمن الضويحي للمحاماة والاستشارات القانونية', en: 'Hajjaj Abdulrahman Al-Dhuwaihi Law Firm and Legal Consultations',
+             cr: '1011149366', vat: '311228238200003', addrAr: '3754، طريق الملك عبدالله، الورود، الخرج، 16278، المملكة العربية السعودية',
+             addrEn: '3754, طريق الملك عبدالله, الورود, الخرج, 16278, Kingdom of Saudi Arabia', email: 'hajaj.alduwaihi@gmail.com', phone: '0555102509' },
+      restaurant: { ar: 'مطعم مذاق البخاري والشاورما', en: 'Mazaq Al Bukhari Restaurant', cr: '1010765432', vat: '310987654300003',
+             addrAr: 'الرياض، المملكة العربية السعودية', addrEn: 'Riyadh, Kingdom of Saudi Arabia', email: '', phone: '' },
+      farm: { ar: 'مزرعة الواحة الخضراء للمنتجات الزراعية', en: 'Green Oasis Farm', cr: '1010543210', vat: '310654321000003',
+             addrAr: 'الخرج، المملكة العربية السعودية', addrEn: 'Al-Kharj, Kingdom of Saudi Arabia', email: '', phone: '' },
+      barber: { ar: 'صالون الأناقة الرجالي', en: 'Elegance Men Salon', cr: '1010432109', vat: '310432109800003',
+             addrAr: 'الرياض، المملكة العربية السعودية', addrEn: 'Riyadh, Kingdom of Saudi Arabia', email: '', phone: '' },
+      home: { ar: 'الذمة المالية الشخصية والمنزلية', en: 'Personal Household', cr: '-', vat: '-',
+             addrAr: 'المملكة العربية السعودية', addrEn: 'Kingdom of Saudi Arabia', email: '', phone: '' }
     };
-
     const ent = entityNames[inv.entity] || entityNames.law;
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
-    // Apply Logo
     const logoEl = document.getElementById('print-logo');
     if (logoEl) logoEl.src = currentCustomLogo;
 
-    document.getElementById('print-entity-name').textContent = ent.ar;
-    document.getElementById('print-entity-en').textContent = ent.en;
-    document.getElementById('print-entity-vat').textContent = ent.vat;
-    document.getElementById('print-entity-cr').textContent = ent.cr;
+    setText('print-entity-name', ent.ar);
+    setText('print-entity-en', ent.en);
+    setText('print-entity-vat', ent.vat);
+    setText('print-entity-vat-ar', ent.vat);
+    setText('print-entity-cr', ent.cr);
+    setText('print-entity-cr-ar', ent.cr);
+    setText('print-entity-addr-ar', ent.addrAr);
+    setText('print-entity-addr-en', ent.addrEn);
+    setText('print-entity-email', ent.email);
+    setText('print-entity-email-ar', ent.email);
+    setText('print-entity-phone', ent.phone);
+    setText('print-entity-phone-ar', ent.phone);
+    setText('print-footer-en', ent.en);
+    setText('print-footer-ar', ent.ar);
+    setText('print-footer-no', inv.id);
 
-    document.getElementById('print-inv-no').textContent = '#' + inv.id;
-    document.getElementById('print-inv-date').textContent = inv.date;
-    document.getElementById('print-inv-due-date').textContent = inv.dueDate || inv.date;
-    document.getElementById('print-inv-method').textContent = inv.method || 'تحويل بنكي';
+    const docTitles = {
+      tax_invoice: ['فاتورة ضريبية', 'Tax Invoice'],
+      simplified: ['فاتورة ضريبية مبسطة', 'Simplified Tax Invoice'],
+      quote: ['عرض سعر', 'Quotation'],
+      proforma: ['فاتورة مبدئية', 'Proforma Invoice']
+    };
+    const dt = docTitles[inv.docType] || docTitles.tax_invoice;
+    setText('print-doc-title', dt[0]);
+    setText('print-doc-title-en', dt[1]);
 
-    document.getElementById('print-inv-client').textContent = inv.client;
-    document.getElementById('print-inv-client-vat').textContent = inv.clientVat || '300000000000003';
-    document.getElementById('print-inv-client-address').textContent = inv.clientAddress || 'الرياض، المملكة العربية السعودية';
-
-    const statusEl = document.getElementById('print-inv-status');
-    if (statusEl) {
-      if (inv.status === 'paid') {
-        statusEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800';
-        statusEl.textContent = 'مسددة بالكامل ✓';
-      } else if (inv.status === 'unpaid') {
-        statusEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800';
-        statusEl.textContent = 'غير مسددة (آجلة) ⏳';
-      } else {
-        statusEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800';
-        statusEl.textContent = 'مدفوعة جزئياً 🔄';
-      }
+    setText('print-inv-no', inv.id);
+    setText('print-inv-date', inv.date);
+    setText('print-inv-due-date', inv.dueDate || inv.date);
+    setText('print-inv-method', inv.method || 'تحويل بنكي');
+    setText('print-inv-client', inv.client);
+    setText('print-inv-client-vat', inv.clientVat || 'غير مقدم');
+    const clientVatRow = document.getElementById('print-client-vat-row');
+    if (clientVatRow) {
+      const hasCustomVat = inv.clientVat && inv.clientVat !== '300000000000003';
+      clientVatRow.style.display = hasCustomVat ? '' : 'none';
     }
+    setText('print-inv-client-address', inv.clientAddress || 'المملكة العربية السعودية ،الخرج');
 
-    // Render Items
+    // Items table rows matching reference columns:
+    // [Line amount | VAT amount + 15% | Taxable amount | Price | Qty | Description (title + subtitle) | #]
     const tbody = document.getElementById('print-inv-items');
     if (tbody) {
       tbody.innerHTML = '';
-      const items = (inv.items && inv.items.length) ? inv.items : [{ desc: inv.item || 'خدمات استشارية', qty: 1, price: inv.subtotal, discount: 0 }];
+      const items = (inv.items && inv.items.length) ? inv.items : [{ desc: inv.item || 'استشارة قانونية', qty: 1, price: inv.subtotal, discount: 0 }];
       items.forEach((item, idx) => {
-        const rowSub = Math.max(0, (item.qty * item.price) - (item.discount || 0));
-        const rowTot = rowSub * 1.15;
+        const qty = Number(item.qty) || 1;
+        const price = Number(item.price) || 0;
+        const disc = Number(item.discount) || 0;
+        const net = Math.max(0, qty * price - disc);
+        const vatAmt = net * 0.15;
+        const line = net + vatAmt;
+        const rawDesc = String(item.desc || 'استشارة قانونية').trim();
+        const parts = rawDesc.split(/\n|\s*-\s*/);
+        const mainTitle = parts[0] || rawDesc;
+        const subTitle = parts.slice(1).join(' - ') || (item.subDesc || '');
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="p-2.5 text-center text-slate-400 font-bold">${idx + 1}</td>
-          <td class="p-2.5 font-bold text-slate-900">${item.desc || 'خدمة'}</td>
-          <td class="p-2.5 text-center text-slate-700 font-bold">${item.qty || 1}</td>
-          <td class="p-2.5 text-slate-700 font-semibold">${formatSAR(item.price || 0)}</td>
-          <td class="p-2.5 text-slate-500">${formatSAR(item.discount || 0)}</td>
-          <td class="p-2.5 text-left font-black text-slate-950">${formatSAR(rowTot)} ر.س</td>
-        `;
+        tr.style.borderTop = idx === 0 ? 'none' : '1px solid #d8e1eb';
+        tr.innerHTML =
+          '<td style="padding:12px 8px;text-align:center;vertical-align:top;color:#2b3a4f;">' + formatSAR(line) + '</td>' +
+          '<td style="padding:12px 8px;text-align:center;vertical-align:top;color:#2b3a4f;line-height:1.35;">' + formatSAR(vatAmt) + '<br><span style="color:#4a5568;">15%</span></td>' +
+          '<td style="padding:12px 8px;text-align:center;vertical-align:top;color:#2b3a4f;">' + formatSAR(net) + '</td>' +
+          '<td style="padding:12px 8px;text-align:center;vertical-align:top;color:#2b3a4f;">' + formatSAR(price) + (disc ? '<br><span style="color:#e53e3e;font-size:9px;">-' + formatSAR(disc) + '</span>' : '') + '</td>' +
+          '<td style="padding:12px 8px;text-align:center;vertical-align:top;color:#2b3a4f;">' + qty + '</td>' +
+          '<td dir="rtl" style="padding:12px 10px;text-align:right;vertical-align:top;direction:rtl;line-height:1.4;">' +
+            '<div style="font-weight:800;color:#2b3a4f;">' + esc(mainTitle) + '</div>' +
+            (subTitle ? '<div style="font-weight:400;color:#4a5568;font-size:10px;">' + esc(subTitle) + '</div>' : '') +
+          '</td>' +
+          '<td style="padding:12px 8px;text-align:right;vertical-align:top;color:#2b3a4f;">' + (idx + 1) + '</td>';
         tbody.appendChild(tr);
       });
     }
 
-    // Totals & Tafqeet
-    document.getElementById('print-subtotal').textContent = formatSAR(inv.subtotal) + ' ر.س';
-    document.getElementById('print-discount').textContent = formatSAR(inv.discount || 0) + ' ر.س';
-    document.getElementById('print-vat').textContent = formatSAR(inv.vat) + ' ر.س';
-    document.getElementById('print-grand').textContent = formatSAR(inv.total) + ' ر.س';
-    document.getElementById('print-tafqeet').textContent = numberToArabicWords(inv.total);
-    if (document.getElementById('print-inv-notes')) {
-      document.getElementById('print-inv-notes').textContent = inv.notes || 'شكراً لتعاملكم معنا • جميع الفواتير تخضع لأنظمة هيئة الزكاة والضريبة والجمارك';
-    }
+    // Totals
+    setText('print-subtotal', formatSAR(inv.subtotal));
+    setText('print-discount', formatSAR(inv.discount || 0));
+    setText('print-vat', formatSAR(inv.vat));
+    setText('print-grand', formatSAR(inv.total));
+    const dRow = document.getElementById('print-discount-row');
+    if (dRow) dRow.style.display = (Number(inv.discount) > 0 || (inv.items || []).some(i => Number(i.discount) > 0)) ? '' : 'none';
+    setText('print-tafqeet', 'المبلغ كتابةً: ' + numberToArabicWords(inv.total));
+    setText('print-inv-notes', inv.notes || '');
 
-    // Render standard ZATCA QR Code
+    // ZATCA QR (TLV, base64)
     const qrContainer = document.getElementById('zatcaQrCodeContainer');
     if (qrContainer) {
       qrContainer.innerHTML = '';
-      function zatcaTlvBase64(sellerName, vatNo, isoTime, total, vat) {
+      try {
         const enc = new TextEncoder();
-        const parts = [sellerName, String(vatNo), isoTime, Number(total).toFixed(2), Number(vat).toFixed(2)];
-        let bytes = [];
+        const parts = [ent.ar, String(ent.vat), inv.date + 'T12:00:00Z', Number(inv.total).toFixed(2), Number(inv.vat).toFixed(2)];
+        let bin = '';
         parts.forEach((val, i) => {
           const b = enc.encode(String(val));
-          bytes.push(i + 1, b.length, ...b);
+          bin += String.fromCharCode(i + 1, b.length);
+          b.forEach(x => bin += String.fromCharCode(x));
         });
-        let bin = '';
-        bytes.forEach(x => bin += String.fromCharCode(x));
-        return btoa(bin);
-      }
-      try {
-        const zatcaPayload = zatcaTlvBase64(ent.ar, ent.vat, inv.date + 'T12:00:00Z', inv.total, inv.vat);
-        new QRCode(qrContainer, {
-          text: zatcaPayload,
-          width: 85,
-          height: 85,
-          colorDark: "#1e1b4b",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.L
-        });
+        new QRCode(qrContainer, { text: btoa(bin), width: 108, height: 108, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
       } catch (qrErr) {
         console.warn('QR generation skipped:', qrErr);
-        qrContainer.textContent = 'ZATCA QR';
       }
     }
 
@@ -5023,11 +5372,11 @@
     if (!src) return null;
     const host = document.createElement('div');
     host.id = 'printCloneHost';
-    host.setAttribute('dir', 'rtl');
+    host.setAttribute('dir', 'ltr');
     host.style.cssText = 'position:fixed;top:0;left:0;width:794px;background:#fff;z-index:-1;pointer-events:none;';
     const clone = src.cloneNode(true);
     clone.id = 'printClone';
-    clone.style.cssText = 'width:794px;max-width:794px;margin:0;border:0;border-radius:0;box-shadow:none;padding:28px;background:#fff;';
+    clone.style.cssText = 'width:794px;max-width:794px;margin:0;box-shadow:none;';
     // cloneNode does not copy canvas pixels (QR) - copy them explicitly
     const srcCanvases = src.querySelectorAll('canvas');
     clone.querySelectorAll('canvas').forEach((cv, i) => {
@@ -5065,7 +5414,7 @@
   }
   window.printInvoice = printInvoice;
 
-  function downloadInvoicePDF(invId) {
+  async function downloadInvoicePDF(invId) {
     if (!invId) invId = currentViewedInvoiceId;
     const inv = state.invoices.find(i => i.id === invId);
     if (!inv) {
@@ -5075,7 +5424,40 @@
 
     // Make sure the view is populated
     viewTaxInvoice(invId);
+    showToast('جاري تجهيز وتحميل ملف PDF الفاتورة الضريبية (A4)...', 'info');
 
+    const datePrefix = String(inv.date || '').replace(/-/g, '') || '2026';
+    const fileName = datePrefix + '_' + inv.id + '_' + (inv.client || 'عميل') + '_SYS-CSH-INV.pdf';
+
+    try {
+      const response = await fetch('/api/invoice-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          invoice: inv,
+          logoData: (typeof currentCustomLogo === 'string' && currentCustomLogo.startsWith('data:')) ? currentCustomLogo : undefined
+        })
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob && blob.size > 500) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1500);
+          showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح ✓', 'success');
+          return;
+        }
+      }
+    } catch (serverErr) {
+      console.warn('Server PDF fallback to client:', serverErr);
+    }
+
+    // Fallback: client-side html2pdf on LTR clone
     const clone = mountInvoiceClone();
     if (!clone) {
       showToast('خطأ في إعداد نموذج الطباعة', 'error');
@@ -5083,32 +5465,27 @@
     }
 
     if (typeof html2pdf === 'undefined') {
-      showToast('مكتبة PDF غير متاحة، سيتم فتح نافذة الطباعة (اختر حفظ كـ PDF)', 'error');
       unmountInvoiceClone();
       printInvoice(invId);
       return;
     }
 
-    showToast('جاري تصدير وتحميل ملف PDF (A4)...', 'info');
-
     const opt = {
-      margin: [6, 6, 6, 6],
-      filename: 'invoice_' + inv.id + '.pdf',
+      margin: 0,
+      filename: fileName,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, scrollX: 0, scrollY: 0, windowWidth: 794, backgroundColor: '#ffffff' },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff' },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'] }
     };
 
-    // wait a frame so images/QR in the clone are laid out
     setTimeout(() => {
       html2pdf().set(opt).from(clone).save().then(() => {
         unmountInvoiceClone();
-        showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح', 'success');
+        showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح ✓', 'success');
       }).catch(err => {
         console.error('PDF error:', err);
         unmountInvoiceClone();
-        showToast('تعذر إنشاء PDF مباشرة، سيتم فتح نافذة الطباعة (اختر حفظ كـ PDF)', 'error');
         printInvoice(invId);
       });
     }, 200);
@@ -5484,31 +5861,31 @@
     
     // ================= AUTHENTICATION & SESSION MANAGEMENT =================
     const SYSTEM_USERS_CREDENTIALS = {
-      'mohamed.babiker': {
+      'm.babiker': {
         name: 'محمد بابكر',
-        username: 'mohamed.babiker',
-        email: 'mohamed.babiker@qoyod.com',
-        pass: 'Babiker@2026',
+        username: 'm.babiker',
+        email: 'm.babiker@qoyod.sa',
+        pass: 'MB@Qoyod2026!',
         role: 'cfo',
         roleTitle: 'المدير المالي العام (CFO)',
         avatar: 'م',
         color: '#6b21a8'
       },
-      'ahmed.elnady': {
+      'a.elnady': {
         name: 'احمد النادي',
-        username: 'ahmed.elnady',
-        email: 'ahmed.elnady@qoyod.com',
-        pass: 'Elnady@2026',
+        username: 'a.elnady',
+        email: 'a.elnady@qoyod.sa',
+        pass: 'AN@Qoyod2026!',
         role: 'chief_accountant',
         roleTitle: 'رئيس الحسابات',
         avatar: 'أ',
         color: '#2563eb'
       },
-      'eid.abdulrahman': {
+      'e.abdulrahman': {
         name: 'عيد عبدالرحمن',
-        username: 'eid.abdulrahman',
-        email: 'eid.abdulrahman@qoyod.com',
-        pass: 'Eid@2026',
+        username: 'e.abdulrahman',
+        email: 'e.abdulrahman@qoyod.sa',
+        pass: 'EA@Qoyod2026!',
         role: 'auditor',
         roleTitle: 'مراجع مالي ومدقق داخلي',
         avatar: 'ع',
@@ -5522,10 +5899,16 @@
       const stored = localStorage.getItem('qoyod_auth_user');
       if (stored) {
         try {
-          currentUser = JSON.parse(stored);
-          applyUserProfile(currentUser);
-          hideLoginOverlay();
-          return true;
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.credVersion === 2) {
+            currentUser = parsed;
+            applyUserProfile(currentUser);
+            hideLoginOverlay();
+            return true;
+          }
+          localStorage.removeItem('qoyod_auth_user');
+          localStorage.removeItem('qoyod_auth_token');
+          localStorage.removeItem('qoyod_jwt_token');
         } catch(e) {
           localStorage.removeItem('qoyod_auth_user');
         }
@@ -5621,8 +6004,12 @@
             body: JSON.stringify({ username: usernameInput, password: passwordInput })
           });
           const data = await res.json();
-          if (res.ok && data.success && data.user) {
-            authUser = data.user;
+          if (res.ok && (data.success || data.token) && data.user) {
+            authUser = { ...data.user, token: data.token, credVersion: 2 };
+            if (data.token) {
+              localStorage.setItem('qoyod_jwt_token', data.token);
+              localStorage.setItem('qoyod_auth_token', data.token);
+            }
           } else if (data.error) {
             throw new Error(data.error);
           }
@@ -5639,7 +6026,7 @@
 
           if (matchKey) {
             const u = SYSTEM_USERS_CREDENTIALS[matchKey];
-            if (passwordInput === u.pass || passwordInput === '123456') {
+            if (passwordInput === u.pass) {
               authUser = {
                 id: u.username,
                 name: u.name,
@@ -5648,7 +6035,8 @@
                 role: u.role,
                 roleTitle: u.roleTitle,
                 avatar: u.avatar,
-                color: u.color
+                color: u.color,
+                credVersion: 2
               };
             } else {
               throw new Error('كلمة المرور غير صحيحة، يرجى التأكد وإعادة المحاولة');
@@ -5666,9 +6054,11 @@
           showToast('مرحباً بك يا ' + currentUser.name + '! تم تسجيل الدخول بنجاح', 'success');
         }
       } catch (err) {
-        if (alert) {
+        if (alert && errorMsg) {
           errorMsg.textContent = err.message || 'حدث خطأ أثناء تسجيل الدخول';
           alert.classList.remove('hidden');
+        } else {
+          showToast(err.message || 'بيانات الدخول غير صحيحة', 'error');
         }
       } finally {
         if (btn) btn.disabled = false;
@@ -5776,6 +6166,9 @@
           </div>
           <!-- Login Form -->
           <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="w-full space-y-4" data-purpose="login-form">
+            <div id="loginErrorAlert" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center">
+              <span id="loginErrorMessage">بيانات الدخول غير صحيحة</span>
+            </div>
             <!-- Username / Email Field -->
             <div class="relative w-full">
               <input class="w-full pr-12 pl-4 py-3.5 bg-white text-gray-800 placeholder-gray-400 text-sm font-medium border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition duration-150" id="loginUsername" name="username" placeholder="اسم المستخدم" required="" type="text">

@@ -9,6 +9,7 @@ const authRoutes = require('./routes-auth');
 const { router: entityRoutes, requireAuth } = require('./routes-entities');
 const salesRoutes = require('./routes-sales');
 const reportsRoutes = require('./routes-reports');
+const zatcaRoutes = require('./routes-zatca');
 const { generateInvoicePdf, defaultLogoData } = require('./invoice-pdf');
 const { createStateInvoice, recordInvoiceReceipt, cancelStateInvoice } = require('./state-invoices');
 
@@ -182,6 +183,30 @@ app.post('/api/state/invoices/:invoiceId/cancel', requireAuth, async (req, res) 
   }
 });
 
+
+app.post('/api/invoice-pdf', async (req, res) => {
+  try {
+    const invoice = req.body?.invoice;
+    if (!invoice || typeof invoice !== 'object') {
+      return res.status(400).json({ error: 'بيانات الفاتورة غير مكتملة' });
+    }
+    const entity = req.body?.entity || { id: invoice.entity || 'law' };
+    const logoData = req.body?.logoData || defaultLogoData();
+    const pdf = await generateInvoicePdf(invoice, entity, { logoData });
+    const safeId = String(invoice.id || 'INV').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const safeClient = String(invoice.client || 'عميل').trim();
+    const datePrefix = String(invoice.date || '').replace(/-/g, '') || '2026';
+    const utf8Name = `${datePrefix}_${safeId}_${safeClient}_SYS-CSH-INV.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Length', pdf.length);
+    res.setHeader('Content-Disposition', `attachment; filename="invoice_${safeId}.pdf"; filename*=UTF-8''${encodeURIComponent(utf8Name)}`);
+    res.send(pdf);
+  } catch (err) {
+    console.error('Direct Invoice PDF error:', err);
+    res.status(500).json({ error: 'تعذر إنشاء ملف PDF للفاتورة: ' + (err.message || '') });
+  }
+});
+
 app.get('/api/state/invoices/:invoiceId/pdf', requireAuth, async (req, res) => {
   try {
     const { pool } = require('./lib');
@@ -233,6 +258,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/entities', entityRoutes);
 app.use('/api/entities', salesRoutes);
 app.use('/api/entities', reportsRoutes);
+app.use('/api/entities', zatcaRoutes);
 
 // Serve Frontend SPA
 const publicDir = path.join(__dirname, '..', 'public');

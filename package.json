@@ -11,7 +11,8 @@
     "seed": "node scripts/seed.js",
     "migrate:legacy": "node scripts/migrate_legacy.js",
     "backup": "node scripts/backup.js",
-    "dev": "node src/server.js"
+    "dev": "node src/server.js",
+    "test:zatca": "node --test test/zatca-xml.test.js"
   },
   "author": "Hajjaj",
   "license": "ISC",

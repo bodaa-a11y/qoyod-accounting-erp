@@ -13,8 +13,8 @@ router.get('/:entityId/reports/trial-balance', requireAuth, requireEntityAccess,
     const q = `
       SELECT 
         a.id, a.code, a.name, a.type, a.nature, a.is_group,
-        COALESCE(SUM(jl.debit_halalas), 0)::BIGINT AS total_debit,
-        COALESCE(SUM(jl.credit_halalas), 0)::BIGINT AS total_credit
+        COALESCE(SUM(CASE WHEN j.id IS NOT NULL THEN jl.debit_halalas ELSE 0 END), 0)::BIGINT AS total_debit,
+        COALESCE(SUM(CASE WHEN j.id IS NOT NULL THEN jl.credit_halalas ELSE 0 END), 0)::BIGINT AS total_credit
       FROM accounts a
       LEFT JOIN journal_lines jl ON jl.account_id = a.id
       LEFT JOIN journals j ON j.id = jl.journal_id AND j.status = 'posted'
@@ -102,8 +102,8 @@ router.get('/:entityId/reports/balance-sheet', requireAuth, requireEntityAccess,
     const q = `
       SELECT 
         a.id, a.code, a.name, a.type, a.nature, a.is_group,
-        COALESCE(SUM(jl.debit_halalas), 0)::BIGINT AS total_debit,
-        COALESCE(SUM(jl.credit_halalas), 0)::BIGINT AS total_credit
+        COALESCE(SUM(CASE WHEN j.id IS NOT NULL THEN jl.debit_halalas ELSE 0 END), 0)::BIGINT AS total_debit,
+        COALESCE(SUM(CASE WHEN j.id IS NOT NULL THEN jl.credit_halalas ELSE 0 END), 0)::BIGINT AS total_credit
       FROM accounts a
       LEFT JOIN journal_lines jl ON jl.account_id = a.id
       LEFT JOIN journals j ON j.id = jl.journal_id AND j.status = 'posted' ${dateFilter}
@@ -191,8 +191,8 @@ router.get('/:entityId/reports/income-statement', requireAuth, requireEntityAcce
     const q = `
       SELECT 
         a.id, a.code, a.name, a.type, a.nature, a.sub_type,
-        COALESCE(SUM(jl.debit_halalas), 0)::BIGINT AS total_debit,
-        COALESCE(SUM(jl.credit_halalas), 0)::BIGINT AS total_credit
+        COALESCE(SUM(CASE WHEN j.id IS NOT NULL THEN jl.debit_halalas ELSE 0 END), 0)::BIGINT AS total_debit,
+        COALESCE(SUM(CASE WHEN j.id IS NOT NULL THEN jl.credit_halalas ELSE 0 END), 0)::BIGINT AS total_credit
       FROM accounts a
       LEFT JOIN journal_lines jl ON jl.account_id = a.id
       LEFT JOIN journals j ON j.id = jl.journal_id AND j.status = 'posted' ${dateCond}
