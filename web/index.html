@@ -207,7 +207,18 @@
       body { background: #ffffff !important; }
     }
   
-  </style>
+  
+    /* Invoice print: show only the standalone clone */
+    @media print {
+      body.printing-invoice > *:not(#printCloneHost) { display: none !important; }
+      body.printing-invoice #printCloneHost {
+        display: block !important; position: static !important; width: 100% !important;
+        z-index: auto !important; pointer-events: auto !important;
+      }
+      body.printing-invoice #printClone { width: 100% !important; max-width: 100% !important; padding: 0 !important; }
+      @page { size: A4; margin: 10mm; }
+    }
+</style>
 
   <script>
     // Early resilient modal helper
@@ -1906,7 +1917,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             <span>تحميل PDF (A4)</span>
           </button>
-          <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+          <button onclick="printInvoice(currentViewedInvoiceId)" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
             <span>طباعة</span>
           </button>
@@ -4974,19 +4985,85 @@
     const qrContainer = document.getElementById('zatcaQrCodeContainer');
     if (qrContainer) {
       qrContainer.innerHTML = '';
-      const zatcaPayload = `Seller:${ent.ar}|VAT:${ent.vat}|Time:${inv.date}T12:00:00Z|Total:${inv.total}|VAT:${inv.vat}`;
-      new QRCode(qrContainer, {
-        text: zatcaPayload,
-        width: 85,
-        height: 85,
-        colorDark: "#1e1b4b",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M
-      });
+      function zatcaTlvBase64(sellerName, vatNo, isoTime, total, vat) {
+        const enc = new TextEncoder();
+        const parts = [sellerName, String(vatNo), isoTime, Number(total).toFixed(2), Number(vat).toFixed(2)];
+        let bytes = [];
+        parts.forEach((val, i) => {
+          const b = enc.encode(String(val));
+          bytes.push(i + 1, b.length, ...b);
+        });
+        let bin = '';
+        bytes.forEach(x => bin += String.fromCharCode(x));
+        return btoa(bin);
+      }
+      try {
+        const zatcaPayload = zatcaTlvBase64(ent.ar, ent.vat, inv.date + 'T12:00:00Z', inv.total, inv.vat);
+        new QRCode(qrContainer, {
+          text: zatcaPayload,
+          width: 85,
+          height: 85,
+          colorDark: "#1e1b4b",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.L
+        });
+      } catch (qrErr) {
+        console.warn('QR generation skipped:', qrErr);
+        qrContainer.textContent = 'ZATCA QR';
+      }
     }
 
     openModal('viewInvoiceModal');
   }
+
+  function mountInvoiceClone() {
+    const src = document.getElementById('printArea');
+    const old = document.getElementById('printCloneHost');
+    if (old) old.remove();
+    if (!src) return null;
+    const host = document.createElement('div');
+    host.id = 'printCloneHost';
+    host.setAttribute('dir', 'rtl');
+    host.style.cssText = 'position:fixed;top:0;left:0;width:794px;background:#fff;z-index:-1;pointer-events:none;';
+    const clone = src.cloneNode(true);
+    clone.id = 'printClone';
+    clone.style.cssText = 'width:794px;max-width:794px;margin:0;border:0;border-radius:0;box-shadow:none;padding:28px;background:#fff;';
+    // cloneNode does not copy canvas pixels (QR) - copy them explicitly
+    const srcCanvases = src.querySelectorAll('canvas');
+    clone.querySelectorAll('canvas').forEach((cv, i) => {
+      try {
+        const s = srcCanvases[i];
+        cv.width = s.width; cv.height = s.height;
+        cv.getContext('2d').drawImage(s, 0, 0);
+      } catch (e) { /* ignore */ }
+    });
+    host.appendChild(clone);
+    document.body.appendChild(host);
+    return clone;
+  }
+
+  function unmountInvoiceClone() {
+    const old = document.getElementById('printCloneHost');
+    if (old) old.remove();
+    document.body.classList.remove('printing-invoice');
+  }
+
+  function printInvoice(invId) {
+    const id = invId || currentViewedInvoiceId;
+    if (!id || !state.invoices.some(i => i.id === id)) {
+      showToast('لم يتم العثور على الفاتورة المطلوبة للطباعة', 'error');
+      return;
+    }
+    viewTaxInvoice(id);
+    const clone = mountInvoiceClone();
+    if (!clone) { showToast('خطأ في إعداد نموذج الطباعة', 'error'); return; }
+    const host = document.getElementById('printCloneHost');
+    host.style.zIndex = '0';
+    document.body.classList.add('printing-invoice');
+    window.addEventListener('afterprint', unmountInvoiceClone, { once: true });
+    setTimeout(() => window.print(), 250);
+  }
+  window.printInvoice = printInvoice;
 
   function downloadInvoicePDF(invId) {
     if (!invId) invId = currentViewedInvoiceId;
@@ -4999,36 +5076,44 @@
     // Make sure the view is populated
     viewTaxInvoice(invId);
 
-    const printElement = document.getElementById('printArea');
-    if (!printElement) {
+    const clone = mountInvoiceClone();
+    if (!clone) {
       showToast('خطأ في إعداد نموذج الطباعة', 'error');
       return;
     }
 
-    showToast('جاري تصدير وتحميل ملف PDF فائق الدقة (A4)...', 'info');
-
     if (typeof html2pdf === 'undefined') {
-      console.warn('html2pdf not found, triggering browser print');
-      window.print();
+      showToast('مكتبة PDF غير متاحة، سيتم فتح نافذة الطباعة (اختر حفظ كـ PDF)', 'error');
+      unmountInvoiceClone();
+      printInvoice(invId);
       return;
     }
 
+    showToast('جاري تصدير وتحميل ملف PDF (A4)...', 'info');
+
     const opt = {
-      margin: [8, 8, 8, 8],
-      filename: `فاتورة_ضريبية_${inv.id}.pdf`,
+      margin: [6, 6, 6, 6],
+      filename: 'invoice_' + inv.id + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true, scrollY: 0 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, scrollX: 0, scrollY: 0, windowWidth: 794, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
     };
 
-    html2pdf().set(opt).from(printElement).save().then(() => {
-      showToast(`تم تحميل الفاتورة ${inv.id} بصيغة PDF بنجاح! 📄✓`, 'success');
-    }).catch(err => {
-      console.error('PDF error:', err);
-      showToast('حدث خطأ أثناء حفظ PDF، فتح نافذة الطباعة كبديل', 'error');
-      window.print();
-    });
+    // wait a frame so images/QR in the clone are laid out
+    setTimeout(() => {
+      html2pdf().set(opt).from(clone).save().then(() => {
+        unmountInvoiceClone();
+        showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح', 'success');
+      }).catch(err => {
+        console.error('PDF error:', err);
+        unmountInvoiceClone();
+        showToast('تعذر إنشاء PDF مباشرة، سيتم فتح نافذة الطباعة (اختر حفظ كـ PDF)', 'error');
+        printInvoice(invId);
+      });
+    }, 200);
   }
+  window.downloadInvoicePDF = downloadInvoicePDF;
 
   // Auto initialize logo on startup
   window.addEventListener('DOMContentLoaded', () => {
