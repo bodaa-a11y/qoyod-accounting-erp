@@ -2124,26 +2124,37 @@
 
   <!-- Modal 2: PRINT & VIEW TAX INVOICE WITH VECTOR A4 PDF EXPORT -->
   <div id="viewInvoiceModal" onclick="if(event.target===this)closeModal('viewInvoiceModal')" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-2 sm:p-4 hidden">
-    <div class="bg-slate-100 rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden">
+    <div class="bg-slate-100 rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 flex flex-col max-h-[94vh] overflow-hidden">
 
       <!-- Toolbar -->
       <div class="shrink-0 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 bg-white border-b border-slate-200 no-print">
-        <div class="flex items-center gap-2.5">
-          <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></span>
-          <div>
-            <div class="font-black text-slate-900 text-sm">معاينة الفاتورة</div>
-            <div class="text-[11px] text-slate-500 font-semibold">معاينة الفاتورة للطباعة وتحميل PDF (نسخة محلية غير مرسلة للهيئة)</div>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2.5">
+            <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></span>
+            <div>
+              <div class="font-black text-slate-900 text-sm">معاينة الفاتورة</div>
+              <div class="text-[11px] text-slate-500 font-semibold">معاينة الفاتورة للطباعة وتحميل PDF</div>
+            </div>
           </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-sm transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg><span>تحميل PDF</span></button>
-          <button type="button" onclick="printInvoice(currentViewedInvoiceId)" class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg><span>طباعة</span></button>
-          <button type="button" onclick="closeModal('viewInvoiceModal')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition" aria-label="إغلاق"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg><span>إغلاق</span></button>
+          <div class="flex flex-wrap items-center gap-2 mr-2">
+            <button type="button" onclick="closeModal('viewInvoiceModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-black flex items-center gap-1.5 transition shadow-xs" aria-label="إغلاق">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span>إغلاق</span>
+            </button>
+            <button type="button" onclick="printInvoice(currentViewedInvoiceId)" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black flex items-center gap-1.5 transition shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>طباعة</span>
+            </button>
+            <button type="button" onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>حفظ PDF</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Paper -->
-      <div class="flex-1 min-h-0 overflow-auto p-3 sm:p-6 bg-slate-200/70">
+      <div class="overflow-auto p-3 sm:p-6 bg-slate-200/70" style="max-height:74vh;">
       <div id="printArea" class="inv-sheet" dir="ltr" style="width:794px;min-height:1122px;margin:0 auto;background:#fff;color:#2b3a4f;font-family:'Cairo',sans-serif;font-size:11px;padding:44px 48px 34px;display:flex;flex-direction:column;box-sizing:border-box;direction:ltr;text-align:left;box-shadow:0 4px 24px rgba(15,23,42,.18);">
 
         <!-- Header: English (LEFT) | Logo (CENTER) | Arabic (RIGHT) -->
@@ -2307,15 +2318,19 @@
       </div>
 
       <!-- Sticky Bottom Footer Bar -->
-      <div class="shrink-0 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-white border-t border-slate-200 no-print">
+      <div class="shrink-0 flex flex-wrap items-center gap-2.5 px-4 sm:px-6 py-3 bg-white border-t border-slate-200 no-print">
         <button type="button" onclick="closeModal('viewInvoiceModal')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
           <span>إغلاق المعاينة</span>
         </button>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="printInvoice(currentViewedInvoiceId)" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 transition">طباعة</button>
-          <button type="button" onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-4 py-2 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-sm transition">تحميل PDF</button>
-        </div>
+        <button type="button" onclick="printInvoice(currentViewedInvoiceId)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span>طباعة</span>
+        </button>
+        <button type="button" onclick="downloadInvoicePDF(currentViewedInvoiceId)" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 shadow-sm transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>حفظ PDF</span>
+        </button>
       </div>
 
     </div>
