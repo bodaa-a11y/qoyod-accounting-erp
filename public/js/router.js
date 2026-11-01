@@ -4,7 +4,7 @@
     'dashboard', 'invoices', 'inventory', 'purchases', 'treasury',
     'journal', 'accounts', 'reports', 'zatca', 'branches',
     'settings', 'payroll', 'clients', 'quotes', 'suppliers',
-    'fixed-assets', 'help'
+    'fixed-assets', 'help', 'crm-leads', 'crm-deals'
   ];
 
   function currentView() {
@@ -50,6 +50,8 @@
     payroll: 'الرواتب والموظفون',
     reports: 'التقارير المالية والختامية',
     zatca: 'التوافق الضريبي والفوترة الإلكترونية ZATCA',
+    'crm-leads': 'إدارة العملاء المحتملين (CRM Leads)',
+    'crm-deals': 'مسار الصفقات والمبيعات (CRM Pipeline)',
     branches: 'الفروع والكيانات التجارية',
     settings: 'الإعدادات العامة واللوجو',
     help: 'مركز المساعدة والدعم الفني'
@@ -93,7 +95,9 @@
     });
 
     let targetId = 'nav-' + view;
-    if (['clients', 'quotes', 'invoices'].includes(view)) {
+    if (['crm-leads', 'crm-deals'].includes(view)) {
+      targetId = 'nav-crm';
+    } else if (['clients', 'quotes', 'invoices'].includes(view)) {
       targetId = 'nav-invoices';
     } else if (['suppliers', 'purchases'].includes(view)) {
       targetId = 'nav-purchases';

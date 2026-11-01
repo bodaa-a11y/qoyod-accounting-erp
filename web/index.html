@@ -405,6 +405,34 @@
           </div>
         </button>
 
+        
+        <!-- إدارة علاقات العملاء CRM (IDURAR) -->
+        <div class="relative has-popover" id="popover-crm">
+          <button onclick="toggleNavPopover('popover-crm', event); switchView('crm-leads');" id="nav-crm" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
+            <svg class="w-4 h-4 text-purple-600 hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+            <div class="flex items-center gap-3">
+              <span>إدارة العملاء CRM</span>
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+          </button>
+          
+          <div class="nav-popover">
+            <button onclick="switchView('crm-leads'); closeAllNavPopovers();" class="popover-item">
+              <span>🎯 العملاء المحتملين (Leads)</span>
+            </button>
+            <button onclick="switchView('crm-deals'); closeAllNavPopovers();" class="popover-item">
+              <span>📊 مسار الصفقات (Pipeline)</span>
+            </button>
+            <button onclick="openNewLeadModal(); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
+              <span>+ إضافة عميل محتمل</span>
+              <span class="text-[10px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">CRM</span>
+            </button>
+            <button onclick="openNewDealModal(); closeAllNavPopovers();" class="popover-item font-bold text-slate-700">
+              <span>+ إنشاء صفقة بيعية</span>
+            </button>
+          </div>
+        </div>
+
         <!-- المبيعات مع السهم وقائمة منبثقة تفتح بالضغط أو التمرير -->
         <div class="relative has-popover" id="popover-sales">
           <button onclick="toggleNavPopover('popover-sales', event); switchView('invoices');" id="nav-invoices" class="sidebar-nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:text-purple-700 hover:bg-slate-50 transition">
@@ -1885,6 +1913,116 @@
       </div>
 
 
+      
+      <!-- View: CRM LEADS (إدارة العملاء المحتملين بأسلوب IDURAR) -->
+      <div id="view-crm-leads" class="space-y-6 hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h2 class="text-xl font-black text-slate-800">إدارة العملاء المحتملين (CRM Leads)</h2>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold border border-purple-200">IDURAR Core</span>
+            </div>
+            <p class="text-xs text-slate-400 font-medium">متابعة الفرص التسويقية والعملاء المحتملين، وتحديث حالات التواصل، والتحويل إلى صفقات وعملاء دائمين</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="switchView('crm-deals')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <span>📊 مسار الصفقات (Pipeline)</span>
+            </button>
+            <button onclick="openNewLeadModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              <span>+ إضافة عميل محتمل</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CRM KPI Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+            <div class="text-[11px] font-bold text-slate-400">إجمالي العملاء المتوقعين</div>
+            <div id="crm-kpi-total-leads" class="text-2xl font-black text-slate-800">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+            <div class="text-[11px] font-bold text-purple-600">قيد التواصل والتفاوض</div>
+            <div id="crm-kpi-pipeline-leads" class="text-2xl font-black text-purple-700">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+            <div class="text-[11px] font-bold text-emerald-600">صفقات ناجحة ومحسومة</div>
+            <div id="crm-kpi-won-leads" class="text-2xl font-black text-emerald-700">0</div>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+            <div class="text-[11px] font-bold text-amber-600">القيمة المتوقعة الإجمالية</div>
+            <div id="crm-kpi-total-value" class="text-2xl font-black text-slate-900">0.00 ر.س</div>
+          </div>
+        </div>
+
+        <!-- Filters & Search Bar -->
+        <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex flex-wrap items-center gap-1.5" id="crmLeadsStatusFilters">
+            <button onclick="filterCrmLeadsByStatus('all')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-purple-100 text-purple-800 transition">الكل</button>
+            <button onclick="filterCrmLeadsByStatus('new')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">جديد</button>
+            <button onclick="filterCrmLeadsByStatus('contacted')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">تم التواصل</button>
+            <button onclick="filterCrmLeadsByStatus('qualified')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">مؤهل</button>
+            <button onclick="filterCrmLeadsByStatus('proposal')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">قيد العرض والتفاوض</button>
+            <button onclick="filterCrmLeadsByStatus('won')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">فائز ✓</button>
+            <button onclick="filterCrmLeadsByStatus('lost')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">ملغي / خاسر</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="crmLeadSearchInput" onkeyup="renderCrmLeadsTable()" placeholder="بحث بالاسم، الشركة، الهاتف..." class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-purple-600 w-64">
+          </div>
+        </div>
+
+        <!-- Leads Table -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-4">الرمز</th>
+                  <th class="p-4">اسم العميل / الشركة</th>
+                  <th class="p-4">النشاط</th>
+                  <th class="p-4">جهة الاتصال</th>
+                  <th class="p-4">المصدر</th>
+                  <th class="p-4">القيمة التقديرية</th>
+                  <th class="p-4">الحالة</th>
+                  <th class="p-4">المسؤول</th>
+                  <th class="p-4 text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="crmLeadsTableBody" class="divide-y divide-slate-100 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View: CRM DEALS & PIPELINE (مسار الصفقات بأسلوب IDURAR) -->
+      <div id="view-crm-deals" class="space-y-6 hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h2 class="text-xl font-black text-slate-800">مسار الصفقات والمبيعات (Sales Pipeline)</h2>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold border border-purple-200">IDURAR Deals</span>
+            </div>
+            <p class="text-xs text-slate-400 font-medium">متابعة الصفقات والعقود التجارية عبر مراحل القمع البيعي وتحويل الصفقات الفائزة إلى فواتير ZATCA مباشرة</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="switchView('crm-leads')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+              <span>🎯 العملاء المحتملين (Leads)</span>
+            </button>
+            <button onclick="openNewDealModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              <span>+ إنشاء صفقة جديدة</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kanban Pipeline Stages -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="crmDealsPipelineContainer">
+          <!-- Filled dynamically by renderCrmDealsPipeline -->
+        </div>
+      </div>
+
       <!-- View: HELP (مركز المساعدة والدليل الإرشادي) -->
       <div id="view-help" class="space-y-6 hidden">
         <div class="bg-gradient-to-r from-purple-900 to-indigo-800 text-white p-8 rounded-3xl shadow-lg relative overflow-hidden">
@@ -3052,6 +3190,18 @@
   // ================= EXTENDED ERP MODULES LOGIC =================
   // Initialize extended collections in state if missing
   function ensureExtendedState() {
+    if (!state.leads) state.leads = [
+      { id: 'LEAD-001', name: 'شركة الأفق للاستشارات', company: 'الأفق للتطوير', entity: 'law', phone: '0551122334', email: 'info@alofoq.sa', source: 'website', status: 'new', value: 35000, notes: 'استشارة تأسيس شركات ودمج واستحواذ', assignedTo: 'محمد بابكر', date: '2026-10-28' },
+      { id: 'LEAD-002', name: 'سلطان القحطاني', company: 'مؤسسة إمداد التموين', entity: 'restaurant', phone: '0567788990', email: 'sultan@emdad.sa', source: 'referral', status: 'proposal', value: 18000, notes: 'طلب توريد وجبات إعاشة شهرية للشركات', assignedTo: 'احمد النادي', date: '2026-10-29' },
+      { id: 'LEAD-003', name: 'مزارع النخيل الذهبي', company: 'النخيل الحديثة', entity: 'farm', phone: '0509988776', email: 'dates@goldenpalm.sa', source: 'social_media', status: 'qualified', value: 45000, notes: 'عقد توريد تمور وأسمدة عضوية لموسم الحصاد', assignedTo: 'عيد عبدالرحمن', date: '2026-10-30' }
+    ];
+    if (!state.deals) state.deals = [
+      { id: 'DEAL-001', title: 'عقد تمثيل واستشارات قانونية سنوي', client: 'شركة الأفق للتطوير', leadId: 'LEAD-001', entity: 'law', amount: 50000, stage: 'negotiation', probability: 80, expectedClose: '2026-11-15', notes: 'في مرحلة صياغة بنود العقد النهائي' },
+      { id: 'DEAL-002', title: 'توريد وجبات تعاقدية للشركات', client: 'مؤسسة إمداد التموين', leadId: 'LEAD-002', entity: 'restaurant', amount: 22000, stage: 'proposal', probability: 60, expectedClose: '2026-11-20', notes: 'تم إرسال عرض السعر المبدئي' },
+      { id: 'DEAL-003', title: 'عقد توريد تمور وأسمدة موسمية', client: 'مزارع النخيل الحديثة', leadId: 'LEAD-003', entity: 'farm', amount: 38000, stage: 'won', probability: 100, expectedClose: '2026-10-31', notes: 'تمت الموافقة وتجهيز فاتورة البيع' }
+    ];
+    if (!state.invoicePayments) state.invoicePayments = [];
+
     if (!state.clients) state.clients = [
       { id: 'CLI-001', name: 'شركة الفيصلية القابضة', entity: 'law', phone: '0501234567', vat: '300123456700003', balance: 12500, status: 'نشط' },
       { id: 'CLI-002', name: 'مجموعة الميرا للاستثمار', entity: 'law', phone: '0559876543', vat: '300987654300003', balance: 0, status: 'نشط' },
@@ -3438,7 +3588,7 @@
 
 
     function switchView(viewName) {
-      const views = ['dashboard', 'invoices', 'inventory', 'purchases', 'treasury', 'journal', 'accounts', 'reports', 'zatca', 'branches', 'settings', 'payroll', 'clients', 'quotes', 'suppliers', 'fixed-assets', 'help'];
+      const views = ['dashboard', 'invoices', 'inventory', 'purchases', 'treasury', 'journal', 'accounts', 'reports', 'zatca', 'branches', 'settings', 'payroll', 'clients', 'quotes', 'suppliers', 'fixed-assets', 'help', 'crm-leads', 'crm-deals'];
       views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         const navEl = document.getElementById(`nav-${v}`);
@@ -4319,59 +4469,12 @@
 
       recent.forEach(inv => {
         const statusBadge = inv.status === 'paid' 
-          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">مدفوعة</span>'
-          : (inv.status === 'overdue' 
-              ? '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">متأخرة</span>' 
-              : '<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">معلقة</span>');
-
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50 transition';
-        tr.innerHTML = `
-          <td class="py-3 font-bold text-gathern-800 cursor-pointer" onclick="viewTaxInvoice('${inv.id}')">${inv.id}</td>
-          <td class="py-3">${ENTITY_BADGES[inv.entity] || inv.entity}</td>
-          <td class="py-3 font-semibold text-slate-800">${inv.client}</td>
-          <td class="py-3 text-slate-500">${inv.date}</td>
-          <td class="py-3 font-black text-slate-900">${formatSAR(inv.total)} ر.س</td>
-          <td class="py-3">${statusBadge}</td>
-          <td class="py-3 text-center">
-            <button onclick="viewTaxInvoice('${inv.id}')" class="text-gathern-700 hover:text-gathern-900 font-bold px-2 py-1 rounded-lg bg-gathern-50">عرض ZATCA</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Render Invoices Table
-    function renderInvoicesTable(filteredList = null) {
-      const list = filteredList || getFilteredList(state.invoices);
-      const tbody = document.getElementById('invoicesTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      const countBadge = document.getElementById('invoicesCountBadge');
-      if (countBadge) countBadge.textContent = list.length;
-
-      if (list.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="10" class="py-12 text-center">
-              <div class="flex flex-col items-center justify-center space-y-2">
-                <span class="text-3xl text-slate-300">🧾</span>
-                <p class="text-xs font-bold text-slate-500">لا توجد فواتير مسجلة لهذا النشاط</p>
-                <button onclick="openNewInvoiceModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إنشاء فاتورة ضريبية جديدة مع QR</button>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      list.forEach(inv => {
-        const statusBadge = inv.status === 'paid' 
-          ? '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">مدفوعة</span>'
-          : (inv.status === 'overdue' 
-              ? '<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">متأخرة</span>' 
-              : '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">معلقة</span>');
+          ? '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">مدفوعة ✓</span>'
+          : (inv.status === 'partially_paid'
+              ? '<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-bold text-[10px]">مسددة جزئياً</span>'
+              : (inv.status === 'overdue' 
+                  ? '<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">متأخرة</span>' 
+                  : '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">معلقة</span>'));
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/80 transition';
@@ -4623,6 +4726,552 @@
     }
 
     // Render Branches
+    
+    // ================= IDURAR CRM & PAYMENT INTEGRATION ENGINE =================
+    let activeCrmLeadFilter = 'all';
+
+    function filterCrmLeadsByStatus(status) {
+      activeCrmLeadFilter = status;
+      document.querySelectorAll('.crm-lead-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-100', 'text-purple-800');
+        btn.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      if (event && event.target) {
+        event.target.classList.add('bg-purple-100', 'text-purple-800');
+        event.target.classList.remove('bg-slate-100', 'text-slate-600');
+      }
+      renderCrmLeadsTable();
+    }
+
+    function renderCrmLeadsTable(customList = null) {
+      ensureExtendedState();
+      const tbody = document.getElementById('crmLeadsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let list = customList || getFilteredList(state.leads);
+      const q = (document.getElementById('crmLeadSearchInput')?.value || '').toLowerCase().trim();
+      if (q) {
+        list = list.filter(l => l.name.toLowerCase().includes(q) || (l.company && l.company.toLowerCase().includes(q)) || l.phone.includes(q));
+      }
+      if (activeCrmLeadFilter !== 'all') {
+        list = list.filter(l => l.status === activeCrmLeadFilter);
+      }
+
+      // Update KPIs
+      const allLeads = getFilteredList(state.leads);
+      const totalCount = allLeads.length;
+      const inPipeline = allLeads.filter(l => ['contacted', 'qualified', 'proposal'].includes(l.status)).length;
+      const wonCount = allLeads.filter(l => l.status === 'won').length;
+      const totalVal = allLeads.reduce((sum, l) => sum + (Number(l.value) || 0), 0);
+
+      const elTotal = document.getElementById('crm-kpi-total-leads');
+      const elPipeline = document.getElementById('crm-kpi-pipeline-leads');
+      const elWon = document.getElementById('crm-kpi-won-leads');
+      const elVal = document.getElementById('crm-kpi-total-value');
+      if (elTotal) elTotal.textContent = totalCount;
+      if (elPipeline) elPipeline.textContent = inPipeline;
+      if (elWon) elWon.textContent = wonCount;
+      if (elVal) elVal.textContent = formatSAR(totalVal) + ' ر.س';
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="py-12 text-center text-slate-400 font-bold">لا يوجد عملاء محتملين مطابقين للمحددات</td></tr>';
+        return;
+      }
+
+      const statusMap = {
+        new: { label: 'جديد', cls: 'bg-blue-100 text-blue-800' },
+        contacted: { label: 'تم التواصل', cls: 'bg-amber-100 text-amber-800' },
+        qualified: { label: 'مؤهل', cls: 'bg-purple-100 text-purple-800' },
+        proposal: { label: 'قيد العرض', cls: 'bg-indigo-100 text-indigo-800' },
+        won: { label: 'فائز ✓', cls: 'bg-emerald-100 text-emerald-800' },
+        lost: { label: 'ملغي / خاسر', cls: 'bg-rose-100 text-rose-800' }
+      };
+
+      const sourceMap = {
+        website: 'الموقع',
+        referral: 'توصية',
+        social_media: 'سوشيال ميديا',
+        direct: 'مباشر',
+        ad: 'إعلان'
+      };
+
+      list.forEach(l => {
+        const st = statusMap[l.status] || { label: l.status, cls: 'bg-slate-100 text-slate-700' };
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition';
+        tr.innerHTML = `
+          <td class="p-4 font-mono font-black text-purple-700 cursor-pointer" onclick="openIdurarDrawer('lead', '${l.id}')">${l.id}</td>
+          <td class="p-4">
+            <div class="font-bold text-slate-900 cursor-pointer hover:text-purple-700" onclick="openIdurarDrawer('lead', '${l.id}')">${l.name}</div>
+            ${l.company ? `<div class="text-[11px] text-slate-400 font-medium">${l.company}</div>` : ''}
+          </td>
+          <td class="p-4">${ENTITY_BADGES[l.entity] || l.entity}</td>
+          <td class="p-4 font-mono text-slate-600" dir="ltr">${l.phone}</td>
+          <td class="p-4"><span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[10px]">${sourceMap[l.source] || l.source}</span></td>
+          <td class="p-4 font-black text-slate-900">${formatSAR(l.value)} ر.س</td>
+          <td class="p-4"><span class="px-2.5 py-1 rounded-full font-bold text-[10px] ${st.cls}">${st.label}</span></td>
+          <td class="p-4 text-slate-500 font-medium">${l.assignedTo || 'غير محدد'}</td>
+          <td class="p-4 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openIdurarDrawer('lead', '${l.id}')" title="عرض الملف الكامل (Drawer)" class="p-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg transition">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+              <button onclick="convertLeadToClient('${l.id}')" title="تحويل لعميل دائم وإنشاء صفقة" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black transition">
+                تحويل ➔
+              </button>
+              <button onclick="deleteLead('${l.id}')" title="حذف" class="p-1.5 text-slate-300 hover:text-rose-600 transition">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openNewLeadModal() {
+      document.getElementById('lead-edit-id').value = '';
+      document.getElementById('lead-name').value = '';
+      document.getElementById('lead-company').value = '';
+      document.getElementById('lead-phone').value = '';
+      document.getElementById('lead-email').value = '';
+      document.getElementById('lead-value').value = '15000';
+      document.getElementById('lead-notes').value = '';
+      openModal('newLeadModal');
+    }
+
+    function handleCreateLead(e) {
+      e.preventDefault();
+      ensureExtendedState();
+      const name = document.getElementById('lead-name').value.trim();
+      const company = document.getElementById('lead-company').value.trim();
+      const entity = document.getElementById('lead-entity').value;
+      const source = document.getElementById('lead-source').value;
+      const phone = document.getElementById('lead-phone').value.trim();
+      const email = document.getElementById('lead-email').value.trim();
+      const value = parseFloat(document.getElementById('lead-value').value) || 0;
+      const status = document.getElementById('lead-status').value;
+      const notes = document.getElementById('lead-notes').value.trim();
+
+      const newId = 'LEAD-' + String(state.leads.length + 101);
+      state.leads.unshift({
+        id: newId,
+        name,
+        company,
+        entity,
+        source,
+        phone,
+        email,
+        value,
+        status,
+        notes,
+        assignedTo: currentUser ? currentUser.name : 'المدير المالي',
+        date: new Date().toISOString().substring(0, 10)
+      });
+
+      saveState();
+      closeModal('newLeadModal');
+      renderCrmLeadsTable();
+      showToast('تمت إضافة العميل المحتمل (' + name + ') بنجاح ✓', 'success');
+    }
+
+    function deleteLead(id) {
+      if (!confirm('هل ترغب في حذف العميل المحتمل رقم ' + id + '؟')) return;
+      state.leads = state.leads.filter(l => l.id !== id);
+      saveState();
+      renderCrmLeadsTable();
+      showToast('تم حذف العميل المحتمل', 'info');
+    }
+
+    function convertLeadToClient(id) {
+      ensureExtendedState();
+      const l = state.leads.find(x => x.id === id);
+      if (!l) return;
+
+      const clientName = l.company ? `${l.name} (${l.company})` : l.name;
+      const newClientId = 'CLI-' + String(state.clients.length + 101);
+      state.clients.unshift({
+        id: newClientId,
+        name: clientName,
+        entity: l.entity,
+        phone: l.phone,
+        vat: '',
+        balance: 0,
+        status: 'نشط'
+      });
+
+      // Also create a Deal in negotiation stage
+      const newDealId = 'DEAL-' + String(state.deals.length + 101);
+      state.deals.unshift({
+        id: newDealId,
+        title: 'صفقة: ' + clientName,
+        client: clientName,
+        leadId: l.id,
+        entity: l.entity,
+        amount: l.value || 10000,
+        stage: 'negotiation',
+        probability: 75,
+        expectedClose: new Date(Date.now() + 15 * 86400000).toISOString().substring(0, 10),
+        notes: l.notes || 'تم التحويل من قائمة العملاء المحتملين'
+      });
+
+      l.status = 'won';
+      saveState();
+      renderCrmLeadsTable();
+      renderClientsTable();
+      if (typeof renderCrmDealsPipeline === 'function') renderCrmDealsPipeline();
+      showToast('تم تحويل العميل المحتمل إلى عميل دائم وإنشاء صفقة بيعية بنجاح!', 'success');
+      switchView('crm-deals');
+    }
+
+    // --- CRM DEALS PIPELINE ---
+    function renderCrmDealsPipeline() {
+      ensureExtendedState();
+      const container = document.getElementById('crmDealsPipelineContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const stages = [
+        { key: 'discovery', label: '1. استكشاف واحتياج', color: 'border-blue-500 bg-blue-50/50 text-blue-900', badge: 'bg-blue-100 text-blue-800' },
+        { key: 'proposal', label: '2. تقديم عرض سعر', color: 'border-purple-500 bg-purple-50/50 text-purple-900', badge: 'bg-purple-100 text-purple-800' },
+        { key: 'negotiation', label: '3. تفاوض ومراجعة', color: 'border-amber-500 bg-amber-50/50 text-amber-900', badge: 'bg-amber-100 text-amber-800' },
+        { key: 'won', label: '4. صفقات فائزة ✓', color: 'border-emerald-500 bg-emerald-50/50 text-emerald-900', badge: 'bg-emerald-100 text-emerald-800' },
+        { key: 'lost', label: '5. صفقات ملغاة', color: 'border-rose-400 bg-rose-50/50 text-rose-900', badge: 'bg-rose-100 text-rose-800' }
+      ];
+
+      const dealsList = getFilteredList(state.deals);
+
+      stages.forEach(st => {
+        const stageDeals = dealsList.filter(d => d.stage === st.key);
+        const stageSum = stageDeals.reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+
+        const col = document.createElement('div');
+        col.className = `flex flex-col bg-slate-50/90 rounded-2xl border border-slate-200/80 p-3.5 space-y-3 min-h-[500px]`;
+        col.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+            <span class="font-black text-xs text-slate-800">${st.label}</span>
+            <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${st.badge}">${stageDeals.length}</span>
+          </div>
+          <div class="text-[11px] font-black text-slate-500">${formatSAR(stageSum)} ر.س</div>
+          <div class="flex-1 space-y-2.5 overflow-y-auto pr-0.5" id="pipeline-stage-${st.key}">
+            ${stageDeals.length === 0 ? '<div class="py-12 text-center text-[11px] text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-xl">لا توجد صفقات هنا</div>' : ''}
+          </div>
+        `;
+
+        const cardsContainer = col.querySelector(`#pipeline-stage-${st.key}`);
+        stageDeals.forEach(d => {
+          const card = document.createElement('div');
+          card.className = 'bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-2xs space-y-2 hover:shadow-xs transition';
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] font-bold text-purple-700 cursor-pointer" onclick="openIdurarDrawer('deal', '${d.id}')">${d.id}</span>
+              ${ENTITY_BADGES[d.entity] || ''}
+            </div>
+            <div class="font-black text-xs text-slate-800 cursor-pointer hover:text-purple-700" onclick="openIdurarDrawer('deal', '${d.id}')">${d.title}</div>
+            <div class="text-[11px] text-slate-500 font-semibold">${d.client}</div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
+              <span class="font-black text-slate-900">${formatSAR(d.amount)} ر.س</span>
+              <span class="text-[10px] font-bold text-slate-400">احتمال ${d.probability}%</span>
+            </div>
+            <div class="pt-1 flex items-center justify-between gap-1">
+              ${st.key === 'won' ? `
+                <button onclick="convertDealToInvoice('${d.id}')" class="w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-black rounded-lg text-[10px] transition text-center">
+                  + إصدار فاتورة ZATCA 🧾
+                </button>
+              ` : `
+                <button onclick="changeDealStage('${d.id}')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition">
+                  تغيير المرحلة ➔
+                </button>
+              `}
+            </div>
+          `;
+          cardsContainer.appendChild(card);
+        });
+
+        container.appendChild(col);
+      });
+    }
+
+    function openNewDealModal() {
+      document.getElementById('deal-title').value = '';
+      document.getElementById('deal-client').value = '';
+      document.getElementById('deal-amount').value = '25000';
+      document.getElementById('deal-probability').value = '70';
+      document.getElementById('deal-notes').value = '';
+      const d = new Date(Date.now() + 20 * 86400000).toISOString().substring(0, 10);
+      document.getElementById('deal-expected-close').value = d;
+      openModal('newDealModal');
+    }
+
+    function handleCreateDeal(e) {
+      e.preventDefault();
+      ensureExtendedState();
+      const title = document.getElementById('deal-title').value.trim();
+      const client = document.getElementById('deal-client').value.trim();
+      const entity = document.getElementById('deal-entity').value;
+      const amount = parseFloat(document.getElementById('deal-amount').value) || 0;
+      const stage = document.getElementById('deal-stage').value;
+      const probability = parseInt(document.getElementById('deal-probability').value, 10) || 50;
+      const expectedClose = document.getElementById('deal-expected-close').value;
+      const notes = document.getElementById('deal-notes').value.trim();
+
+      const newId = 'DEAL-' + String(state.deals.length + 101);
+      state.deals.unshift({
+        id: newId,
+        title,
+        client,
+        entity,
+        amount,
+        stage,
+        probability,
+        expectedClose,
+        notes
+      });
+
+      saveState();
+      closeModal('newDealModal');
+      renderCrmDealsPipeline();
+      showToast('تم حفظ الصفقة البيعية (' + title + ') بنجاح ✓', 'success');
+    }
+
+    function changeDealStage(dealId) {
+      const d = state.deals.find(x => x.id === dealId);
+      if (!d) return;
+      const stages = ['discovery', 'proposal', 'negotiation', 'won', 'lost'];
+      const curIdx = stages.indexOf(d.stage);
+      const nextStage = stages[(curIdx + 1) % stages.length];
+      d.stage = nextStage;
+      if (nextStage === 'won') d.probability = 100;
+      saveState();
+      renderCrmDealsPipeline();
+      showToast('تم نقل الصفقة ' + dealId + ' إلى مرحلة: ' + nextStage, 'info');
+    }
+
+    function convertDealToInvoice(dealId) {
+      const d = state.deals.find(x => x.id === dealId);
+      if (!d) return;
+
+      openNewInvoiceModal();
+      const clientInp = document.getElementById('inv-client');
+      const entInp = document.getElementById('inv-entity');
+      if (clientInp) clientInp.value = d.client;
+      if (entInp) { entInp.value = d.entity; onInvoiceEntityChanged(); }
+
+      window.modalInvoiceRows = [
+        { desc: d.title, qty: 1, price: (d.amount / 1.15), discount: 0 }
+      ];
+      renderInvoiceRows();
+      showToast('تم تحميل بيانات الصفقة ' + dealId + ' إلى استوديو الفاتورة الضريبية ✓', 'info');
+    }
+
+    // --- IDURAR DETAIL DRAWER (لوحة التفاصيل الجانبية) ---
+    function openIdurarDrawer(type, id) {
+      const drawer = document.getElementById('idurarDrawer');
+      const overlay = document.getElementById('idurarDrawerOverlay');
+      const title = document.getElementById('drawerTitle');
+      const subtitle = document.getElementById('drawerSubtitle');
+      const body = document.getElementById('drawerBody');
+      const actions = document.getElementById('drawerActionButtons');
+      if (!drawer || !body) return;
+
+      body.innerHTML = '';
+      actions.innerHTML = '';
+
+      if (type === 'lead') {
+        const l = state.leads.find(x => x.id === id);
+        if (!l) return;
+        title.textContent = l.name;
+        subtitle.textContent = 'ملف عميل محتمل • ' + l.id;
+        body.innerHTML = `
+          <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200 space-y-1">
+            <div class="text-[11px] font-bold text-purple-700">القيمة المتوقعة</div>
+            <div class="text-2xl font-black text-purple-900">${formatSAR(l.value)} ر.س</div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">النشاط:</span>
+              <span>${ENTITY_BADGES[l.entity] || l.entity}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">الشركة:</span>
+              <span class="font-bold text-slate-800">${l.company || 'غير محدد'}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">رقم الهاتف:</span>
+              <span class="font-mono font-bold text-slate-800" dir="ltr">${l.phone}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">البريد الإلكتروني:</span>
+              <span class="text-slate-800">${l.email || 'غير مسجل'}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">المصدر:</span>
+              <span class="font-bold text-slate-800">${l.source}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">المرحلة:</span>
+              <span class="font-bold text-purple-700">${l.status}</span>
+            </div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
+            <div class="font-bold text-slate-600">ملاحظات العميل:</div>
+            <p class="text-slate-500 leading-relaxed">${l.notes || 'لا توجد ملاحظات مسجلة'}</p>
+          </div>
+        `;
+        actions.innerHTML = `
+          <button onclick="convertLeadToClient('${l.id}'); closeIdurarDrawer();" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs">تحويل لعميل دائم ➔</button>
+        `;
+      } else if (type === 'deal') {
+        const d = state.deals.find(x => x.id === id);
+        if (!d) return;
+        title.textContent = d.title;
+        subtitle.textContent = 'صفقة تجارية • ' + d.id;
+        body.innerHTML = `
+          <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 space-y-1">
+            <div class="text-[11px] font-bold text-emerald-700">قيمة الصفقة الإجمالية</div>
+            <div class="text-2xl font-black text-emerald-900">${formatSAR(d.amount)} ر.س</div>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">الطرف / العميل:</span>
+              <span class="font-bold text-slate-800">${d.client}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">المرحلة الحالية:</span>
+              <span class="font-black text-purple-700">${d.stage}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">احتمالية الإغلاق:</span>
+              <span class="font-black text-slate-900">${d.probability}%</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+              <span class="text-slate-400 font-bold">تاريخ الإغلاق المتوقع:</span>
+              <span class="font-mono text-slate-800">${d.expectedClose || '-'}</span>
+            </div>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
+            <div class="font-bold text-slate-600">شروط وملاحظات الصفقة:</div>
+            <p class="text-slate-500 leading-relaxed">${d.notes || 'لا توجد ملاحظات'}</p>
+          </div>
+        `;
+        actions.innerHTML = `
+          <button onclick="convertDealToInvoice('${d.id}'); closeIdurarDrawer();" class="px-3.5 py-2 gathern-gradient-btn text-white rounded-xl font-black text-xs">+ إصدار فاتورة ZATCA</button>
+        `;
+      }
+
+      overlay.classList.remove('opacity-0', 'pointer-events-none');
+      overlay.classList.add('opacity-100');
+      drawer.classList.remove('-translate-x-full');
+    }
+
+    function closeIdurarDrawer() {
+      const drawer = document.getElementById('idurarDrawer');
+      const overlay = document.getElementById('idurarDrawerOverlay');
+      if (drawer) drawer.classList.add('-translate-x-full');
+      if (overlay) {
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    // --- INVOICE PARTIAL PAYMENTS (سداد الفواتير المتعدد بأسلوب IDURAR) ---
+    function openRecordPaymentModal(invId) {
+      const inv = state.invoices.find(x => x.id === invId);
+      if (!inv) return;
+
+      const totalPaid = (state.invoicePayments || [])
+        .filter(p => p.invoiceId === invId)
+        .reduce((sum, p) => sum + (Number(p.amount) || 0), 0) + (inv.status === 'paid' && !state.invoicePayments?.some(p => p.invoiceId === invId) ? inv.total : 0);
+
+      const remaining = Math.max(0, inv.total - totalPaid);
+
+      document.getElementById('pay-inv-id').value = inv.id;
+      document.getElementById('pay-inv-num').textContent = inv.id;
+      document.getElementById('pay-inv-client').textContent = inv.client;
+      document.getElementById('pay-inv-total').textContent = formatSAR(inv.total) + ' ر.س';
+      document.getElementById('pay-inv-remaining').textContent = formatSAR(remaining) + ' ر.س';
+
+      const amtInp = document.getElementById('pay-amount');
+      if (amtInp) {
+        amtInp.value = remaining > 0 ? remaining : inv.total;
+        amtInp.max = remaining > 0 ? remaining : inv.total;
+      }
+      document.getElementById('pay-date').value = new Date().toISOString().substring(0, 10);
+      document.getElementById('pay-ref').value = '';
+      document.getElementById('pay-notes').value = 'سداد دفعة للفاتورة ' + inv.id;
+
+      openModal('recordPaymentModal');
+    }
+
+    function handleRecordInvoicePayment(e) {
+      e.preventDefault();
+      ensureExtendedState();
+      const invId = document.getElementById('pay-inv-id').value;
+      const inv = state.invoices.find(x => x.id === invId);
+      if (!inv) return;
+
+      const amount = parseFloat(document.getElementById('pay-amount').value) || 0;
+      if (amount <= 0) {
+        showToast('يرجى إدخال مبلغ سداد صالح', 'error');
+        return;
+      }
+
+      const date = document.getElementById('pay-date').value;
+      const method = document.getElementById('pay-method').value;
+      const account = document.getElementById('pay-account').value;
+      const ref = document.getElementById('pay-ref').value.trim();
+      const notes = document.getElementById('pay-notes').value.trim();
+
+      // Record payment
+      const payId = 'PAY-' + String(state.invoicePayments.length + 101);
+      state.invoicePayments.unshift({
+        id: payId,
+        invoiceId: inv.id,
+        entity: inv.entity,
+        amount,
+        date,
+        method,
+        account,
+        ref,
+        notes
+      });
+
+      // Calculate total paid for this invoice
+      const totalPaid = state.invoicePayments
+        .filter(p => p.invoiceId === inv.id)
+        .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+      if (totalPaid >= inv.total - 0.01) {
+        inv.status = 'paid';
+      } else {
+        inv.status = 'partially_paid';
+      }
+
+      // Update Treasury
+      if (account === 'cash') state.treasury.cash += amount;
+      else if (account === 'rajhi') state.treasury.rajhi += amount;
+      else if (account === 'ahli') state.treasury.ahli += amount;
+
+      // Journal entry
+      const accName = account === 'cash' ? 'الصندوق النقدي' : (account === 'rajhi' ? 'مصرف الراجحي' : 'البنك الأهلي');
+      state.journals.unshift({
+        id: 'JRN-' + String(state.journals.length + 1).padStart(3, '0'),
+        date,
+        entity: inv.entity,
+        desc: `سداد دفعة (${formatSAR(amount)} ر.س) للفاتورة ${inv.id} - ${inv.client}`,
+        debit: `1001 - ${accName}`,
+        credit: '1103 - العملاء والذمم المدينة',
+        amount,
+        status: 'متزن'
+      });
+
+      saveState();
+      closeModal('recordPaymentModal');
+      renderAll();
+      showToast(`تم تسجيل دفعة السداد (${formatSAR(amount)} ر.س) للفاتورة ${inv.id} بنجاح ✓`, 'success');
+    }
+
     function renderBranches() {
       const container = document.getElementById('branchesContainer');
       if (!container) return;
@@ -5867,6 +6516,8 @@
       renderVouchersTable();
       renderJournalsTable();
       renderBranches();
+      if (typeof renderCrmLeadsTable === "function") renderCrmLeadsTable();
+      if (typeof renderCrmDealsPipeline === "function") renderCrmDealsPipeline();
       if (typeof renderAccountsTree === 'function') renderAccountsTree();
       if (typeof updateTrialBalance === 'function') updateTrialBalance();
       if (typeof populateAccountSelects === 'function') populateAccountSelects();
@@ -6244,6 +6895,254 @@
   </div>
 
 
+
+  
+  <!-- IDURAR DETAIL DRAWER (الدرج الجانبي للتفاصيل السريعة) -->
+  <div id="idurarDrawerOverlay" onclick="closeIdurarDrawer()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-2xs z-50 transition-opacity opacity-0 pointer-events-none"></div>
+  <aside id="idurarDrawer" class="fixed inset-y-0 left-0 w-full max-w-md sm:max-w-lg bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-200">
+    <div class="flex items-center justify-between px-6 py-4 bg-slate-50 border-b border-slate-200">
+      <div class="flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">📋</span>
+        <div>
+          <h3 class="font-black text-slate-900 text-sm" id="drawerTitle">تفاصيل العنصر</h3>
+          <p class="text-[11px] text-slate-400 font-medium" id="drawerSubtitle">IDURAR Detailed View</p>
+        </div>
+      </div>
+      <button onclick="closeIdurarDrawer()" class="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-200 transition">&times;</button>
+    </div>
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 text-xs" id="drawerBody">
+      <!-- Dynamic Details -->
+    </div>
+    <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3" id="drawerFooter">
+      <button onclick="closeIdurarDrawer()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl">إغلاق</button>
+      <div id="drawerActionButtons" class="flex items-center gap-2"></div>
+    </div>
+  </aside>
+
+  <!-- MODAL: ADD CRM LEAD -->
+  <div id="newLeadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-purple-800 flex items-center gap-2">
+          <span>🎯 إضافة عميل محتمل جديد (Lead)</span>
+        </h3>
+        <button onclick="closeModal('newLeadModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleCreateLead(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="lead-edit-id" value="">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">النشاط التابع له:</label>
+            <select id="lead-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="law">🏢 شركة المحاماة</option>
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ الحلاق</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">مصدر العميل:</label>
+            <select id="lead-source" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="website">🌐 الموقع الإلكتروني</option>
+              <option value="referral">👥 توصية / عميل سابق</option>
+              <option value="social_media">📱 وسائل التواصل</option>
+              <option value="direct">📞 اتصال مباشر / زيارة</option>
+              <option value="ad">📢 إعلان ترويجي</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">اسم العميل / جهة الاتصال:*</label>
+          <input type="text" id="lead-name" required placeholder="مثال: عبدالله الراجحي" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">اسم المنشأة / الشركة (إن وجد):</label>
+          <input type="text" id="lead-company" placeholder="مثال: شركة التطوير العقاري المحدودة" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">رقم الهاتف / الجوال:*</label>
+            <input type="text" id="lead-phone" required placeholder="05xxxxxxxx" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">البريد الإلكتروني:</label>
+            <input type="email" id="lead-email" placeholder="client@example.com" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">القيمة التقديرية (ر.س):</label>
+            <input type="number" id="lead-value" min="0" step="100" value="10000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">المرحلة الحالية:</label>
+            <select id="lead-status" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="new">🆕 جديد (لم يتم الاتصال)</option>
+              <option value="contacted">📞 تم الاتصال والمتابعة</option>
+              <option value="qualified">⭐ مؤهل ومهتم</option>
+              <option value="proposal">📄 تم تقديم عرض سعر</option>
+              <option value="won">🎉 فائز ومكتمل</option>
+              <option value="lost">❌ خاسر / غير مهتم</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">ملاحظات واحتياجات العميل:</label>
+          <textarea id="lead-notes" rows="2" placeholder="تفاصيل الطلب، الموعد المناسب للتواصل..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('newLeadModal')" class="px-4 py-2 text-slate-500 font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black">حفظ العميل المحتمل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD CRM DEAL -->
+  <div id="newDealModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-purple-800 flex items-center gap-2">
+          <span>📊 إنشاء صفقة بيعية جديدة (Deal)</span>
+        </h3>
+        <button onclick="closeModal('newDealModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleCreateDeal(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">عنوان الصفقة:*</label>
+          <input type="text" id="deal-title" required placeholder="مثال: عقد خدمات استشارية سنوي" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
+            <select id="deal-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="law">🏢 شركة المحاماة</option>
+              <option value="restaurant">🍔 المطعم</option>
+              <option value="farm">🌾 المزرعة</option>
+              <option value="barber">✂️ الحلاق</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">العميل / الطرف الآخر:*</label>
+            <input type="text" id="deal-client" required placeholder="اسم العميل أو الشركة" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">قيمة الصفقة (ر.س):*</label>
+            <input type="number" id="deal-amount" required min="1" step="100" value="25000" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-black">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">المرحلة الحالية:</label>
+            <select id="deal-stage" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="discovery">🔍 استكشاف واحتياج</option>
+              <option value="proposal">📄 تقديم عرض سعر</option>
+              <option value="negotiation" selected>🤝 تفاوض ومراجعة بنود</option>
+              <option value="won">🎉 صفقة فائزة (Won)</option>
+              <option value="lost">❌ خاسرة / ملغاة</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">نسبة احتمالية الفوز (%):</label>
+            <input type="number" id="deal-probability" min="0" max="100" value="70" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تاريخ الإغلاق المتوقع:</label>
+            <input type="date" id="deal-expected-close" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">ملاحظات الصفقة:</label>
+          <textarea id="deal-notes" rows="2" placeholder="شروط التعاقد والدفع والتسليم..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('newDealModal')" class="px-4 py-2 text-slate-500 font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black">حفظ الصفقة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RECORD INVOICE PAYMENT (سداد جزئي أو كامل للفاتورة بأسلوب IDURAR) -->
+  <div id="recordPaymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-emerald-800 flex items-center gap-2">
+          <span>💳 تسجيل سداد دفعة فاتورة مبيعات</span>
+        </h3>
+        <button onclick="closeModal('recordPaymentModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <form onsubmit="handleRecordInvoicePayment(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="pay-inv-id" value="">
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+          <div class="flex justify-between text-slate-500 font-bold">
+            <span>رقم الفاتورة:</span>
+            <span id="pay-inv-num" class="font-black text-slate-900 font-mono">-</span>
+          </div>
+          <div class="flex justify-between text-slate-500 font-bold">
+            <span>العميل:</span>
+            <span id="pay-inv-client" class="font-black text-slate-900">-</span>
+          </div>
+          <div class="flex justify-between text-slate-500 font-bold">
+            <span>إجمالي الفاتورة:</span>
+            <span id="pay-inv-total" class="font-black text-slate-900">-</span>
+          </div>
+          <div class="flex justify-between text-slate-500 font-bold pt-1 border-t border-slate-200">
+            <span class="text-rose-600 font-bold">المتبقي المطلوب سداده:</span>
+            <span id="pay-inv-remaining" class="font-black text-rose-600 text-sm">0.00 ر.س</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">مبلغ الدفعة الحالية (ر.س):*</label>
+            <input type="number" id="pay-amount" required step="0.01" min="1" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-black text-emerald-700 text-sm">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">تاريخ السداد:*</label>
+            <input type="date" id="pay-date" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">طريقة الدفع:</label>
+            <select id="pay-method" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="تحويل بنكي">🏦 تحويل بنكي</option>
+              <option value="نقدي (كاش)">💵 نقدي (كاش)</option>
+              <option value="مدى / شبكة">💳 مدى / شبكة POS</option>
+              <option value="شيك مصرفي">📝 شيك مصرفي</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">الحساب المستلم (الخزينة):</label>
+            <select id="pay-account" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+              <option value="rajhi">مصرف الراجحي</option>
+              <option value="ahli">البنك الأهلي</option>
+              <option value="cash">الصندوق النقدي (كاش)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">الرقم المرجعي / رقم الحوالة:</label>
+          <input type="text" id="pay-ref" placeholder="مثال: REF-98765432" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">ملاحظات وبيان السداد:</label>
+          <input type="text" id="pay-notes" placeholder="سداد دفعة أولى / تصفية الحساب" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('recordPaymentModal')" class="px-4 py-2 text-slate-500 font-bold">إلغاء</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black">اعتماد وترحيل الدفعة ✓</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL: ADD CLIENT -->
   <div id="newClientModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
