@@ -19,12 +19,12 @@ function runBackup() {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const outFile = path.join(backupDir, `qoyod-backup-${timestamp}.sql`);
 
-  console.log(`📦 Creating database backup to: ${outFile}`);
+  console.log(`Creating database backup to: ${outFile}`);
   try {
     execSync(`pg_dump "${dbUrl}" -f "${outFile}"`, { stdio: 'inherit' });
-    console.log(`✅ Backup successfully saved: ${outFile}`);
+    console.log(`[PASS] Backup successfully saved: ${outFile}`);
   } catch (err) {
-    console.error('❌ Backup command failed. Ensure pg_dump is installed and accessible on PATH.', err.message);
+    console.error('[FAIL] Backup command failed. Ensure pg_dump is installed and accessible on PATH.', err.message);
     process.exit(1);
   }
 }

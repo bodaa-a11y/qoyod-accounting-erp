@@ -11,7 +11,7 @@ async function migrateLegacy() {
     process.exit(1);
   }
 
-  console.log(`📦 Migrating legacy JSON state from: ${legacyFile}`);
+  console.log(`Migrating legacy JSON state from: ${legacyFile}`);
   const data = JSON.parse(fs.readFileSync(legacyFile, 'utf8'));
 
   const client = await pool.connect();
@@ -41,12 +41,12 @@ async function migrateLegacy() {
     `);
     entityMap['all'] = allRes.rows[0].id;
 
-    console.log(`✅ Migrated ${Object.keys(entityMap).length} entities.`);
+    console.log(`[PASS] Migrated ${Object.keys(entityMap).length} entities.`);
     await client.query('COMMIT');
-    console.log('🎉 Legacy migration completed successfully.');
+    console.log('Legacy migration completed successfully.');
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error('❌ Legacy migration failed:', err);
+    console.error('[FAIL] Legacy migration failed:', err);
     process.exit(1);
   } finally {
     client.release();

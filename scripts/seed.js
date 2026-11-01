@@ -6,7 +6,7 @@ const path = require('path');
 const { pool } = require('../src/lib');
 
 async function runSeed() {
-  console.log('🌱 Seeding initial system data...');
+  console.log('Seeding initial system data...');
   const client = await pool.connect();
 
   try {
@@ -24,7 +24,7 @@ async function runSeed() {
     `, [adminEmail, hash]);
 
     const adminUser = userRes.rows[0];
-    console.log(`👤 Admin user ready: ${adminUser.email}`);
+    console.log(`Admin user ready: ${adminUser.email}`);
 
     // Additional Enterprise Users requested (Updated credentials)
     await client.query(`
@@ -46,7 +46,7 @@ async function runSeed() {
         ON CONFLICT (email) DO UPDATE
         SET password_hash = EXCLUDED.password_hash, full_name = EXCLUDED.full_name, role = EXCLUDED.role
       `, [u.email, uHash, u.name, u.role]);
-      console.log(`👤 Seeded user: ${u.name} (${u.email})`);
+      console.log(`Seeded user: ${u.name} (${u.email})`);
     }
 
     // 2. Insert Default Entities
@@ -106,9 +106,9 @@ async function runSeed() {
       }
     }
 
-    console.log('✅ Default entities and Chart of Accounts seeded successfully.');
+    console.log('[PASS] Default entities and Chart of Accounts seeded successfully.');
   } catch (err) {
-    console.error('❌ Seeding failed:', err);
+    console.error('[FAIL] Seeding failed:', err);
     process.exit(1);
   } finally {
     client.release();

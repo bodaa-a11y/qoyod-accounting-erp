@@ -5,7 +5,7 @@ const path = require('path');
 const { pool } = require('../src/lib');
 
 async function runMigration() {
-  console.log('🔄 Running database migrations...');
+  console.log('Running database migrations...');
   const dbDir = path.join(__dirname, '..', 'db');
   const migrationFiles = ['schema.sql', ...fs.readdirSync(dbDir)
     .filter(file => /^migration_\d+.*\.sql$/i.test(file))
@@ -16,11 +16,11 @@ async function runMigration() {
     for (const file of migrationFiles) {
       const sql = fs.readFileSync(path.join(dbDir, file), 'utf8');
       await client.query(sql);
-      console.log(`✅ Applied ${file}`);
+      console.log(`[PASS] Applied ${file}`);
     }
-    console.log('✅ All tables, constraints, and audit triggers created successfully.');
+    console.log('[PASS] All tables, constraints, and audit triggers created successfully.');
   } catch (err) {
-    console.error('❌ Migration failed:', err);
+    console.error('[FAIL] Migration failed:', err);
     process.exit(1);
   } finally {
     client.release();

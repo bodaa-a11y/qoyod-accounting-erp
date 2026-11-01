@@ -39,7 +39,7 @@ function request(method, path, body = null) {
 
 async function runTests() {
   console.log('====================================================');
-  console.log('   🧪 Qoyod Accounting ERP - Test Suite');
+  console.log('   Qoyod Accounting ERP - Test Suite');
   console.log('   Chart of Accounts & Double-Entry Accounting Engine');
   console.log('====================================================\n');
 
@@ -48,10 +48,10 @@ async function runTests() {
 
   function assert(condition, testName, details = '') {
     if (condition) {
-      console.log(` ✅ PASS: ${testName}`);
+      console.log(` [PASS] PASS: ${testName}`);
       passed++;
     } else {
-      console.error(` ❌ FAIL: ${testName} - ${details}`);
+      console.error(` [FAIL] FAIL: ${testName} - ${details}`);
       failed++;
     }
   }
@@ -161,9 +161,9 @@ async function runTests() {
     console.log('\n----------------------------------------------------');
     console.log(` Total Tests: ${passed + failed} | Passed: ${passed} | Failed: ${failed}`);
     if (failed === 0) {
-      console.log(' 🎉 ALL ACCOUNTING MODULE TESTS PASSED WITH 100% SUCCESS!');
+      console.log(' ALL ACCOUNTING MODULE TESTS PASSED WITH 100% SUCCESS!');
     } else {
-      console.log(' ⚠️ Some tests failed, check details above.');
+      console.log(' Some tests failed, check details above.');
     }
     console.log('----------------------------------------------------\n');
 

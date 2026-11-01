@@ -16,7 +16,7 @@ const checks = [
 
 let allOk = true;
 checks.forEach(([name, passed]) => {
-  console.log(passed ? '✅' : '❌', name);
+  console.log(passed ? '[PASS]' : '[FAIL]', name);
   if (!passed) allOk = false;
 });
 

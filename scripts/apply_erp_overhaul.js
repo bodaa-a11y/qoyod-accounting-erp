@@ -50,29 +50,29 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">دورة المبيعات والعملاء</div>
             <button onclick="switchView('clients'); closeAllNavPopovers();" class="popover-item">
-              <span>👥 العملاء (Customers)</span>
+              <span>العملاء (Customers)</span>
             </button>
             <button onclick="switchView('crm-leads'); closeAllNavPopovers();" class="popover-item">
-              <span>🎯 العملاء المحتملين (Leads CRM)</span>
+              <span>العملاء المحتملين (Leads CRM)</span>
             </button>
             <button onclick="switchView('crm-deals'); closeAllNavPopovers();" class="popover-item">
-              <span>📊 مسار الصفقات (Pipeline)</span>
+              <span>مسار الصفقات (Pipeline)</span>
             </button>
             <button onclick="switchView('quotes'); closeAllNavPopovers();" class="popover-item">
-              <span>📄 عروض الأسعار وفواتير مبدئية</span>
+              <span>عروض الأسعار وفواتير مبدئية</span>
             </button>
             <button onclick="openNewInvoiceModal(); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
               <span>+ إصدار فاتورة مبيعات</span>
               <span class="text-[9px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
             </button>
             <button onclick="switchView('invoices'); closeAllNavPopovers();" class="popover-item">
-              <span>📑 فواتير البيع (Sales Invoices)</span>
+              <span>فواتير البيع (Sales Invoices)</span>
             </button>
             <button onclick="switchSalesSection('customer-receipts'); closeAllNavPopovers();" class="popover-item">
-              <span>💵 سندات قبض العملاء</span>
+              <span>سندات قبض العملاء</span>
             </button>
             <button onclick="switchSalesSection('credit-notes'); closeAllNavPopovers();" class="popover-item">
-              <span>🔄 إشعارات دائنة ومرتجعات</span>
+              <span>إشعارات دائنة ومرتجعات</span>
             </button>
           </div>
         </div>
@@ -91,23 +91,23 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">دورة المشتريات والموردين</div>
             <button onclick="switchView('suppliers'); closeAllNavPopovers();" class="popover-item">
-              <span>🏢 الموردون (Suppliers)</span>
+              <span>الموردون (Suppliers)</span>
             </button>
             <button onclick="openNewPurchaseModal(); closeAllNavPopovers();" class="popover-item font-black text-emerald-700 bg-emerald-50/90 border border-emerald-200 shadow-2xs flex items-center justify-between">
               <span>+ تسجيل فاتورة شراء</span>
               <span class="text-[9px] bg-emerald-700 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
             </button>
             <button onclick="switchPurchasesSection('bills'); closeAllNavPopovers();" class="popover-item">
-              <span>📑 فواتير المشتريات</span>
+              <span>فواتير المشتريات</span>
             </button>
             <button onclick="switchPurchasesSection('purchase-orders'); closeAllNavPopovers();" class="popover-item">
-              <span>📋 أوامر الشراء (Purchase Orders)</span>
+              <span>أوامر الشراء (Purchase Orders)</span>
             </button>
             <button onclick="switchPurchasesSection('supplier-receipts'); closeAllNavPopovers();" class="popover-item">
-              <span>💸 سندات صرف الموردين</span>
+              <span>سندات صرف الموردين</span>
             </button>
             <button onclick="switchPurchasesSection('debit-notes'); closeAllNavPopovers();" class="popover-item">
-              <span>🔄 إشعارات مدينة ومرتجعات</span>
+              <span>إشعارات مدينة ومرتجعات</span>
             </button>
           </div>
         </div>
@@ -126,17 +126,17 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">إدارة المستودعات والأصناف</div>
             <button onclick="switchView('inventory'); closeAllNavPopovers();" class="popover-item">
-              <span>📦 دليل الأصناف والمنتجات</span>
+              <span>دليل الأصناف والمنتجات</span>
             </button>
             <button onclick="openModal('newItemModal'); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 flex items-center justify-between">
               <span>+ إضافة صنف أو منتج</span>
               <span class="text-[9px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">مخزون</span>
             </button>
             <button onclick="switchView('inventory'); showToast('عرض أرصدة المستودعات وحركة الأصناف', 'info'); closeAllNavPopovers();" class="popover-item">
-              <span>🏢 المستودعات والتحويلات</span>
+              <span>المستودعات والتحويلات</span>
             </button>
             <button onclick="switchView('inventory'); showToast('وضع الجرد الفعلي وتسوية الكميات', 'info'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ تسوية وجرد المخزون</span>
+              <span>تسوية وجرد المخزون</span>
             </button>
           </div>
         </div>
@@ -155,16 +155,16 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">إدارة النقدية والحسابات البنكية</div>
             <button onclick="switchView('treasury'); closeAllNavPopovers();" class="popover-item">
-              <span>🏦 الصناديق والحسابات البنكية</span>
+              <span>الصناديق والحسابات البنكية</span>
             </button>
             <button onclick="openModal('receiptModal'); closeAllNavPopovers();" class="popover-item font-black text-emerald-700 bg-emerald-50 border border-emerald-200">
-              <span>📥 + سند قبض مالي</span>
+              <span>+ سند قبض مالي</span>
             </button>
             <button onclick="openModal('paymentModal'); closeAllNavPopovers();" class="popover-item font-black text-rose-700 bg-rose-50 border border-rose-200">
-              <span>📤 + سند صرف مالي</span>
+              <span>+ سند صرف مالي</span>
             </button>
             <button onclick="switchView('treasury'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ التسوية البنكية وحركة النقد</span>
+              <span>التسوية البنكية وحركة النقد</span>
             </button>
           </div>
         </div>
@@ -183,19 +183,19 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">المحاسبة المالية والأستاذ العام</div>
             <button onclick="switchView('accounts'); closeAllNavPopovers();" class="popover-item">
-              <span>🌳 شجرة الحسابات (Chart of Accounts)</span>
+              <span>شجرة الحسابات (Chart of Accounts)</span>
             </button>
             <button onclick="switchView('journal'); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50">
-              <span>✍️ دفتر القيود اليومية</span>
+              <span>دفتر القيود اليومية</span>
             </button>
             <button onclick="openModal('newJournalModal'); closeAllNavPopovers();" class="popover-item font-bold text-emerald-700">
               <span>+ إضافة قيد يومية يدوي</span>
             </button>
             <button onclick="switchView('fixed-assets'); closeAllNavPopovers();" class="popover-item">
-              <span>🏛️ الأصول الثابتة والإهلاك</span>
+              <span>الأصول الثابتة والإهلاك</span>
             </button>
             <button onclick="openModal('openingBalancesModal'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ الأرصدة الافتتاحية</span>
+              <span>الأرصدة الافتتاحية</span>
             </button>
           </div>
         </div>
@@ -214,16 +214,16 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">القوائم والتقارير الختامية</div>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>📈 قائمة الدخل (الأرباح والخسائر)</span>
+              <span>قائمة الدخل (الأرباح والخسائر)</span>
             </button>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>🏛️ الميزانية العمومية (المركز المالي)</span>
+              <span>الميزانية العمومية (المركز المالي)</span>
             </button>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ ميزان المراجعة (Trial Balance)</span>
+              <span>ميزان المراجعة (Trial Balance)</span>
             </button>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>📑 تقارير الضرائب وأعمار الديون</span>
+              <span>تقارير الضرائب وأعمار الديون</span>
             </button>
           </div>
         </div>
@@ -278,10 +278,10 @@ function overhaulHTML(filePath) {
           <div class="nav-popover">
             <div class="popover-header">إعدادات المنشأة والكيانات</div>
             <button onclick="switchView('settings'); closeAllNavPopovers();" class="popover-item">
-              <span>⚙️ بيانات الشركة والشعار</span>
+              <span>بيانات الشركة والشعار</span>
             </button>
             <button onclick="switchView('branches'); closeAllNavPopovers();" class="popover-item">
-              <span>🏢 الفروع والأنشطة (5 أنشطة)</span>
+              <span>الفروع والأنشطة (5 أنشطة)</span>
             </button>
           </div>
         </div>
@@ -299,10 +299,10 @@ function overhaulHTML(filePath) {
           </button>
           <div class="nav-popover">
             <button onclick="switchView('help'); closeAllNavPopovers();" class="popover-item">
-              <span>❓ مركز المساعدة ودليل النظام</span>
+              <span>مركز المساعدة ودليل النظام</span>
             </button>
             <button onclick="showToast('فريق الدعم متواجد لخدمتكم 24/7', 'info'); closeAllNavPopovers();" class="popover-item">
-              <span>💬 الدعم الفني المباشر</span>
+              <span>الدعم الفني المباشر</span>
             </button>
           </div>
         </div>

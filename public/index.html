@@ -17,6 +17,7 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <!-- html2pdf.js for Professional Vector A4 PDF Export -->
   <script src="js/html2pdf.bundle.min.js"></script>
+  <script src="js/icons.js"></script>
   <script src="js/invoice-utils.js"></script>
 
   <script>
@@ -394,29 +395,29 @@
           <div class="nav-popover">
             <div class="popover-header">دورة المبيعات والعملاء</div>
             <button onclick="switchView('clients'); closeAllNavPopovers();" class="popover-item">
-              <span>👥 العملاء (Customers)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-users inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> <span>العملاء (Customers)</span></span>
             </button>
             <button onclick="switchView('crm-leads'); closeAllNavPopovers();" class="popover-item">
-              <span>🎯 العملاء المحتملين (Leads CRM)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-target inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span>العملاء المحتملين (Leads CRM)</span></span>
             </button>
             <button onclick="switchView('crm-deals'); closeAllNavPopovers();" class="popover-item">
-              <span>📊 مسار الصفقات (Pipeline)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-kanban inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v11"/><path d="M12 5v6"/><path d="M18 5v14"/></svg> <span>مسار الصفقات (Pipeline)</span></span>
             </button>
             <button onclick="switchView('quotes'); closeAllNavPopovers();" class="popover-item">
-              <span>📄 عروض الأسعار وفواتير مبدئية</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-file-text inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> <span>عروض الأسعار وفواتير مبدئية</span></span>
             </button>
             <button onclick="openNewInvoiceModal(); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 shadow-2xs flex items-center justify-between">
               <span>+ إصدار فاتورة مبيعات</span>
               <span class="text-[9px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
             </button>
             <button onclick="switchView('invoices'); closeAllNavPopovers();" class="popover-item">
-              <span>📑 فواتير البيع (Sales Invoices)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-receipt inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg> <span>فواتير البيع (Sales Invoices)</span></span>
             </button>
             <button onclick="switchSalesSection('customer-receipts'); closeAllNavPopovers();" class="popover-item">
-              <span>💵 سندات قبض العملاء</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-banknote inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> <span>سندات قبض العملاء</span></span>
             </button>
             <button onclick="switchSalesSection('credit-notes'); closeAllNavPopovers();" class="popover-item">
-              <span>🔄 إشعارات دائنة ومرتجعات</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-rotate-ccw inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> <span>إشعارات دائنة ومرتجعات</span></span>
             </button>
           </div>
         </div>
@@ -435,23 +436,23 @@
           <div class="nav-popover">
             <div class="popover-header">دورة المشتريات والموردين</div>
             <button onclick="switchView('suppliers'); closeAllNavPopovers();" class="popover-item">
-              <span>🏢 الموردون (Suppliers)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-truck inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg> <span>الموردون (Suppliers)</span></span>
             </button>
             <button onclick="openNewPurchaseModal(); closeAllNavPopovers();" class="popover-item font-black text-emerald-700 bg-emerald-50/90 border border-emerald-200 shadow-2xs flex items-center justify-between">
               <span>+ تسجيل فاتورة شراء</span>
               <span class="text-[9px] bg-emerald-700 text-white px-1.5 py-0.5 rounded font-bold">جديد</span>
             </button>
             <button onclick="switchPurchasesSection('bills'); closeAllNavPopovers();" class="popover-item">
-              <span>📑 فواتير المشتريات</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-file-text inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> <span>فواتير المشتريات</span></span>
             </button>
             <button onclick="switchPurchasesSection('purchase-orders'); closeAllNavPopovers();" class="popover-item">
-              <span>📋 أوامر الشراء (Purchase Orders)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-clipboard-list inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg> <span>أوامر الشراء (Purchase Orders)</span></span>
             </button>
             <button onclick="switchPurchasesSection('supplier-receipts'); closeAllNavPopovers();" class="popover-item">
-              <span>💸 سندات صرف الموردين</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-wallet inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg> <span>سندات صرف الموردين</span></span>
             </button>
             <button onclick="switchPurchasesSection('debit-notes'); closeAllNavPopovers();" class="popover-item">
-              <span>🔄 إشعارات مدينة ومرتجعات</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-rotate-ccw inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> <span>إشعارات مدينة ومرتجعات</span></span>
             </button>
           </div>
         </div>
@@ -470,17 +471,17 @@
           <div class="nav-popover">
             <div class="popover-header">إدارة المستودعات والأصناف</div>
             <button onclick="switchView('inventory'); closeAllNavPopovers();" class="popover-item">
-              <span>📦 دليل الأصناف والمنتجات</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-package inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg> <span>دليل الأصناف والمنتجات</span></span>
             </button>
             <button onclick="openModal('newItemModal'); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50/90 border border-purple-200 flex items-center justify-between">
               <span>+ إضافة صنف أو منتج</span>
               <span class="text-[9px] bg-purple-700 text-white px-1.5 py-0.5 rounded font-bold">مخزون</span>
             </button>
             <button onclick="switchView('inventory'); showToast('عرض أرصدة المستودعات وحركة الأصناف', 'info'); closeAllNavPopovers();" class="popover-item">
-              <span>🏢 المستودعات والتحويلات</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-warehouse inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><rect width="12" height="12" x="6" y="10"/></svg> <span>المستودعات والتحويلات</span></span>
             </button>
             <button onclick="switchView('inventory'); showToast('وضع الجرد الفعلي وتسوية الكميات', 'info'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ تسوية وجرد المخزون</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-scale inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> <span>تسوية وجرد المخزون</span></span>
             </button>
           </div>
         </div>
@@ -499,16 +500,16 @@
           <div class="nav-popover">
             <div class="popover-header">إدارة النقدية والحسابات البنكية</div>
             <button onclick="switchView('treasury'); closeAllNavPopovers();" class="popover-item">
-              <span>🏦 الصناديق والحسابات البنكية</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-landmark inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> <span>الصناديق والحسابات البنكية</span></span>
             </button>
             <button onclick="openModal('receiptModal'); closeAllNavPopovers();" class="popover-item font-black text-emerald-700 bg-emerald-50 border border-emerald-200">
-              <span>📥 + سند قبض مالي</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-arrow-down-left inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 7 7 17"/><path d="M17 17H7V7"/></svg> <span>+ سند قبض مالي</span></span>
             </button>
             <button onclick="openModal('paymentModal'); closeAllNavPopovers();" class="popover-item font-black text-rose-700 bg-rose-50 border border-rose-200">
-              <span>📤 + سند صرف مالي</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-arrow-up-right inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg> <span>+ سند صرف مالي</span></span>
             </button>
             <button onclick="switchView('treasury'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ التسوية البنكية وحركة النقد</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-scale inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> <span>التسوية البنكية وحركة النقد</span></span>
             </button>
           </div>
         </div>
@@ -527,19 +528,19 @@
           <div class="nav-popover">
             <div class="popover-header">المحاسبة المالية والأستاذ العام</div>
             <button onclick="switchView('accounts'); closeAllNavPopovers();" class="popover-item">
-              <span>🌳 شجرة الحسابات (Chart of Accounts)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-folder-tree inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2.5a1 1 0 0 1-.8-.4l-.9-1.2A1 1 0 0 0 15 3h-2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M20 21a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-2.9a1 1 0 0 1-.88-.55l-.42-.85a1 1 0 0 0-.92-.6H13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1Z"/><path d="M3 5a2 2 0 0 0 2 2h3"/><path d="M3 3v13a2 2 0 0 0 2 2h3"/></svg> <span>شجرة الحسابات (Chart of Accounts)</span></span>
             </button>
             <button onclick="switchView('journal'); closeAllNavPopovers();" class="popover-item font-black text-purple-700 bg-purple-50">
-              <span>✍️ دفتر القيود اليومية</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-book-open inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg> <span>دفتر القيود اليومية</span></span>
             </button>
             <button onclick="openModal('newJournalModal'); closeAllNavPopovers();" class="popover-item font-bold text-emerald-700">
               <span>+ إضافة قيد يومية يدوي</span>
             </button>
             <button onclick="switchView('fixed-assets'); closeAllNavPopovers();" class="popover-item">
-              <span>🏛️ الأصول الثابتة والإهلاك</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-building-2 inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg> <span>الأصول الثابتة والإهلاك</span></span>
             </button>
             <button onclick="openModal('openingBalancesModal'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ الأرصدة الافتتاحية</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-scale inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> <span>الأرصدة الافتتاحية</span></span>
             </button>
           </div>
         </div>
@@ -558,16 +559,16 @@
           <div class="nav-popover">
             <div class="popover-header">القوائم والتقارير الختامية</div>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>📈 قائمة الدخل (الأرباح والخسائر)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-trending-up inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> <span>قائمة الدخل (الأرباح والخسائر)</span></span>
             </button>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>🏛️ الميزانية العمومية (المركز المالي)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-landmark inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> <span>الميزانية العمومية (المركز المالي)</span></span>
             </button>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>⚖️ ميزان المراجعة (Trial Balance)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-scale inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> <span>ميزان المراجعة (Trial Balance)</span></span>
             </button>
             <button onclick="switchView('reports'); closeAllNavPopovers();" class="popover-item">
-              <span>📑 تقارير الضرائب وأعمار الديون</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-file-text inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> <span>تقارير الضرائب وأعمار الديون</span></span>
             </button>
           </div>
         </div>
@@ -622,10 +623,10 @@
           <div class="nav-popover">
             <div class="popover-header">إعدادات المنشأة والكيانات</div>
             <button onclick="switchView('settings'); closeAllNavPopovers();" class="popover-item">
-              <span>⚙️ بيانات الشركة والشعار</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-settings inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> <span>بيانات الشركة والشعار</span></span>
             </button>
             <button onclick="switchView('branches'); closeAllNavPopovers();" class="popover-item">
-              <span>🏢 الفروع والأنشطة (5 أنشطة)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-building-2 inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg> <span>الفروع والأنشطة (5 أنشطة)</span></span>
             </button>
           </div>
         </div>
@@ -643,10 +644,10 @@
           </button>
           <div class="nav-popover">
             <button onclick="switchView('help'); closeAllNavPopovers();" class="popover-item">
-              <span>❓ مركز المساعدة ودليل النظام</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-circle-help inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg> <span>مركز المساعدة ودليل النظام</span></span>
             </button>
             <button onclick="showToast('فريق الدعم متواجد لخدمتكم 24/7', 'info'); closeAllNavPopovers();" class="popover-item">
-              <span>💬 الدعم الفني المباشر</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-message-square inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span>الدعم الفني المباشر</span></span>
             </button>
           </div>
         </div>
@@ -1057,7 +1058,7 @@
           </div>
           <div class="flex items-center gap-2">
             <button onclick="openOpeningBalancesModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-              <span>⚙️ رصيد افتتاحي</span>
+              <span><svg class="lucide lucide-settings inline-block shrink-0 ml-1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> رصيد افتتاحي</span>
             </button>
             <button onclick="openReceiptModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition">
               <span>+ سند قبض</span>
@@ -1131,9 +1132,7 @@
         <!-- Trial Balance Summary -->
         <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">
-              ✓
-            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg"><svg class="lucide lucide-check-circle-2 inline-block shrink-0" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div>
             <div>
               <h4 class="text-sm font-bold text-slate-200">حالة ميزان القيود والدفاتر</h4>
               <p class="text-xs text-emerald-400 font-black">كافة القيود متزنة تماماً (إجمالي المدين = إجمالي الدائن)</p>
@@ -1192,10 +1191,10 @@
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button onclick="expandAllAccounts()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-              <span>⊞ توسيع الكل</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="lucide lucide-unfold-vertical inline-block shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></svg> <span>توسيع الكل</span></span>
             </button>
             <button onclick="collapseAllAccounts()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-              <span>⊟ طي الكل</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="lucide lucide-fold-vertical inline-block shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22v-6"/><path d="M12 8V2"/><path d="M4 12H2"/><path d="M10 12H8"/><path d="M16 12h-2"/><path d="M22 12h-2"/><path d="m15 16-3-3-3 3"/><path d="m15 8-3 3-3-3"/></svg> <span>طي الكل</span></span>
             </button>
             <button onclick="exportAccountsCSV()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
               <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
@@ -1259,18 +1258,14 @@
         <!-- Balance Sheet Equation Banner -->
         <div class="bg-slate-900 text-white rounded-2xl p-4 lg:p-5 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-base">
-              ⚖️
-            </div>
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-base"><svg class="lucide lucide-scale inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
             <div>
               <div class="text-xs font-bold text-slate-300">المعادلة المحاسبية الأساسية للدفاتر:</div>
               <div class="text-sm font-black text-white">الأصول (Assets) = الالتزامات (Liabilities) + حقوق الملكية (Equity)</div>
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <span id="accountingEquationBadge" class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-black rounded-lg border border-emerald-500/30">
-              المعادلة متزنة 100% ✓
-            </span>
+            <span id="accountingEquationBadge" class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-black rounded-lg border border-emerald-500/30 inline-flex items-center gap-1.5"><span>المعادلة متزنة 100%</span> <svg class="lucide lucide-check inline-block shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
             <span class="text-xs text-slate-400 font-medium" id="accountingEquationDiff">الفرق: 0.00 ر.س</span>
           </div>
         </div>
@@ -1383,7 +1378,7 @@
               <div>
                 <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
                   <span>ميزان المراجعة بالأرصدة (Trial Balance)</span>
-                  <span id="trialBalanceBalanceBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">متزن ✓</span>
+                  <span id="trialBalanceBalanceBadge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center gap-1"><span>متزن</span> <svg class="lucide lucide-check inline-block shrink-0" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
                 </h3>
                 <p class="text-xs text-slate-400">كشف ميزان الحسابات التفصيلية للتحقق من اتزان القيود والأستاذ العام</p>
               </div>
@@ -1461,18 +1456,18 @@
           <div class="flex items-center gap-3">
             <label class="text-xs font-bold text-slate-600">المنشأة:</label>
             <select id="zatca-entity-select" onchange="loadZatcaDashboard()" class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-800">
-              <option value="law">🏢 شركة المحاماة والاستشارات</option>
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ صالون الحلاقة</option>
+              <option value="law">شركة المحاماة والاستشارات</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">صالون الحلاقة</option>
             </select>
-            <button onclick="loadZatcaDashboard()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">تحديث الفحص ↻</button>
+            <button onclick="loadZatcaDashboard()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition"><span class="inline-flex items-center gap-1"><span>تحديث الفحص</span> <svg class="lucide lucide-refresh-cw inline-block shrink-0" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span></button>
           </div>
         </div>
 
         <!-- Warning Banner -->
         <div class="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 flex items-start gap-3">
-          <span class="text-lg leading-none">⚠️</span>
+          <span class="text-amber-600 flex items-center shrink-0 mt-0.5"><svg class="lucide lucide-alert-triangle inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span>
           <div class="space-y-1 leading-relaxed">
             <div class="font-black">تنبيه مهم: هذه الطبقة التأسيسية لتكامل الفوترة الإلكترونية (Development Preview)</div>
             <div id="zatca-warning-text" class="text-amber-800">النسخة الحالية تجهّز سجلات XML وQR والتجزئة (SHA-256) وتفحص جاهزية البيانات في قاعدة البيانات دون إرسال فعلي إلى خوادم ZATCA. يلزم إكمال التوقيع الرقمي (XAdES) والتحقق بـ SDK الرسمي وربط CSID قبل الاستخدام الإنتاجي.</div>
@@ -1625,7 +1620,7 @@
                 <option value="simplified">فاتورة مبسطة (0200000)</option>
                 <option value="standard">فاتورة ضريبية قياسية (0100000)</option>
               </select>
-              <button onclick="prepareZatcaInvoiceXml()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl font-black shadow-xs transition">تجهيز ومعاينة XML ⚡</button>
+              <button onclick="prepareZatcaInvoiceXml()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl font-black shadow-xs transition"><span class="inline-flex items-center gap-1.5"><span>تجهيز ومعاينة XML</span> <svg class="lucide lucide-zap inline-block shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></span></button>
             </div>
 
             <div id="zatca-prepare-result" class="hidden space-y-3 text-xs">
@@ -1646,7 +1641,7 @@
               <div>
                 <div class="flex items-center justify-between mb-1">
                   <span class="font-bold text-slate-700">محتوى UBL 2.1 XML المولّد (معاينة تطويرية):</span>
-                  <button type="button" onclick="copyZatcaXml()" class="text-[11px] font-bold text-gathern-700 hover:underline">نسخ XML 📋</button>
+                  <button type="button" onclick="copyZatcaXml()" class="text-[11px] font-bold text-gathern-700 hover:underline"><span class="inline-flex items-center gap-1"><span>نسخ XML</span> <svg class="lucide lucide-copy inline-block shrink-0" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></span></button>
                 </div>
                 <textarea id="zp-xml" dir="ltr" readonly rows="8" class="w-full p-3 bg-slate-900 text-emerald-300 font-mono text-[11px] rounded-xl border border-slate-700 leading-relaxed"></textarea>
               </div>
@@ -1700,7 +1695,7 @@
                 <span>تصدير نسخة احتياطية (JSON)</span>
               </button>
               <button onclick="openOpeningBalancesModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                <span>⚙️ تعديل الأرصدة الافتتاحية</span>
+                <span class="inline-flex items-center gap-1.5"><svg class="lucide lucide-settings inline-block shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> <span>تعديل الأرصدة الافتتاحية</span></span>
               </button>
             </div>
           </div>
@@ -1854,7 +1849,7 @@
           </div>
           <div class="flex items-center gap-2">
             <button onclick="openRunPayrollModal()" class="px-4 py-2.5 rounded-xl border border-purple-200 bg-purple-50 text-purple-800 text-xs font-bold hover:bg-purple-100 transition flex items-center gap-1.5">
-              <span>⚡ ترحيل مسير الشهر</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="lucide lucide-zap inline-block shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg> <span>ترحيل مسير الشهر</span></span>
             </button>
             <button onclick="openNewEmployeeModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -1869,21 +1864,21 @@
               <span class="text-slate-400 block mb-1">إجمالي الكادر الوظيفي</span>
               <span id="totalEmployeesCount" class="text-2xl font-black text-slate-800">0</span>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl">👥</div>
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center"><svg class="lucide lucide-users inline-block shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
             <div>
               <span class="text-slate-400 block mb-1">إجمالي الرواتب الأساسية</span>
               <span id="totalSalariesSpan" class="text-2xl font-black text-purple-900">0.00 ر.س</span>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl">💵</div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center"><svg class="lucide lucide-banknote inline-block shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
             <div>
               <span class="text-slate-400 block mb-1">حالة مسير الشهر الحالي</span>
               <span class="text-sm font-black text-emerald-600">جاهز للترحيل</span>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl">📋</div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center"><svg class="lucide lucide-clipboard-check inline-block shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div>
           </div>
         </div>
 
@@ -1963,7 +1958,7 @@
           </div>
           <div class="flex items-center gap-2">
             <button onclick="switchView('crm-deals')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-              <span>📊 مسار الصفقات (Pipeline)</span>
+              <span class="flex items-center gap-2"><svg class="lucide lucide-kanban inline-block shrink-0 opacity-80" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v11"/><path d="M12 5v6"/><path d="M18 5v14"/></svg> <span>مسار الصفقات (Pipeline)</span></span>
             </button>
             <button onclick="openNewLeadModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -2000,7 +1995,7 @@
             <button onclick="filterCrmLeadsByStatus('contacted')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">تم التواصل</button>
             <button onclick="filterCrmLeadsByStatus('qualified')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">مؤهل</button>
             <button onclick="filterCrmLeadsByStatus('proposal')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">قيد العرض والتفاوض</button>
-            <button onclick="filterCrmLeadsByStatus('won')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">فائز ✓</button>
+            <button onclick="filterCrmLeadsByStatus('won')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition inline-flex items-center gap-1"><span>فائز</span> <svg class="lucide lucide-check inline-block shrink-0" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button>
             <button onclick="filterCrmLeadsByStatus('lost')" class="crm-lead-filter-btn px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">ملغي / خاسر</button>
           </div>
           <div class="flex items-center gap-2">
@@ -2044,7 +2039,7 @@
           </div>
           <div class="flex items-center gap-2">
             <button onclick="switchView('crm-leads')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-              <span>🎯 العملاء المحتملين (Leads)</span>
+              <span class="inline-flex items-center gap-1.5"><svg class="lucide lucide-target inline-block shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span>العملاء المحتملين (Leads)</span></span>
             </button>
             <button onclick="openNewDealModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition shadow-xs">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -2088,28 +2083,28 @@
             <div class="text-[11px] font-bold text-slate-400">بانتظار الاعتماد</div>
             <div id="stat-approvals-pending" class="text-2xl font-black text-amber-600 mt-1">0</div>
           </div>
-          <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-black">⏳</span>
+          <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><svg class="lucide lucide-clock inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div class="text-[11px] font-bold text-slate-400">معتمدة ومرحّلة</div>
             <div id="stat-approvals-approved" class="text-2xl font-black text-emerald-600 mt-1">0</div>
           </div>
-          <span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black">✓</span>
+          <span class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg class="lucide lucide-check-circle-2 inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div class="text-[11px] font-bold text-slate-400">مرفوضة / ملغاة</div>
             <div id="stat-approvals-rejected" class="text-2xl font-black text-rose-600 mt-1">0</div>
           </div>
-          <span class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-black">✕</span>
+          <span class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><svg class="lucide lucide-x-circle inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <div class="text-[11px] font-bold text-slate-400">إجمالي طلبات الفترة</div>
             <div id="stat-approvals-total" class="text-2xl font-black text-purple-600 mt-1">0</div>
           </div>
-          <span class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-black">📋</span>
+          <span class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><svg class="lucide lucide-clipboard-list inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span>
         </div>
       </div>
 
@@ -2205,17 +2200,17 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg">📖</div>
+            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center"><svg class="lucide lucide-book-open inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></div>
             <h3 class="font-extrabold text-sm text-slate-800">دليل الفوترة والربط مع ZATCA</h3>
             <p class="text-xs text-slate-400">شرح إنشاء الفواتير الضريبية المبسطة وتوليد رمز الاستجابة السريع QR المشفر بالمواصفات الرسمية.</p>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">⚖️</div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"><svg class="lucide lucide-scale inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
             <h3 class="font-extrabold text-sm text-slate-800">قواعد القيد المزدوج المحاسبي</h3>
             <p class="text-xs text-slate-400">دليل القيود اليومية التلقائية واليدوية وضمان توازن ميزان المراجعة والمركز المالي.</p>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg">📞</div>
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center"><svg class="lucide lucide-phone-call inline-block shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/></svg></div>
             <h3 class="font-extrabold text-sm text-slate-800">تواصل مع المستشار المحاسبي</h3>
             <p class="text-xs text-slate-400">فريق الدعم المالي والتقني متصل وجاهز للإجابة على استفساراتكم الضريبية والمحاسبية.</p>
           </div>
@@ -2261,11 +2256,11 @@
                   <div class="sm:col-span-2">
                     <label class="inv-label">المنشأة المصدرة</label>
                     <select id="inv-entity" onchange="onInvoiceEntityChanged()" class="inv-input font-bold">
-                      <option value="law">🏢 شركة المحاماة والاستشارات</option>
-                      <option value="restaurant">🍔 المطعم والمأكولات</option>
-                      <option value="farm">🌾 المزرعة والإنتاج الزراعي</option>
-                      <option value="barber">✂️ صالون الأناقة الرجالي</option>
-                      <option value="home">🏡 الحساب الشخصي</option>
+                      <option value="law">شركة المحاماة والاستشارات</option>
+                      <option value="restaurant">المطعم والمأكولات</option>
+                      <option value="farm">المزرعة والإنتاج الزراعي</option>
+                      <option value="barber">صالون الأناقة الرجالي</option>
+                      <option value="home">الحساب الشخصي</option>
                     </select>
                     <div id="inv-entity-legal-badge" class="mt-2 text-[11px] font-bold text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-dashed border-slate-200">س.ت: 1010987654 • ر.ض: 310123456700003</div>
                   </div>
@@ -2312,9 +2307,9 @@
                   <div>
                     <label class="inv-label">حالة السداد</label>
                     <select id="inv-status" class="inv-input font-bold">
-                      <option value="paid">✅ مسددة (مدفوعة بالكامل)</option>
-                      <option value="unpaid">⏳ غير مسددة (آجلة)</option>
-                      <option value="partial">🔄 مدفوعة جزئياً</option>
+                      <option value="paid">مسددة (مدفوعة بالكامل)</option>
+                      <option value="unpaid">غير مسددة (آجلة)</option>
+                      <option value="partial">مدفوعة جزئياً</option>
                     </select>
                   </div>
                   <div>
@@ -2364,7 +2359,7 @@
               <section class="inv-card">
                 <div class="inv-card-title"><span class="inv-step">4</span> الشروط والملاحظات وخيار الإرسال</div>
                 <textarea id="inv-notes" rows="3" class="inv-input font-semibold" placeholder="شكراً لتعاملكم معنا • جميع الفواتير الصادرة تخضع للائحة هيئة الزكاة والضريبة والجمارك"></textarea>
-                <div class="mt-2 text-[11px] text-slate-500 bg-purple-50/70 px-3 py-2 rounded-xl border border-purple-100 font-bold">🏦 الحساب البنكي: مصرف الراجحي | الآيبان: SA0380000123456789012345</div>
+                <div class="mt-2 text-[11px] text-slate-500 bg-purple-50/70 px-3 py-2 rounded-xl border border-purple-100 font-bold flex items-center gap-1.5"><svg class="lucide lucide-landmark inline-block shrink-0 text-purple-700" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg> <span>الحساب البنكي: مصرف الراجحي | الآيبان: SA0380000123456789012345</span></div>
                 <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
                   <div class="font-black text-slate-800 text-xs">بعد إنشاء الفاتورة</div>
                   <label class="flex items-start gap-2 text-xs font-bold text-slate-700 cursor-pointer">
@@ -2654,11 +2649,11 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
           <select id="receipt-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="law">🏢 شركة المحاماة</option>
-            <option value="restaurant">🍔 المطعم</option>
-            <option value="farm">🌾 المزرعة</option>
-            <option value="barber">✂️ الحلاق</option>
-            <option value="home">🏠 البيت</option>
+            <option value="law">شركة المحاماة</option>
+            <option value="restaurant">المطعم</option>
+            <option value="farm">المزرعة</option>
+            <option value="barber">الحلاق</option>
+            <option value="home">البيت</option>
           </select>
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -2704,11 +2699,11 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
           <select id="payment-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="law">🏢 شركة المحاماة</option>
-            <option value="restaurant">🍔 المطعم</option>
-            <option value="farm">🌾 المزرعة</option>
-            <option value="barber">✂️ الحلاق</option>
-            <option value="home">🏠 البيت (مصروفات المعيشة)</option>
+            <option value="law">شركة المحاماة</option>
+            <option value="restaurant">المطعم</option>
+            <option value="farm">المزرعة</option>
+            <option value="barber">الحلاق</option>
+            <option value="home">البيت (مصروفات المعيشة)</option>
           </select>
         </div>
         <div class="grid grid-cols-2 gap-3">
@@ -2757,10 +2752,10 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">النشاط التابع له:</label>
             <select id="item-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ الحلاق</option>
-              <option value="law">🏢 شركة المحاماة</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">الحلاق</option>
+              <option value="law">شركة المحاماة</option>
             </select>
           </div>
         </div>
@@ -2814,11 +2809,11 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
             <select id="po-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="law">🏢 شركة المحاماة</option>
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ الحلاق</option>
-              <option value="home">🏠 البيت (مصروفات شخصية)</option>
+              <option value="law">شركة المحاماة</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">الحلاق</option>
+              <option value="home">البيت (مصروفات شخصية)</option>
             </select>
           </div>
           <div>
@@ -2882,11 +2877,11 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
             <select id="jrn-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="law">🏢 شركة المحاماة</option>
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ الحلاق</option>
-              <option value="home">🏠 البيت</option>
+              <option value="law">شركة المحاماة</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">الحلاق</option>
+              <option value="home">البيت</option>
             </select>
           </div>
           <div>
@@ -2990,12 +2985,12 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">النشاط المرتبط:</label>
             <select id="acc-form-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800">
-              <option value="all">🌐 مجمع لكافة الكيانات</option>
-              <option value="law">🏢 شركة المحاماة</option>
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ الحلاق</option>
-              <option value="home">🏠 البيت (المصروفات الشخصية)</option>
+              <option value="all">مجمع لكافة الكيانات</option>
+              <option value="law">شركة المحاماة</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">الحلاق</option>
+              <option value="home">البيت (المصروفات الشخصية)</option>
             </select>
           </div>
           <div>
@@ -3093,7 +3088,7 @@
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
-          <span>⚙️ ضبط الأرصدة الافتتاحية الحقيقية</span>
+          <span class="flex items-center gap-2"><svg class="lucide lucide-settings inline-block shrink-0 text-purple-700" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> <span>ضبط الأرصدة الافتتاحية الحقيقية</span></span>
         </h3>
         <button onclick="closeModal('openingBalancesModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
       </div>
@@ -3138,11 +3133,11 @@
       vouchers: [],
       journals: [],
       branches: [
-        { id: 'law', name: 'شركة حجاج للمحاماة والاستشارات', desc: 'فرع طريق الملك فهد - الرياض', cr: '1010987654', vat: '310123456700003', icon: '🏢' },
-        { id: 'restaurant', name: 'مطعم مذاق البخاري والشاورما', desc: 'حي السليمانية - الرياض', cr: '1010765432', vat: '310987654300003', icon: '🍔' },
-        { id: 'farm', name: 'مزرعة الواحة الخضراء', desc: 'محافظة الخرج - وادي حنيفة', cr: '1010543210', vat: '310654321000003', icon: '🌾' },
-        { id: 'barber', name: 'صالون الأناقة للرجال', desc: 'حي النرجس - الرياض', cr: '1010432109', vat: '310432109800003', icon: '✂️' },
-        { id: 'home', name: 'المصروفات الشخصية والمنزلية', desc: 'الذمة المالية الشخصية المعزولة', cr: 'حساب مالك خاص', vat: 'غير خاضع', icon: '🏠' }
+        { id: 'law', name: 'شركة حجاج للمحاماة والاستشارات', desc: 'فرع طريق الملك فهد - الرياض', cr: '1010987654', vat: '310123456700003', icon: 'building-2' },
+        { id: 'restaurant', name: 'مطعم مذاق البخاري والشاورما', desc: 'حي السليمانية - الرياض', cr: '1010765432', vat: '310987654300003', icon: 'utensils' },
+        { id: 'farm', name: 'مزرعة الواحة الخضراء', desc: 'محافظة الخرج - وادي حنيفة', cr: '1010543210', vat: '310654321000003', icon: 'sprout' },
+        { id: 'barber', name: 'صالون الأناقة للرجال', desc: 'حي النرجس - الرياض', cr: '1010432109', vat: '310432109800003', icon: 'scissors' },
+        { id: 'home', name: 'المصروفات الشخصية والمنزلية', desc: 'الذمة المالية الشخصية المعزولة', cr: 'حساب مالك خاص', vat: 'غير خاضع', icon: 'home' }
       ]
     };
 
@@ -3219,11 +3214,11 @@
       const welcomeSub = document.getElementById('welcomeSub');
       const entityNames = {
         all: 'الرئيسية (المجمع العام)',
-        law: '🏢 شركة المحاماة',
-        restaurant: '🍔 المطعم',
-        farm: '🌾 المزرعة',
-        barber: '✂️ الحلاق',
-        home: '🏠 البيت (المصروفات الشخصية)'
+        law: 'شركة المحاماة',
+        restaurant: 'المطعم',
+        farm: 'المزرعة',
+        barber: 'الحلاق',
+        home: 'البيت (المصروفات الشخصية)'
       };
       if (badge) badge.textContent = entityNames[entityKey] || 'المجمع';
       if (welcomeSub) {
@@ -3559,7 +3554,7 @@
         <td class="p-4 font-black text-slate-900">${formatSAR(q.total)} ر.س</td>
         <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">${q.status}</span></td>
         <td class="p-4 text-center">
-          <button onclick="convertQuoteToInvoice('${q.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] transition">تحويل لفاتورة ✓</button>
+          <button onclick="convertQuoteToInvoice('${q.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] transition inline-flex items-center gap-1"><span>تحويل لفاتورة</span> ${window.erpIcon ? window.erpIcon('check', 12) : ''}</button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -3808,8 +3803,9 @@
       if (!container) return;
       const toast = document.createElement('div');
       toast.className = 'px-4 py-3 bg-slate-900 text-white rounded-xl shadow-lg text-xs font-bold flex items-center gap-2 border border-slate-700 transition transform duration-300 translate-y-2';
+      const iconHtml = window.erpIcon ? window.erpIcon(type === 'error' ? 'alert-circle' : (type === 'success' ? 'check-circle-2' : 'info'), 16, type === 'error' ? 'text-red-400' : 'text-emerald-400') : '';
       toast.innerHTML = `
-        <span class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-red-400' : 'bg-emerald-400'}"></span>
+        ${iconHtml}
         <span>${message}</span>
       `;
       container.appendChild(toast);
@@ -3970,11 +3966,11 @@
       const eqDiffEl = document.getElementById('accountingEquationDiff');
       if (eqBadge) {
         if (eqDiff < 0.01) {
-          eqBadge.className = 'px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-black rounded-lg border border-emerald-500/30';
-          eqBadge.textContent = 'المعادلة متزنة 100% ✓';
+          eqBadge.className = 'px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-black rounded-lg border border-emerald-500/30 inline-flex items-center gap-1.5';
+          eqBadge.innerHTML = '<span>المعادلة متزنة 100%</span> ' + (window.erpIcon ? window.erpIcon('check', 14) : '');
         } else {
-          eqBadge.className = 'px-3 py-1 bg-rose-500/20 text-rose-300 text-xs font-black rounded-lg border border-rose-500/30';
-          eqBadge.textContent = 'يوجد فارق في المعادلة ⚠️';
+          eqBadge.className = 'px-3 py-1 bg-rose-500/20 text-rose-300 text-xs font-black rounded-lg border border-rose-500/30 inline-flex items-center gap-1.5';
+          eqBadge.innerHTML = '<span>يوجد فارق في المعادلة</span> ' + (window.erpIcon ? window.erpIcon('alert-triangle', 14) : '');
         }
       }
       if (eqDiffEl) {
@@ -3985,7 +3981,7 @@
         tbody.innerHTML = `
           <tr>
             <td colspan="8" class="py-12 text-center text-slate-400">
-              <span class="text-2xl block mb-2">🔍</span>
+              ${window.erpIllustration ? window.erpIllustration('search') : ''}
               <p class="text-xs font-bold">لا توجد حسابات مطابقة لمعايير البحث أو التصفية</p>
             </td>
           </tr>
@@ -4499,8 +4495,8 @@
         const tbBadge = document.getElementById('trialBalanceBalanceBadge');
         if (tbBadge) {
           if (isBalanced) {
-            tbBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
-            tbBadge.textContent = 'متزن ✓ (المدين = الدائن)';
+            tbBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 inline-flex items-center gap-1';
+            tbBadge.innerHTML = '<span>متزن (المدين = الدائن)</span> ' + (window.erpIcon ? window.erpIcon('check', 12) : '');
           } else {
             tbBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800';
             tbBadge.textContent = `غير متزن فارق: ${formatSAR(Math.abs(grandDebitBalance - grandCreditBalance))} ر.س`;
@@ -4625,7 +4621,7 @@
           <tr>
             <td colspan="7" class="py-12 text-center">
               <div class="flex flex-col items-center justify-center space-y-2">
-                <span class="text-3xl text-slate-300">📄</span>
+                ${window.erpIllustration ? window.erpIllustration('invoices') : ''}
                 <p class="text-xs font-bold text-slate-500">لا توجد فواتير أو حركات مسجلة بعد</p>
                 <button onclick="openNewInvoiceModal()" class="mt-2 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إصدار أول فاتورة</button>
               </div>
@@ -4637,7 +4633,7 @@
 
       recent.forEach(inv => {
         const statusBadge = inv.status === 'paid' 
-          ? '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">مدفوعة ✓</span>'
+          ? '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] inline-flex items-center gap-1"><span>مدفوعة</span> ' + (window.erpIcon ? window.erpIcon('check', 11) : '') + '</span>'
           : (inv.status === 'partially_paid'
               ? '<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-bold text-[10px]">مسددة جزئياً</span>'
               : (inv.status === 'overdue' 
@@ -4681,7 +4677,7 @@
       updateCharts();
       
       if (newStatus === 'paid') {
-        showToast('تم تحديث الفاتورة ' + invId + ' إلى: مسددة بنجاح ✓', 'success');
+        showToast('تم تحديث الفاتورة ' + invId + ' إلى: مسددة بنجاح', 'success');
       } else {
         showToast('تم تحديث الفاتورة ' + invId + ' إلى: غير مسددة (آجلة)', 'info');
       }
@@ -4719,7 +4715,7 @@
           <tr>
             <td colspan="10" class="py-12 text-center">
               <div class="flex flex-col items-center justify-center space-y-2">
-                <span class="text-3xl text-slate-300">📦</span>
+                ${window.erpIllustration ? window.erpIllustration('inventory') : ''}
                 <p class="text-xs font-bold text-slate-500">المستودع فارغ حالياً — لا توجد أصناف مدخلة</p>
                 <button onclick="openNewItemModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إضافة صنف جديد للمخزون</button>
               </div>
@@ -4774,7 +4770,7 @@
           <tr>
             <td colspan="7" class="py-12 text-center">
               <div class="flex flex-col items-center justify-center space-y-2">
-                <span class="text-3xl text-slate-300">🛍️</span>
+                ${window.erpIllustration ? window.erpIllustration('purchases') : ''}
                 <p class="text-xs font-bold text-slate-500">لا توجد أوامر شراء أو فواتير موردين مسجلة</p>
                 <button onclick="openNewPurchaseModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ تسجيل أول فاتورة شراء</button>
               </div>
@@ -4812,7 +4808,7 @@
           <tr>
             <td colspan="8" class="py-12 text-center">
               <div class="flex flex-col items-center justify-center space-y-2">
-                <span class="text-3xl text-slate-300">💳</span>
+                ${window.erpIllustration ? window.erpIllustration('vouchers') : ''}
                 <p class="text-xs font-bold text-slate-500">لا توجد سندات قبض أو صرف مسجلة بالخزينة</p>
                 <div class="flex items-center gap-2 mt-1">
                   <button onclick="openReceiptModal()" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition">+ سند قبض</button>
@@ -4859,7 +4855,7 @@
           <tr>
             <td colspan="8" class="py-12 text-center">
               <div class="flex flex-col items-center justify-center space-y-2">
-                <span class="text-3xl text-slate-300">⚖️</span>
+                ${window.erpIllustration ? window.erpIllustration('journal') : ''}
                 <p class="text-xs font-bold text-slate-500">دفتر اليومية فارغ — القيود تنشأ تلقائياً مع العمليات أو يدوياً</p>
                 <button onclick="openNewJournalModal()" class="mt-1 text-xs font-bold text-gathern-700 bg-gathern-50 px-3 py-1.5 rounded-lg hover:bg-gathern-100 transition">+ إضافة قيد يومية يدوي</button>
               </div>
@@ -4884,7 +4880,7 @@
           <td class="p-4 text-emerald-700 font-bold">${j.debit}</td>
           <td class="p-4 text-blue-700 font-bold">${j.credit}</td>
           <td class="p-4 font-black text-slate-900">${formatSAR(j.amount)} ر.س</td>
-          <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">متزن ✓</span></td>
+          <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] inline-flex items-center gap-1"><span>متزن</span> ${window.erpIcon ? window.erpIcon('check', 11) : ''}</span></td>
         `;
         tbody.appendChild(tr);
       });
@@ -4952,7 +4948,7 @@
         contacted: { label: 'تم التواصل', cls: 'bg-amber-100 text-amber-800' },
         qualified: { label: 'مؤهل', cls: 'bg-purple-100 text-purple-800' },
         proposal: { label: 'قيد العرض', cls: 'bg-indigo-100 text-indigo-800' },
-        won: { label: 'فائز ✓', cls: 'bg-emerald-100 text-emerald-800' },
+        won: { label: 'فائز (Won)', cls: 'bg-emerald-100 text-emerald-800' },
         lost: { label: 'ملغي / خاسر', cls: 'bg-rose-100 text-rose-800' }
       };
 
@@ -4985,8 +4981,8 @@
               <button onclick="openIdurarDrawer('lead', '${l.id}')" title="عرض الملف الكامل (Drawer)" class="p-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg transition">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </button>
-              <button onclick="convertLeadToClient('${l.id}')" title="تحويل لعميل دائم وإنشاء صفقة" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black transition">
-                تحويل ➔
+              <button onclick="convertLeadToClient('${l.id}')" title="تحويل لعميل دائم وإنشاء صفقة" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black transition inline-flex items-center gap-1">
+                <span>تحويل</span> ${window.erpIcon ? window.erpIcon('arrow-left', 12) : ''}
               </button>
               <button onclick="deleteLead('${l.id}')" title="حذف" class="p-1.5 text-slate-300 hover:text-rose-600 transition">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -5041,7 +5037,7 @@
       saveState();
       closeModal('newLeadModal');
       renderCrmLeadsTable();
-      showToast('تمت إضافة العميل المحتمل (' + name + ') بنجاح ✓', 'success');
+      showToast('تمت إضافة العميل المحتمل (' + name + ') بنجاح', 'success');
     }
 
     function deleteLead(id) {
@@ -5104,7 +5100,7 @@
         { key: 'discovery', label: '1. استكشاف واحتياج', color: 'border-blue-500 bg-blue-50/50 text-blue-900', badge: 'bg-blue-100 text-blue-800' },
         { key: 'proposal', label: '2. تقديم عرض سعر', color: 'border-purple-500 bg-purple-50/50 text-purple-900', badge: 'bg-purple-100 text-purple-800' },
         { key: 'negotiation', label: '3. تفاوض ومراجعة', color: 'border-amber-500 bg-amber-50/50 text-amber-900', badge: 'bg-amber-100 text-amber-800' },
-        { key: 'won', label: '4. صفقات فائزة ✓', color: 'border-emerald-500 bg-emerald-50/50 text-emerald-900', badge: 'bg-emerald-100 text-emerald-800' },
+        { key: 'won', label: '4. صفقات فائزة', color: 'border-emerald-500 bg-emerald-50/50 text-emerald-900', badge: 'bg-emerald-100 text-emerald-800' },
         { key: 'lost', label: '5. صفقات ملغاة', color: 'border-rose-400 bg-rose-50/50 text-rose-900', badge: 'bg-rose-100 text-rose-800' }
       ];
 
@@ -5144,12 +5140,12 @@
             </div>
             <div class="pt-1 flex items-center justify-between gap-1">
               ${st.key === 'won' ? `
-                <button onclick="convertDealToInvoice('${d.id}')" class="w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-black rounded-lg text-[10px] transition text-center">
-                  + إصدار فاتورة ZATCA 🧾
+                <button onclick="convertDealToInvoice('${d.id}')" class="w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-black rounded-lg text-[10px] transition inline-flex items-center justify-center gap-1">
+                  ${window.erpIcon ? window.erpIcon('file-text', 12) : ''} <span>إصدار فاتورة ZATCA</span>
                 </button>
               ` : `
-                <button onclick="changeDealStage('${d.id}')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition">
-                  تغيير المرحلة ➔
+                <button onclick="changeDealStage('${d.id}')" class="w-full py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition inline-flex items-center justify-center gap-1">
+                  <span>تغيير المرحلة</span> ${window.erpIcon ? window.erpIcon('arrow-left', 12) : ''}
                 </button>
               `}
             </div>
@@ -5200,7 +5196,7 @@
       saveState();
       closeModal('newDealModal');
       renderCrmDealsPipeline();
-      showToast('تم حفظ الصفقة البيعية (' + title + ') بنجاح ✓', 'success');
+      showToast('تم حفظ الصفقة البيعية (' + title + ') بنجاح', 'success');
     }
 
     function changeDealStage(dealId) {
@@ -5230,7 +5226,7 @@
         { desc: d.title, qty: 1, price: (d.amount / 1.15), discount: 0 }
       ];
       renderInvoiceRows();
-      showToast('تم تحميل بيانات الصفقة ' + dealId + ' إلى استوديو الفاتورة الضريبية ✓', 'info');
+      showToast('تم تحميل بيانات الصفقة ' + dealId + ' إلى استوديو الفاتورة الضريبية', 'info');
     }
 
     // --- IDURAR DETAIL DRAWER (لوحة التفاصيل الجانبية) ---
@@ -5288,7 +5284,7 @@
           </div>
         `;
         actions.innerHTML = `
-          <button onclick="convertLeadToClient('${l.id}'); closeIdurarDrawer();" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs">تحويل لعميل دائم ➔</button>
+          <button onclick="convertLeadToClient('${l.id}'); closeIdurarDrawer();" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs inline-flex items-center gap-1.5"><span>تحويل لعميل دائم</span> ${window.erpIcon ? window.erpIcon('arrow-left', 14) : ''}</button>
         `;
       } else if (type === 'deal') {
         const d = state.deals.find(x => x.id === id);
@@ -5437,7 +5433,7 @@
       saveState();
       closeModal('recordPaymentModal');
       renderAll();
-      showToast(`تم تسجيل دفعة السداد (${formatSAR(amount)} ر.س) للفاتورة ${inv.id} بنجاح ✓`, 'success');
+      showToast(`تم تسجيل دفعة السداد (${formatSAR(amount)} ر.س) للفاتورة ${inv.id} بنجاح`, 'success');
     }
 
     function renderBranches() {
@@ -5450,9 +5446,9 @@
         div.className = 'bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4';
         div.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="text-3xl">${b.icon}</span>
-            <button onclick="setEntity('${b.id}'); switchView('dashboard');" class="text-xs font-black text-gathern-700 hover:text-gathern-900 px-3 py-1 bg-gathern-50 rounded-lg">
-              فتح النشاط ➔
+            <span class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 border border-purple-100 flex items-center justify-center">${window.renderBranchIcon ? window.renderBranchIcon(b.icon, b.id) : ''}</span>
+            <button onclick="setEntity('${b.id}'); switchView('dashboard');" class="text-xs font-black text-gathern-700 hover:text-gathern-900 px-3 py-1.5 bg-gathern-50 rounded-lg inline-flex items-center gap-1.5">
+              <span>فتح النشاط</span> ${window.erpIcon ? window.erpIcon('arrow-left', 14) : ''}
             </button>
           </div>
           <div>
@@ -5750,7 +5746,7 @@
       document.querySelectorAll('.customizable-invoice-logo').forEach(img => img.src = currentCustomLogo);
       const thumb = document.getElementById('modalLogoThumb');
       if (thumb) thumb.src = currentCustomLogo;
-      showToast('تم تحديث شعار الفاتورة بنجاح! سيظهر على كافة الفواتير وملفات PDF ✓', 'success');
+      showToast('تم تحديث شعار الفاتورة بنجاح! سيظهر على كافة الفواتير وملفات PDF ', 'success');
     };
     reader.readAsDataURL(file);
   }
@@ -6044,7 +6040,7 @@
     closeModal('newInvoiceModal');
     renderAll();
     updateCharts();
-    showToast(`تم حفظ وإصدار الفاتورة ${docNum} بنجاح! ✓`, 'success');
+    showToast(`تم حفظ وإصدار الفاتورة ${docNum} بنجاح!`, 'success');
 
     return newInvoice;
   }
@@ -6281,7 +6277,7 @@
           a.click();
           a.remove();
           setTimeout(() => URL.revokeObjectURL(url), 1500);
-          showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح ✓', 'success');
+          showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح', 'success');
           return;
         }
       }
@@ -6314,7 +6310,7 @@
     setTimeout(() => {
       html2pdf().set(opt).from(clone).save().then(() => {
         unmountInvoiceClone();
-        showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح ✓', 'success');
+        showToast('تم تحميل الفاتورة ' + inv.id + ' بصيغة PDF بنجاح', 'success');
       }).catch(err => {
         console.error('PDF error:', err);
         unmountInvoiceClone();
@@ -7071,7 +7067,7 @@
   <aside id="idurarDrawer" class="fixed inset-y-0 left-0 w-full max-w-md sm:max-w-lg bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-200">
     <div class="flex items-center justify-between px-6 py-4 bg-slate-50 border-b border-slate-200">
       <div class="flex items-center gap-2.5">
-        <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">📋</span>
+        <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center"><svg class="lucide lucide-clipboard-list inline-block shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span>
         <div>
           <h3 class="font-black text-slate-900 text-sm" id="drawerTitle">تفاصيل العنصر</h3>
           <p class="text-[11px] text-slate-400 font-medium" id="drawerSubtitle">IDURAR Detailed View</p>
@@ -7093,7 +7089,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-black text-purple-800 flex items-center gap-2">
-          <span>🎯 إضافة عميل محتمل جديد (Lead)</span>
+          <span class="flex items-center gap-2"><svg class="lucide lucide-target inline-block shrink-0 text-purple-700" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span>إضافة عميل محتمل جديد (Lead)</span></span>
         </h3>
         <button onclick="closeModal('newLeadModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
       </div>
@@ -7103,20 +7099,20 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">النشاط التابع له:</label>
             <select id="lead-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="law">🏢 شركة المحاماة</option>
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ الحلاق</option>
+              <option value="law">شركة المحاماة</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">الحلاق</option>
             </select>
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">مصدر العميل:</label>
             <select id="lead-source" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="website">🌐 الموقع الإلكتروني</option>
-              <option value="referral">👥 توصية / عميل سابق</option>
-              <option value="social_media">📱 وسائل التواصل</option>
-              <option value="direct">📞 اتصال مباشر / زيارة</option>
-              <option value="ad">📢 إعلان ترويجي</option>
+              <option value="website">الموقع الإلكتروني</option>
+              <option value="referral">توصية / عميل سابق</option>
+              <option value="social_media">وسائل التواصل</option>
+              <option value="direct">اتصال مباشر / زيارة</option>
+              <option value="ad">إعلان ترويجي</option>
             </select>
           </div>
         </div>
@@ -7146,12 +7142,12 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">المرحلة الحالية:</label>
             <select id="lead-status" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="new">🆕 جديد (لم يتم الاتصال)</option>
-              <option value="contacted">📞 تم الاتصال والمتابعة</option>
-              <option value="qualified">⭐ مؤهل ومهتم</option>
-              <option value="proposal">📄 تم تقديم عرض سعر</option>
-              <option value="won">🎉 فائز ومكتمل</option>
-              <option value="lost">❌ خاسر / غير مهتم</option>
+              <option value="new">جديد (لم يتم الاتصال)</option>
+              <option value="contacted">تم الاتصال والمتابعة</option>
+              <option value="qualified">مؤهل ومهتم</option>
+              <option value="proposal">تم تقديم عرض سعر</option>
+              <option value="won">فائز ومكتمل</option>
+              <option value="lost">خاسر / غير مهتم</option>
             </select>
           </div>
         </div>
@@ -7172,7 +7168,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-black text-purple-800 flex items-center gap-2">
-          <span>📊 إنشاء صفقة بيعية جديدة (Deal)</span>
+          <span class="flex items-center gap-2"><svg class="lucide lucide-chart-no-axes-combined inline-block shrink-0 text-purple-700" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg> <span>إنشاء صفقة بيعية جديدة (Deal)</span></span>
         </h3>
         <button onclick="closeModal('newDealModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
       </div>
@@ -7185,10 +7181,10 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">النشاط:</label>
             <select id="deal-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="law">🏢 شركة المحاماة</option>
-              <option value="restaurant">🍔 المطعم</option>
-              <option value="farm">🌾 المزرعة</option>
-              <option value="barber">✂️ الحلاق</option>
+              <option value="law">شركة المحاماة</option>
+              <option value="restaurant">المطعم</option>
+              <option value="farm">المزرعة</option>
+              <option value="barber">الحلاق</option>
             </select>
           </div>
           <div>
@@ -7204,11 +7200,11 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">المرحلة الحالية:</label>
             <select id="deal-stage" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="discovery">🔍 استكشاف واحتياج</option>
-              <option value="proposal">📄 تقديم عرض سعر</option>
-              <option value="negotiation" selected>🤝 تفاوض ومراجعة بنود</option>
-              <option value="won">🎉 صفقة فائزة (Won)</option>
-              <option value="lost">❌ خاسرة / ملغاة</option>
+              <option value="discovery">استكشاف واحتياج</option>
+              <option value="proposal">تقديم عرض سعر</option>
+              <option value="negotiation" selected>تفاوض ومراجعة بنود</option>
+              <option value="won">صفقة فائزة (Won)</option>
+              <option value="lost">خاسرة / ملغاة</option>
             </select>
           </div>
         </div>
@@ -7239,7 +7235,7 @@
     <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-black text-emerald-800 flex items-center gap-2">
-          <span>💳 تسجيل سداد دفعة فاتورة مبيعات</span>
+          <span class="flex items-center gap-2"><svg class="lucide lucide-credit-card inline-block shrink-0 text-emerald-700" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg> <span>تسجيل سداد دفعة فاتورة مبيعات</span></span>
         </h3>
         <button onclick="closeModal('recordPaymentModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
       </div>
@@ -7279,10 +7275,10 @@
           <div>
             <label class="block font-bold text-slate-700 mb-1">طريقة الدفع:</label>
             <select id="pay-method" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-              <option value="تحويل بنكي">🏦 تحويل بنكي</option>
-              <option value="نقدي (كاش)">💵 نقدي (كاش)</option>
-              <option value="مدى / شبكة">💳 مدى / شبكة POS</option>
-              <option value="شيك مصرفي">📝 شيك مصرفي</option>
+              <option value="تحويل بنكي">تحويل بنكي</option>
+              <option value="نقدي (كاش)">نقدي (كاش)</option>
+              <option value="مدى / شبكة">مدى / شبكة POS</option>
+              <option value="شيك مصرفي">شيك مصرفي</option>
             </select>
           </div>
           <div>
@@ -7307,7 +7303,7 @@
 
         <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeModal('recordPaymentModal')" class="px-4 py-2 text-slate-500 font-bold">إلغاء</button>
-          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black">اعتماد وترحيل الدفعة ✓</button>
+          <button type="submit" class="gathern-gradient-btn text-white px-5 py-2.5 rounded-xl font-black inline-flex items-center gap-1.5"><span>اعتماد وترحيل الدفعة</span> <svg class="lucide lucide-check inline-block shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button>
         </div>
       </form>
     </div>
@@ -7324,10 +7320,10 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له العميل:</label>
           <select id="client-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="law">🏢 شركة المحاماة</option>
-            <option value="restaurant">🍔 المطعم</option>
-            <option value="farm">🌾 المزرعة</option>
-            <option value="barber">✂️ الحلاق</option>
+            <option value="law">شركة المحاماة</option>
+            <option value="restaurant">المطعم</option>
+            <option value="farm">المزرعة</option>
+            <option value="barber">الحلاق</option>
           </select>
         </div>
         <div>
@@ -7363,10 +7359,10 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له المورد:</label>
           <select id="supplier-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="restaurant">🍔 المطعم (موردي اللحوم والخضار)</option>
-            <option value="farm">🌾 المزرعة (موردي الأسمدة والأعلاف)</option>
-            <option value="barber">✂️ الحلاق (موردي الشفرات والمستحضرات)</option>
-            <option value="law">🏢 شركة المحاماة (موردي القرطاسية والأنظمة)</option>
+            <option value="restaurant">المطعم (موردي اللحوم والخضار)</option>
+            <option value="farm">المزرعة (موردي الأسمدة والأعلاف)</option>
+            <option value="barber">الحلاق (موردي الشفرات والمستحضرات)</option>
+            <option value="law">شركة المحاماة (موردي القرطاسية والأنظمة)</option>
           </select>
         </div>
         <div>
@@ -7402,10 +7398,10 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له الموظف:</label>
           <select id="emp-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="law">🏢 شركة المحاماة</option>
-            <option value="restaurant">🍔 المطعم</option>
-            <option value="farm">🌾 المزرعة</option>
-            <option value="barber">✂️ الحلاق</option>
+            <option value="law">شركة المحاماة</option>
+            <option value="restaurant">المطعم</option>
+            <option value="farm">المزرعة</option>
+            <option value="barber">الحلاق</option>
           </select>
         </div>
         <div>
@@ -7451,10 +7447,10 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له الأصل:</label>
           <select id="asset-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="restaurant">🍔 المطعم (أفران ومعدات طبخ)</option>
-            <option value="farm">🌾 المزرعة (معدات ري وحصاد ومضخات)</option>
-            <option value="barber">✂️ الحلاق (كراسي وأجهزة حلاقة)</option>
-            <option value="law">🏢 شركة المحاماة (أجهزة حاسب وأثاث مكتبي)</option>
+            <option value="restaurant">المطعم (أفران ومعدات طبخ)</option>
+            <option value="farm">المزرعة (معدات ري وحصاد ومضخات)</option>
+            <option value="barber">الحلاق (كراسي وأجهزة حلاقة)</option>
+            <option value="law">شركة المحاماة (أجهزة حاسب وأثاث مكتبي)</option>
           </select>
         </div>
         <div>

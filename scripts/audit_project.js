@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 function audit() {
-  console.log('🔍 Starting Comprehensive ERP System Audit...\n');
+  console.log('Starting Comprehensive ERP System Audit...\n');
 
   // 1. Inspect public/index.html
   const htmlPath = path.join(__dirname, '..', 'public', 'index.html');

@@ -13,8 +13,7 @@ const invoiceStudioModalHtml = `
       <header class="bg-white px-6 py-3.5 border-b border-slate-200 flex items-center justify-between shrink-0 shadow-xs">
         <div class="flex items-center gap-3">
           <button onclick="closeModal('newInvoiceModal')" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 font-bold transition">
-            ✕
-          </button>
+            </button>
           <div class="h-5 w-px bg-slate-200"></div>
           <h2 id="studioModalTitle" class="text-base font-extrabold text-slate-800 flex items-center gap-2">
             <span>إنشاء فاتورة مبيعات / عرض سعر</span>
@@ -57,10 +56,10 @@ const invoiceStudioModalHtml = `
               <div class="flex items-center gap-3">
                 <span class="text-xs font-bold text-slate-500">نوع المستند:</span>
                 <select id="studio-doc-type" onchange="updateStudioDocType()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl font-black text-xs text-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-600">
-                  <option value="tax_invoice">🧾 فاتورة ضريبية رسمية (Tax Invoice)</option>
-                  <option value="simplified_invoice">🧾 فاتورة ضريبية مبسطة (B2C)</option>
-                  <option value="proforma">📄 فاتورة مبدئية (Proforma Invoice)</option>
-                  <option value="quotation">📊 عرض سعر رسمي (Quotation)</option>
+                  <option value="tax_invoice">فاتورة ضريبية رسمية (Tax Invoice)</option>
+                  <option value="simplified_invoice">فاتورة ضريبية مبسطة (B2C)</option>
+                  <option value="proforma">فاتورة مبدئية (Proforma Invoice)</option>
+                  <option value="quotation">عرض سعر رسمي (Quotation)</option>
                 </select>
               </div>
 
@@ -119,19 +118,19 @@ const invoiceStudioModalHtml = `
               <div class="flex items-center gap-3">
                 <span class="text-slate-500">قالب وشكل الفاتورة:</span>
                 <select id="studio-template" onchange="renderStudioLivePreview()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-purple-700 font-extrabold focus:outline-none">
-                  <option value="modern_purple">🎨 قالب قـيـد البنفسجي الحديث (Modern Purple)</option>
-                  <option value="clean_corporate">🏢 قالب الشركات الرسمي النظيف (Corporate Clean)</option>
+                  <option value="modern_purple">قالب قـيـد البنفسجي الحديث (Modern Purple)</option>
+                  <option value="clean_corporate">قالب الشركات الرسمي النظيف (Corporate Clean)</option>
                   <option value="zatca_standard">🇸🇦 قالب ZATCA المعتمد ثنائي اللغة</option>
-                  <option value="minimalist_classic">📜 قالب كلاسيكي بسيط (Minimalist)</option>
+                  <option value="minimalist_classic">قالب كلاسيكي بسيط (Minimalist)</option>
                 </select>
               </div>
 
               <div class="flex items-center gap-3">
                 <span class="text-slate-500">حالة السداد:</span>
                 <select id="studio-status" onchange="renderStudioLivePreview()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl font-black text-xs">
-                  <option value="paid">✅ مسددة (مدفوعة بالكامل)</option>
+                  <option value="paid">[PASS] مسددة (مدفوعة بالكامل)</option>
                   <option value="unpaid">⏳ غير مسددة (آجلة / مستحقة)</option>
-                  <option value="pending">⚠️ معلقة بانتظار التحصيل</option>
+                  <option value="pending">معلقة بانتظار التحصيل</option>
                 </select>
               </div>
 
@@ -251,7 +250,7 @@ const invoiceStudioModalHtml = `
                   <span id="previewClientName" class="font-black text-slate-800 text-xs">شركة الفيصلية للاستثمار</span>
                 </div>
                 <div id="previewStatusBadge">
-                  <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px]">مسددة ✓</span>
+                  <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px]">مسددة </span>
                 </div>
               </div>
 
@@ -528,7 +527,7 @@ const studioScripts = `
     const badgeContainer = document.getElementById('previewStatusBadge');
     if (badgeContainer) {
       if (status === 'paid') {
-        badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px]">مسددة ✓</span>';
+        badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px]">مسددة </span>';
       } else if (status === 'unpaid') {
         badgeContainer.innerHTML = '<span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-black text-[10px]">غير مسددة ⏳</span>';
       } else {

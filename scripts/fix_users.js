@@ -17,11 +17,11 @@ async function fixUsers() {
       'UPDATE users SET password_hash = $1, full_name = $2, role = $3 WHERE email = $4',
       [hash, u.name, u.role, u.email]
     );
-    console.log('✅ Updated password for:', u.name, '=>', u.email);
+    console.log('[PASS] Updated password for:', u.name, '=>', u.email);
   }
 
   await pool.end();
-  console.log('🎉 Done successfully.');
+  console.log('Done successfully.');
 }
 
 fixUsers().catch(err => {

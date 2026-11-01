@@ -440,5 +440,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 نظام قيد المحاسبي شغال بنجاح على: http://localhost:${PORT}`);
+  console.log(`نظام قيد المحاسبي شغال بنجاح على: http://localhost:${PORT}`);
 });

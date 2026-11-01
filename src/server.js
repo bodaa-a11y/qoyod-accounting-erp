@@ -288,7 +288,7 @@ app.use((err, req, res, next) => {
 let server = null;
 if (process.env.NODE_ENV !== 'test_skip_listen') {
   server = app.listen(PORT, () => {
-    console.log(`🚀 Qoyod ERP Server listening on port ${PORT}`);
+    console.log(`Qoyod ERP Server listening on port ${PORT}`);
   });
 }
 

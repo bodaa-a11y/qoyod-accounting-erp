@@ -1,7 +1,7 @@
 'use strict';
 
 async function runE2ETest() {
-  console.log('🧪 Starting End-to-End ERP Business Workflow Test (Phase 10 QA)...\n');
+  console.log('Starting End-to-End ERP Business Workflow Test (Phase 10 QA)...\n');
 
   // 1. Authenticate as CFO
   const authRes = await fetch('http://localhost:3000/api/auth/login', {
@@ -13,7 +13,7 @@ async function runE2ETest() {
   if (!authRes.ok || !authData.token) {
     throw new Error('Authentication failed: ' + JSON.stringify(authData));
   }
-  console.log('✅ Step 1: Authenticated as CFO (' + authData.user.name + ')');
+  console.log('[PASS] Step 1: Authenticated as CFO (' + authData.user.name + ')');
 
   const headers = {
     'Authorization': 'Bearer ' + authData.token,
@@ -33,7 +33,7 @@ async function runE2ETest() {
   });
   const custData = await custRes.json();
   const customerId = custData.id || (custData.customer && custData.customer.id);
-  console.log('✅ Step 2: Customer Created:', custData.name || 'شركة الرواد', '| ID:', customerId);
+  console.log('[PASS] Step 2: Customer Created:', custData.name || 'شركة الرواد', '| ID:', customerId);
 
   // 3. Create Quotation
   const qRes = await fetch('http://localhost:3000/api/entities/law/quotes', {
@@ -51,7 +51,7 @@ async function runE2ETest() {
   const qData = await qRes.json();
   if (!qRes.ok) throw new Error('Quote creation failed: ' + JSON.stringify(qData));
   const quote = qData.quote;
-  console.log('✅ Step 3: Quotation Created:', quote.code, '| Total: 11,500.00 SAR');
+  console.log('[PASS] Step 3: Quotation Created:', quote.code, '| Total: 11,500.00 SAR');
 
   // 4. Convert Quotation to Sales Invoice
   const convRes = await fetch(`http://localhost:3000/api/entities/law/quotes/${quote.id}/convert-to-invoice`, {
@@ -61,7 +61,7 @@ async function runE2ETest() {
   const convData = await convRes.json();
   if (!convRes.ok) throw new Error('Convert quote failed: ' + JSON.stringify(convData));
   const invoice = convData.invoice;
-  console.log('✅ Step 4: Converted Quote to Sales Invoice:', invoice.invoice_number, '| Status:', invoice.status);
+  console.log('[PASS] Step 4: Converted Quote to Sales Invoice:', invoice.invoice_number, '| Status:', invoice.status);
 
   // 5. Submit Invoice for Approval
   const subRes = await fetch('http://localhost:3000/api/entities/law/workflows/submit', {
@@ -77,7 +77,7 @@ async function runE2ETest() {
   });
   const subData = await subRes.json();
   if (!subRes.ok) throw new Error('Approval submission failed: ' + JSON.stringify(subData));
-  console.log('✅ Step 5: Submitted Invoice to Approval Queue | Approval ID:', subData.approval.id);
+  console.log('[PASS] Step 5: Submitted Invoice to Approval Queue | Approval ID:', subData.approval.id);
 
   // 6. Approve Invoice in Workflow Queue
   const actRes = await fetch(`http://localhost:3000/api/entities/law/workflows/approvals/${subData.approval.id}/action`, {
@@ -87,7 +87,7 @@ async function runE2ETest() {
   });
   const actData = await actRes.json();
   if (!actRes.ok) throw new Error('Approval action failed: ' + JSON.stringify(actData));
-  console.log('✅ Step 6: Approved Invoice | Status transitioned to: approved');
+  console.log('[PASS] Step 6: Approved Invoice | Status transitioned to: approved');
 
   // 7. Post Approved Invoice to General Ledger
   const postRes = await fetch(`http://localhost:3000/api/entities/law/invoices/${invoice.id}/post`, {
@@ -96,7 +96,7 @@ async function runE2ETest() {
   });
   const postData = await postRes.json();
   if (!postRes.ok) throw new Error('Post invoice failed: ' + JSON.stringify(postData));
-  console.log('✅ Step 7: Invoice Posted to General Ledger | Journal ID:', postData.journal_id || (postData.journal && postData.journal.id));
+  console.log('[PASS] Step 7: Invoice Posted to General Ledger | Journal ID:', postData.journal_id || (postData.journal && postData.journal.id));
 
   // 8. Register Partial Payment (5,000.00 SAR out of 11,500.00 SAR)
   const payRes = await fetch(`http://localhost:3000/api/entities/law/invoices/${invoice.id}/payments`, {
@@ -111,26 +111,26 @@ async function runE2ETest() {
   });
   const payData = await payRes.json();
   if (!payRes.ok) throw new Error('Partial payment failed: ' + JSON.stringify(payData));
-  console.log('✅ Step 8: Registered Partial Payment (5,000.00 SAR) | Remaining Balance:', payData.remaining_riyals, 'SAR');
+  console.log('[PASS] Step 8: Registered Partial Payment (5,000.00 SAR) | Remaining Balance:', payData.remaining_riyals, 'SAR');
 
   // 9. Verify Trial Balance & Financial Statements
   const tbRes = await fetch('http://localhost:3000/api/entities/law/reports/trial-balance', { headers });
   const tbData = await tbRes.json();
-  console.log('✅ Step 9: Verified Trial Balance | Total Debit:', tbData.totals?.debit_riyals, '| Total Credit:', tbData.totals?.credit_riyals, '| Balanced:', tbData.totals?.is_balanced);
+  console.log('[PASS] Step 9: Verified Trial Balance | Total Debit:', tbData.totals?.debit_riyals, '| Total Credit:', tbData.totals?.credit_riyals, '| Balanced:', tbData.totals?.is_balanced);
 
   const isRes = await fetch('http://localhost:3000/api/entities/law/reports/income-statement', { headers });
   const isData = await isRes.json();
-  console.log('✅ Step 10: Verified Profit & Loss Statement | Net Income:', isData.net_income_riyals, 'SAR');
+  console.log('[PASS] Step 10: Verified Profit & Loss Statement | Net Income:', isData.net_income_riyals, 'SAR');
 
   // 11. Verify Live Dashboard KPIs
   const kpiRes = await fetch('http://localhost:3000/api/entities/law/dashboard/live-kpis', { headers });
   const kpiData = await kpiRes.json();
-  console.log('✅ Step 11: Verified Live Smart Dashboard KPIs:', kpiData.kpis);
+  console.log('[PASS] Step 11: Verified Live Smart Dashboard KPIs:', kpiData.kpis);
 
-  console.log('\n🎉 ALL END-TO-END WORKFLOW STEPS PASSED 100%!');
+  console.log('\nALL END-TO-END WORKFLOW STEPS PASSED 100%!');
 }
 
 runE2ETest().catch(err => {
-  console.error('❌ E2E Test Failed:', err);
+  console.error('[FAIL] E2E Test Failed:', err);
   process.exit(1);
 });

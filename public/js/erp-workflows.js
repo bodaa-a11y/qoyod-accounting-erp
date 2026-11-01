@@ -98,7 +98,8 @@
       setStat('stat-approvals-total', approvals.length);
 
       if (approvals.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 font-bold">لا توجد طلبات اعتماد مطابقة للتصفية الحالية</td></tr>`;
+        const illus = window.erpIllustration ? window.erpIllustration('approvals') : '';
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400 font-bold"><div class="flex flex-col items-center justify-center space-y-2">${illus}<span>لا توجد طلبات اعتماد مطابقة للتصفية الحالية</span></div></td></tr>`;
         return;
       }
 

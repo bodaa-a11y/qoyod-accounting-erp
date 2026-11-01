@@ -38,7 +38,7 @@ for (const filePath of files) {
   const newLoop = `      list.forEach(inv => {
         const isPaid = inv.status === 'paid';
         const statusBadge = isPaid 
-          ? '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط لتغيير الحالة لغير مسددة" class="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-black text-[11px] transition flex items-center gap-1 cursor-pointer"><span>✓ مسددة</span></button>'
+          ? '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط لتغيير الحالة لغير مسددة" class="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-black text-[11px] transition flex items-center gap-1 cursor-pointer"><span>مسددة</span></button>'
           : (inv.status === 'overdue' 
               ? '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط للتسديد" class="px-3 py-1.5 rounded-full bg-rose-100 text-rose-800 hover:bg-rose-200 font-black text-[11px] transition flex items-center gap-1 cursor-pointer"><span>! متأخرة</span></button>' 
               : '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط للتسديد الآن" class="px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 hover:bg-amber-200 font-black text-[11px] transition flex items-center gap-1 cursor-pointer"><span>⏳ غير مسددة</span></button>');
@@ -97,7 +97,7 @@ for (const filePath of files) {
   const newDashLoop = `      recent.forEach(inv => {
         const isPaid = inv.status === 'paid';
         const statusBadge = isPaid 
-          ? '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط لتغيير الحالة لغير مسددة" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-black text-[10px] transition cursor-pointer">✓ مسددة</button>'
+          ? '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط لتغيير الحالة لغير مسددة" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-black text-[10px] transition cursor-pointer">مسددة</button>'
           : '<button onclick="toggleInvoicePaidStatus(\\'' + inv.id + '\\')" title="اضغط للتسديد" class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 hover:bg-amber-200 font-black text-[10px] transition cursor-pointer">⏳ غير مسددة</button>';
 
         const tr = document.createElement('tr');

@@ -145,7 +145,7 @@ const viewPayrollHtml = `
           </div>
           <div class="flex items-center gap-2">
             <button onclick="openRunPayrollModal()" class="px-4 py-2.5 rounded-xl border border-purple-200 bg-purple-50 text-purple-800 text-xs font-bold hover:bg-purple-100 transition flex items-center gap-1.5">
-              <span>⚡ ترحيل مسير الشهر</span>
+              <span>ترحيل مسير الشهر</span>
             </button>
             <button onclick="openNewEmployeeModal()" class="gathern-gradient-btn text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -160,21 +160,21 @@ const viewPayrollHtml = `
               <span class="text-slate-400 block mb-1">إجمالي الكادر الوظيفي</span>
               <span id="totalEmployeesCount" class="text-2xl font-black text-slate-800">0</span>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl">👥</div>
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl"></div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
             <div>
               <span class="text-slate-400 block mb-1">إجمالي الرواتب الأساسية</span>
               <span id="totalSalariesSpan" class="text-2xl font-black text-purple-900">0.00 ر.س</span>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl">💵</div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl"></div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
             <div>
               <span class="text-slate-400 block mb-1">حالة مسير الشهر الحالي</span>
               <span class="text-sm font-black text-emerald-600">جاهز للترحيل</span>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl">📋</div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-xl"></div>
           </div>
         </div>
 
@@ -256,17 +256,17 @@ const viewHelpHtml = `
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg">📖</div>
+            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-lg"></div>
             <h3 class="font-extrabold text-sm text-slate-800">دليل الفوترة والربط مع ZATCA</h3>
             <p class="text-xs text-slate-400">شرح إنشاء الفواتير الضريبية المبسطة وتوليد رمز الاستجابة السريع QR المشفر بالمواصفات الرسمية.</p>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">⚖️</div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg"></div>
             <h3 class="font-extrabold text-sm text-slate-800">قواعد القيد المزدوج المحاسبي</h3>
             <p class="text-xs text-slate-400">دليل القيود اليومية التلقائية واليدوية وضمان توازن ميزان المراجعة والمركز المالي.</p>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg">📞</div>
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg"></div>
             <h3 class="font-extrabold text-sm text-slate-800">تواصل مع المستشار المحاسبي</h3>
             <p class="text-xs text-slate-400">فريق الدعم المالي والتقني متصل وجاهز للإجابة على استفساراتكم الضريبية والمحاسبية.</p>
           </div>
@@ -287,10 +287,10 @@ const helperModalsHtml = `
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له العميل:</label>
           <select id="client-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="law">🏢 شركة المحاماة</option>
-            <option value="restaurant">🍔 المطعم</option>
-            <option value="farm">🌾 المزرعة</option>
-            <option value="barber">✂️ الحلاق</option>
+            <option value="law">شركة المحاماة</option>
+            <option value="restaurant">المطعم</option>
+            <option value="farm">المزرعة</option>
+            <option value="barber">الحلاق</option>
           </select>
         </div>
         <div>
@@ -326,10 +326,10 @@ const helperModalsHtml = `
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له المورد:</label>
           <select id="supplier-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="restaurant">🍔 المطعم (موردي اللحوم والخضار)</option>
-            <option value="farm">🌾 المزرعة (موردي الأسمدة والأعلاف)</option>
-            <option value="barber">✂️ الحلاق (موردي الشفرات والمستحضرات)</option>
-            <option value="law">🏢 شركة المحاماة (موردي القرطاسية والأنظمة)</option>
+            <option value="restaurant">المطعم (موردي اللحوم والخضار)</option>
+            <option value="farm">المزرعة (موردي الأسمدة والأعلاف)</option>
+            <option value="barber">الحلاق (موردي الشفرات والمستحضرات)</option>
+            <option value="law">شركة المحاماة (موردي القرطاسية والأنظمة)</option>
           </select>
         </div>
         <div>
@@ -365,10 +365,10 @@ const helperModalsHtml = `
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له الموظف:</label>
           <select id="emp-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="law">🏢 شركة المحاماة</option>
-            <option value="restaurant">🍔 المطعم</option>
-            <option value="farm">🌾 المزرعة</option>
-            <option value="barber">✂️ الحلاق</option>
+            <option value="law">شركة المحاماة</option>
+            <option value="restaurant">المطعم</option>
+            <option value="farm">المزرعة</option>
+            <option value="barber">الحلاق</option>
           </select>
         </div>
         <div>
@@ -414,10 +414,10 @@ const helperModalsHtml = `
         <div>
           <label class="block font-bold text-slate-700 mb-1">النشاط التابع له الأصل:</label>
           <select id="asset-entity" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold">
-            <option value="restaurant">🍔 المطعم (أفران ومعدات طبخ)</option>
-            <option value="farm">🌾 المزرعة (معدات ري وحصاد ومضخات)</option>
-            <option value="barber">✂️ الحلاق (كراسي وأجهزة حلاقة)</option>
-            <option value="law">🏢 شركة المحاماة (أجهزة حاسب وأثاث مكتبي)</option>
+            <option value="restaurant">المطعم (أفران ومعدات طبخ)</option>
+            <option value="farm">المزرعة (معدات ري وحصاد ومضخات)</option>
+            <option value="barber">الحلاق (كراسي وأجهزة حلاقة)</option>
+            <option value="law">شركة المحاماة (أجهزة حاسب وأثاث مكتبي)</option>
           </select>
         </div>
         <div>
@@ -642,7 +642,7 @@ const modulesLogicJs = `
         <td class="p-4 font-black text-slate-900">\${formatSAR(q.total)} ر.س</td>
         <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">\${q.status}</span></td>
         <td class="p-4 text-center">
-          <button onclick="convertQuoteToInvoice('\${q.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] transition">تحويل لفاتورة ✓</button>
+          <button onclick="convertQuoteToInvoice('\${q.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] transition">تحويل لفاتورة </button>
         </td>
       \`;
       tbody.appendChild(tr);
