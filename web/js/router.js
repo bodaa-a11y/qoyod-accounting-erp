@@ -4,7 +4,7 @@
     'dashboard', 'invoices', 'inventory', 'purchases', 'treasury',
     'journal', 'accounts', 'reports', 'zatca', 'branches',
     'settings', 'payroll', 'clients', 'quotes', 'suppliers',
-    'fixed-assets', 'help', 'crm-leads', 'crm-deals'
+    'fixed-assets', 'help', 'crm-leads', 'crm-deals', 'approvals', 'users'
   ];
 
   function currentView() {

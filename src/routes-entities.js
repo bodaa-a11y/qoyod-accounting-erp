@@ -18,17 +18,33 @@ function requireAuth(req, res, next) {
   next();
 }
 
-// Entity Isolation Middleware
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Entity Isolation Middleware (also resolves entity code like 'law' to UUID)
 async function requireEntityAccess(req, res, next) {
-  const entityId = req.params.entityId || req.params.id;
+  let entityId = req.params.entityId || req.params.id;
   if (!entityId) return next();
 
-  // Admin and CFO roles have full access to all entities
-  if (req.user && ['admin', 'cfo', 'chief_accountant', 'auditor'].includes(req.user.role)) {
-    return next();
-  }
-
   try {
+    if (!UUID_RE.test(entityId)) {
+      const codeRes = await pool.query(
+        'SELECT id FROM entities WHERE LOWER(code) = LOWER($1) OR LOWER(name) LIKE LOWER($2) LIMIT 1',
+        [entityId, `%${entityId}%`]
+      );
+      if (codeRes.rows.length > 0) {
+        entityId = codeRes.rows[0].id;
+      } else {
+        const fallbackRes = await pool.query('SELECT id FROM entities ORDER BY created_at ASC LIMIT 1');
+        if (fallbackRes.rows.length > 0) entityId = fallbackRes.rows[0].id;
+      }
+      if (req.params.entityId) req.params.entityId = entityId;
+    }
+
+    // Admin and CFO roles have full access to all entities
+    if (req.user && ['admin', 'cfo', 'chief_accountant', 'auditor'].includes(req.user.role)) {
+      return next();
+    }
+
     const resCheck = await pool.query(
       'SELECT 1 FROM user_entities WHERE user_id = $1 AND entity_id = $2',
       [req.user.id, entityId]

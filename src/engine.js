@@ -166,8 +166,8 @@ async function postInvoice(client, entityId, invoiceId, userId = null) {
   }
 
   const invoice = invRes.rows[0];
-  if (invoice.status !== 'draft') {
-    throw new Error(`لا يمكن ترحيل الفاتورة؛ حالتها الحالية (${invoice.status}) وليست مسودة`);
+  if (invoice.status !== 'draft' && invoice.status !== 'approved') {
+    throw new Error(`لا يمكن ترحيل الفاتورة؛ حالتها الحالية (${invoice.status}) ولا تسمح بالترحيل`);
   }
 
   const linesRes = await client.query(`

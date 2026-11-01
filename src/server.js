@@ -11,6 +11,7 @@ const salesRoutes = require('./routes-sales');
 const reportsRoutes = require('./routes-reports');
 const zatcaRoutes = require('./routes-zatca');
 const crmRoutes = require('./routes-crm');
+const workflowRoutes = require('./routes-workflows');
 const { generateInvoicePdf, defaultLogoData } = require('./invoice-pdf');
 const { createStateInvoice, recordInvoiceReceipt, cancelStateInvoice } = require('./state-invoices');
 
@@ -261,6 +262,7 @@ app.use('/api/entities', salesRoutes);
 app.use('/api/entities', reportsRoutes);
 app.use('/api/entities', zatcaRoutes);
 app.use('/api/entities', crmRoutes);
+app.use('/api/entities', workflowRoutes);
 
 // Serve Frontend SPA
 const publicDir = path.join(__dirname, '..', 'public');
