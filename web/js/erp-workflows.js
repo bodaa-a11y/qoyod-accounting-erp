@@ -1,4 +1,4 @@
-// web/js/erp-workflows.js — Enterprise Workflows, Approvals, Live KPIs & Bilingual Support
+// public/js/erp-workflows.js — Enterprise Workflows, Approvals, Live KPIs & Bilingual Support
 (function () {
   'use strict';
 
@@ -31,6 +31,7 @@
       if (!data.success || !data.kpis) return;
 
       const k = data.kpis;
+      // Update dashboard cards if elements exist
       const updateEl = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
@@ -45,6 +46,7 @@
       updateEl('dash-bank', k.bankBalance);
       updateEl('dash-inventory-val', k.inventoryValue);
 
+      // Update sidebar pending badge
       const pendingBadge = document.getElementById('badge-pending-approvals');
       if (pendingBadge) {
         pendingBadge.textContent = k.pendingApprovalsCount > 0 ? `${k.pendingApprovalsCount} معلق` : 'اعتمادات';
@@ -81,6 +83,7 @@
       const approvals = data.approvals || [];
       window.erpWorkflowState.approvals = approvals;
 
+      // Update Stat Cards
       const pendingCount = approvals.filter(a => a.status === 'pending').length;
       const approvedCount = approvals.filter(a => a.status === 'approved').length;
       const rejectedCount = approvals.filter(a => a.status === 'rejected').length;
@@ -155,7 +158,7 @@
     let notes = '';
     if (action === 'reject') {
       notes = prompt('يرجى كتابة سبب رفض المستند:', 'مرفوض لعدم اكتمال المرفقات أو البيانات');
-      if (notes === null) return;
+      if (notes === null) return; // User cancelled
     }
 
     const entity = (window.currentEntity && window.currentEntity.id) || 'law';
@@ -281,6 +284,7 @@
     return res;
   };
 
+  // Initial Auto-load on page ready
   window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       window.loadLiveDashboardKPIs();
