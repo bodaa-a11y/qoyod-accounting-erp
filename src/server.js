@@ -12,8 +12,9 @@ const reportsRoutes = require('./routes-reports');
 const zatcaRoutes = require('./routes-zatca');
 const crmRoutes = require('./routes-crm');
 const workflowRoutes = require('./routes-workflows');
+const accountingWorkflowRoutes = require('./routes-accounting-workflow');
 const { generateInvoicePdf, defaultLogoData } = require('./invoice-pdf');
-const { createStateInvoice, recordInvoiceReceipt, cancelStateInvoice } = require('./state-invoices');
+const { createStateInvoice, recordInvoiceReceipt, cancelStateInvoice, recalculatePartyBalances } = require('./state-invoices');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -257,6 +258,7 @@ app.get('/api/auth/users', requireAuth, async (req, res) => {
 
 // Mount API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/accounting', accountingWorkflowRoutes);
 app.use('/api/entities', entityRoutes);
 app.use('/api/entities', salesRoutes);
 app.use('/api/entities', reportsRoutes);
